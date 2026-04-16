@@ -33,6 +33,14 @@ export const sectorSteps = [
   { id: 'client-relevance', label: 'Client relevance' },
 ];
 
+function sortByNewest(items, key) {
+  return [...items].sort((left, right) => new Date(right[key]) - new Date(left[key]));
+}
+
+function resolveNotes(noteIds, notesById) {
+  return noteIds.map(noteId => notesById[noteId]).filter(Boolean);
+}
+
 export function getViewContext(state, alertId = null) {
   const activeAlert = alertId
     ? state.alerts.find(alert => alert.id === alertId)
@@ -49,6 +57,15 @@ export function getViewContext(state, alertId = null) {
   const briefing = getSectorBriefingById(state.sectorFocus || scenario.sectorId);
   const lookupResponse = state.lookupSession.responseId ? getLookupResponseById(state.lookupSession.responseId) : null;
   const insightDraft = state.insightDrafts?.[scenario.id] ?? insight.clientFacingDraft;
+  const portalNotes = state.clientPortal?.notes ?? {};
+  const activeInsightRecord = state.clientPortal?.insightRecords.find(
+    record => record.scenarioId === scenario.id && record.isActive,
+  ) ?? null;
+  const latestEngagement = sortByNewest(
+    (state.clientPortal?.engagements ?? []).filter(engagement => engagement.scenarioId === scenario.id),
+    'confirmedAt',
+  )[0] ?? null;
+  const pendingEngagementDraft = state.clientPortal?.pendingEngagementDrafts?.[scenario.id] ?? null;
 
   return {
     activeAlert,
@@ -61,5 +78,11 @@ export function getViewContext(state, alertId = null) {
     selectedProducts,
     briefing,
     lookupResponse,
+    activeInsightRecord,
+    latestEngagement,
+    pendingEngagementDraft,
+    pendingPreEngagementNotes: resolveNotes(pendingEngagementDraft?.preNoteIds ?? [], portalNotes),
+    latestEngagementPreNotes: resolveNotes(latestEngagement?.preNoteIds ?? [], portalNotes),
+    latestEngagementPostNotes: resolveNotes(latestEngagement?.postNoteIds ?? [], portalNotes),
   };
 }

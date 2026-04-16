@@ -5,6 +5,7 @@ import { renderApp } from './testUtils';
 describe('route smoke tests', () => {
   it.each([
     ['/dashboard', 'Relationship manager command centre'],
+    ['/portal', 'Client portal'],
     ['/engagement/alert/alert-growth-retail', 'Alert detail view'],
     ['/engagement/insight', 'Insight review screen'],
     ['/engagement/bundle', 'Insight review screen'],

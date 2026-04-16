@@ -1,10 +1,11 @@
 import { ActionLink, InsightCard, JourneyStepper, MetricGrid, PageHeader, SectionPanel, useJourneyStep } from '../../components/UI';
+import { JourneyNoteAction } from '../../components/InternalNotes';
 import { useDemoState } from '../../state/DemoStateProvider';
 import { getViewContext, insightSteps } from '../pageContext';
 
 export default function InsightDetailPage() {
   const { state } = useDemoState();
-  const { client, insight } = getViewContext(state);
+  const { activeInsightRecord, client, insight } = getViewContext(state);
 
   useJourneyStep('insight', 'insight');
 
@@ -14,7 +15,12 @@ export default function InsightDetailPage() {
         eyebrow="Insight Delivery"
         title="Detailed insight view"
         description="This step combines the client transaction pattern and sector knowledge into one longform AI explanation that the RM can review before client-facing editing."
-        actions={<ActionLink to="/insights/customize">Customize insight</ActionLink>}
+        actions={
+          <>
+            <JourneyNoteAction clientId={client.id} insightRecordId={activeInsightRecord?.id} />
+            <ActionLink to="/insights/customize">Customize insight</ActionLink>
+          </>
+        }
       />
 
       <JourneyStepper steps={insightSteps} currentStep="insight" />

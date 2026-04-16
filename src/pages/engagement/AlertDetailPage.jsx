@@ -1,13 +1,14 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { ActionLink, InsightCard, JourneyStepper, MetricGrid, PageHeader, SectionPanel, StatusPill, useJourneyStep } from '../../components/UI';
+import { JourneyNoteAction } from '../../components/InternalNotes';
 import { useDemoState } from '../../state/DemoStateProvider';
 import { engagementSteps, getViewContext } from '../pageContext';
 
 export default function AlertDetailPage() {
   const { alertId } = useParams();
   const { state, dispatch } = useDemoState();
-  const { activeAlert, client, insight, scenario } = getViewContext(state, alertId);
+  const { activeAlert, activeInsightRecord, client, insight, scenario } = getViewContext(state, alertId);
 
   useJourneyStep('engagement', 'alert');
 
@@ -27,7 +28,12 @@ export default function AlertDetailPage() {
         eyebrow="Advisory Engagement"
         title="Alert detail view"
         description="The RM sees the trigger, the supporting evidence, the confidence score, and exactly why the moment matters now."
-        actions={<ActionLink to="/engagement/insight">Review AI recommendation</ActionLink>}
+        actions={
+          <>
+            <JourneyNoteAction clientId={client.id} insightRecordId={activeInsightRecord?.id} />
+            <ActionLink to="/engagement/insight">Review AI recommendation</ActionLink>
+          </>
+        }
       />
 
       <JourneyStepper steps={engagementSteps} currentStep="alert" />

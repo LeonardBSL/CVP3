@@ -25,6 +25,21 @@ export function buildTestState(overrides = {}) {
       ...base.lookupSession,
       ...overrides.lookupSession,
     },
+    clientPortal: {
+      ...base.clientPortal,
+      ...overrides.clientPortal,
+      notes: {
+        ...base.clientPortal.notes,
+        ...overrides.clientPortal?.notes,
+      },
+      insightRecords: overrides.clientPortal?.insightRecords ?? base.clientPortal.insightRecords,
+      generalNotes: overrides.clientPortal?.generalNotes ?? base.clientPortal.generalNotes,
+      engagements: overrides.clientPortal?.engagements ?? base.clientPortal.engagements,
+      pendingEngagementDrafts: {
+        ...base.clientPortal.pendingEngagementDrafts,
+        ...overrides.clientPortal?.pendingEngagementDrafts,
+      },
+    },
   };
 }
 

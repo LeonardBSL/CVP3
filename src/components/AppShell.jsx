@@ -1,4 +1,4 @@
-import { BellRing, BriefcaseBusiness, LayoutDashboard, Search, Settings2, TrendingUp, X } from 'lucide-react';
+import { BellRing, BriefcaseBusiness, Building2, LayoutDashboard, Search, Settings2, TrendingUp, X } from 'lucide-react';
 import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import absaLogo from '../assets/absa-logo.png';
@@ -8,6 +8,7 @@ import { StatusPill, ToastStack } from './UI';
 
 const navigationItems = [
   { label: 'Dashboard', description: 'RM command centre', to: '/dashboard', icon: LayoutDashboard },
+  { label: 'Client portal', description: 'Client history and notes', to: '/portal', icon: Building2 },
   { label: 'Advisory engagement', description: 'Signal to outreach', to: '/engagement/alert/alert-growth-retail', icon: BellRing },
   { label: 'Insight delivery', description: 'Client-ready packaging', to: '/insights/client', icon: BriefcaseBusiness },
   { label: 'Advisory lookup', description: 'On-demand intelligence', to: '/lookup/search', icon: Search },

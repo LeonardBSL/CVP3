@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { Settings2, X } from 'lucide-react';
 import { ActionLink, FeedbackStrip, InsightCard, JourneyStepper, MetricGrid, PageHeader, SectionPanel, StatusPill, useJourneyStep } from '../../components/UI';
+import { JourneyNoteAction } from '../../components/InternalNotes';
 import { useDemoState } from '../../state/DemoStateProvider';
 import { engagementSteps, getViewContext } from '../pageContext';
 
 export default function InsightReviewPage() {
   const [bundleOpen, setBundleOpen] = useState(false);
   const { state, dispatch } = useDemoState();
-  const { bundle, client, insight, scenario, selection, selectedProducts } = getViewContext(state);
+  const { activeInsightRecord, bundle, client, insight, scenario, selection, selectedProducts } = getViewContext(state);
 
   useJourneyStep('engagement', 'insight');
 
@@ -17,7 +18,12 @@ export default function InsightReviewPage() {
         eyebrow="Advisory Engagement"
         title="Insight review screen"
         description="The RM sees a structured signal summary first, then a fuller model explanation grounded in the client transaction profile and sector knowledge base."
-        actions={<ActionLink to="/engagement/outreach">Choose outreach</ActionLink>}
+        actions={
+          <>
+            <JourneyNoteAction clientId={client.id} insightRecordId={activeInsightRecord?.id} />
+            <ActionLink to="/engagement/outreach">Choose outreach</ActionLink>
+          </>
+        }
       />
 
       <JourneyStepper steps={engagementSteps} currentStep="insight" />

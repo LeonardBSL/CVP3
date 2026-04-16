@@ -15,6 +15,7 @@ import SearchPage from './pages/lookup/SearchPage';
 import ClientRelevancePage from './pages/sector/ClientRelevancePage';
 import DeepDivePage from './pages/sector/DeepDivePage';
 import OverviewPage from './pages/sector/OverviewPage';
+import ClientPortalPage from './pages/portal/ClientPortalPage';
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/portal" element={<ClientPortalPage />} />
 
         <Route path="/engagement/alert/:alertId" element={<AlertDetailPage />} />
         <Route path="/engagement/insight" element={<InsightReviewPage />} />

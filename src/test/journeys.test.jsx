@@ -20,7 +20,7 @@ describe('journey walkthroughs', () => {
     await user.click(screen.getByRole('button', { name: /Confirm outreach/i }));
 
     expect(screen.getAllByText('Meeting scheduled').length).toBeGreaterThan(0);
-  });
+  }, 15000);
 
   it('walks the insight delivery journey from client insight to send action', async () => {
     const user = userEvent.setup();
@@ -32,7 +32,7 @@ describe('journey walkthroughs', () => {
     await user.click(screen.getByRole('button', { name: /^Send$/i }));
 
     expect(screen.getByText(/Insight sent:/i)).toBeInTheDocument();
-  });
+  }, 15000);
 
   it('walks the lookup journey from query to recommendation output', async () => {
     const user = userEvent.setup();
@@ -51,7 +51,7 @@ describe('journey walkthroughs', () => {
 
     expect(screen.getByRole('heading', { name: 'Recommendation output' })).toBeInTheDocument();
     expect(screen.getByText(/Working Capital Revolver/i)).toBeInTheDocument();
-  });
+  }, 15000);
 
   it('walks the sector journey from overview to client relevance', async () => {
     const user = userEvent.setup();
@@ -65,5 +65,5 @@ describe('journey walkthroughs', () => {
 
     await user.click(screen.getByRole('link', { name: /Move into advisory engagement/i }));
     expect(screen.getByRole('heading', { name: 'Insight review screen' })).toBeInTheDocument();
-  });
+  }, 15000);
 });

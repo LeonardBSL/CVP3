@@ -153,6 +153,10 @@ export default function DashboardPage() {
               <Search size={16} />
               Run advisory lookup
             </ActionLink>
+            <ActionLink to="/portal" tone="secondary">
+              <BriefcaseBusiness size={16} />
+              Open client portal
+            </ActionLink>
             <ActionLink to="/sector/overview" tone="secondary">
               <TrendingUp size={16} />
               Open sector briefing

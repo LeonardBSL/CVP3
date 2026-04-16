@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { DeliveryActions, JourneyStepper, PageHeader, PresentationOverlay, SectionPanel, useJourneyStep } from '../../components/UI';
+import { JourneyNoteAction } from '../../components/InternalNotes';
 import { useDemoState } from '../../state/DemoStateProvider';
 import { getViewContext, insightSteps } from '../pageContext';
 
 export default function DeliveryPage() {
   const [presentationOpen, setPresentationOpen] = useState(false);
   const { state, dispatch } = useDemoState();
-  const { client, insight, insightDraft } = getViewContext(state);
+  const { activeInsightRecord, client, insight, insightDraft } = getViewContext(state);
 
   useJourneyStep('insight', 'delivery');
 
@@ -25,6 +26,7 @@ export default function DeliveryPage() {
         eyebrow="Insight Delivery"
         title="Insight delivery screen"
         description="Delivery actions now use the customized client-facing draft so the RM can send, present, or prepare exactly what was refined in the previous step."
+        actions={<JourneyNoteAction clientId={client.id} insightRecordId={activeInsightRecord?.id} />}
       />
 
       <JourneyStepper steps={insightSteps} currentStep="delivery" />

@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useDemoState } from '../../state/DemoStateProvider';
 import { JourneyStepper, OutreachChoiceIcon, PageHeader, SectionPanel, StatusPill, useJourneyStep } from '../../components/UI';
+import { EngagementPhaseNoteAction, JourneyNoteAction } from '../../components/InternalNotes';
 import { engagementSteps, getViewContext } from '../pageContext';
 
 const choices = [
@@ -12,7 +13,7 @@ const choices = [
 export default function OutreachSelectionPage() {
   const navigate = useNavigate();
   const { state, dispatch } = useDemoState();
-  const { client, scenario, insight } = getViewContext(state);
+  const { activeInsightRecord, client, pendingPreEngagementNotes, scenario, insight } = getViewContext(state);
 
   useJourneyStep('engagement', 'outreach');
 
@@ -23,16 +24,19 @@ export default function OutreachSelectionPage() {
         title="Outreach selection screen"
         description="Every insight ends in a clear RM action. The channel is chosen deliberately to match the urgency, trust level, and narrative style of the opportunity."
         actions={
-          <button
-            type="button"
-            className="button button--primary"
-            onClick={() => {
-              dispatch({ type: 'CONFIRM_OUTREACH' });
-              navigate('/engagement/confirm');
-            }}
-          >
-            Confirm outreach
-          </button>
+          <>
+            <JourneyNoteAction clientId={client.id} insightRecordId={activeInsightRecord?.id} />
+            <button
+              type="button"
+              className="button button--primary"
+              onClick={() => {
+                dispatch({ type: 'CONFIRM_OUTREACH' });
+                navigate('/engagement/confirm');
+              }}
+            >
+              Confirm outreach
+            </button>
+          </>
         }
       />
 
@@ -61,7 +65,11 @@ export default function OutreachSelectionPage() {
           </div>
         </SectionPanel>
 
-        <SectionPanel title="Outreach preview" subtitle="The RM delivers a packaged recommendation, not a raw model output.">
+        <SectionPanel
+          title="Outreach preview"
+          subtitle="The RM delivers a packaged recommendation, not a raw model output."
+          action={<EngagementPhaseNoteAction clientId={client.id} scenarioId={scenario.id} phase="pre" buttonTone="ghost" />}
+        >
           <div className="panel-stack">
             <article className="list-item">
               <h4>Target client</h4>
@@ -78,6 +86,23 @@ export default function OutreachSelectionPage() {
             <article className="list-item">
               <h4>Selected channel</h4>
               <p>{state.outreachChoice}</p>
+            </article>
+            <article className="list-item">
+              <div className="list-item__top">
+                <h4>Pre-engagement notes</h4>
+                <StatusPill tone="neutral">{pendingPreEngagementNotes.length}</StatusPill>
+              </div>
+              {pendingPreEngagementNotes.length ? (
+                <div className="note-list">
+                  {pendingPreEngagementNotes.map(note => (
+                    <article key={note.id} className="note-item">
+                      <p>{note.body}</p>
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <p>No pre-engagement notes captured yet.</p>
+              )}
             </article>
           </div>
         </SectionPanel>

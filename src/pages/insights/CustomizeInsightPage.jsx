@@ -1,10 +1,11 @@
 import { ActionLink, JourneyStepper, PageHeader, SectionPanel, SourceChips, useJourneyStep } from '../../components/UI';
+import { JourneyNoteAction } from '../../components/InternalNotes';
 import { useDemoState } from '../../state/DemoStateProvider';
 import { getViewContext, insightSteps } from '../pageContext';
 
 export default function CustomizeInsightPage() {
   const { state, dispatch } = useDemoState();
-  const { client, insight, insightDraft, scenario } = getViewContext(state);
+  const { activeInsightRecord, client, insight, insightDraft, scenario } = getViewContext(state);
 
   useJourneyStep('insight', 'customize');
 
@@ -14,7 +15,12 @@ export default function CustomizeInsightPage() {
         eyebrow="Insight Delivery"
         title="Customize insight"
         description="The generated insight is rewritten into client-facing language here so the RM can refine tone, detail, and emphasis before delivery."
-        actions={<ActionLink to="/insights/delivery">Continue to delivery</ActionLink>}
+        actions={
+          <>
+            <JourneyNoteAction clientId={client.id} insightRecordId={activeInsightRecord?.id} />
+            <ActionLink to="/insights/delivery">Continue to delivery</ActionLink>
+          </>
+        }
       />
 
       <JourneyStepper steps={insightSteps} currentStep="customize" />

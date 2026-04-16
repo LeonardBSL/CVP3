@@ -1,3 +1,4 @@
+import { buildInitialClientPortal, getActiveInsightRecordId } from '../data/clientPortalData';
 import {
   buildInitialAlerts,
   buildInitialBundleSelection,
@@ -14,6 +15,10 @@ export const storageKey = 'cvp3-demo-state';
 
 function makeId() {
   return globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
+}
+
+function nowIso() {
+  return new Date().toISOString();
 }
 
 function timestampLabel() {
@@ -58,6 +63,265 @@ function updateAlertCollection(alerts, scenarioId, updates) {
     .sort(sortAlerts);
 }
 
+function sortNewest(items, key) {
+  return [...items].sort((left, right) => new Date(right[key]) - new Date(left[key]));
+}
+
+function mergeClientPortalState(basePortal, savedPortal = {}) {
+  return {
+    ...basePortal,
+    ...savedPortal,
+    notes: {
+      ...basePortal.notes,
+      ...savedPortal.notes,
+    },
+    insightRecords: savedPortal.insightRecords ?? basePortal.insightRecords,
+    generalNotes: savedPortal.generalNotes ?? basePortal.generalNotes,
+    engagements: savedPortal.engagements ?? basePortal.engagements,
+    pendingEngagementDrafts: {
+      ...basePortal.pendingEngagementDrafts,
+      ...savedPortal.pendingEngagementDrafts,
+    },
+  };
+}
+
+function normalizeNoteInput(noteInput = {}) {
+  const body = noteInput.body?.trim();
+  if (!body) {
+    return null;
+  }
+
+  const durationType = noteInput.durationType ?? 'permanent';
+  if (durationType === 'time-constrained' && !noteInput.expiresOn) {
+    return null;
+  }
+
+  return {
+    ...noteInput,
+    body,
+    durationType,
+    expiresOn: durationType === 'time-constrained' ? noteInput.expiresOn : null,
+  };
+}
+
+function buildPortalNote(noteInput, overrides = {}) {
+  const createdAt = nowIso();
+  return {
+    id: makeId(),
+    clientId: noteInput.clientId,
+    body: noteInput.body,
+    createdAt,
+    updatedAt: createdAt,
+    relevance: noteInput.relevance ?? 'general',
+    durationType: noteInput.durationType,
+    expiresOn: noteInput.durationType === 'time-constrained' ? noteInput.expiresOn : null,
+    insightRecordId: noteInput.insightRecordId ?? null,
+    engagementId: noteInput.engagementId ?? null,
+    engagementPhase: noteInput.engagementPhase ?? null,
+    ...overrides,
+  };
+}
+
+function withSortedPortal(clientPortal) {
+  return {
+    ...clientPortal,
+    insightRecords: sortNewest(clientPortal.insightRecords, 'generatedAt'),
+    engagements: sortNewest(clientPortal.engagements, 'confirmedAt'),
+  };
+}
+
+function addGeneralNoteId(generalNotes, noteId) {
+  return [noteId, ...generalNotes.filter(existingId => existingId !== noteId)];
+}
+
+function attachNoteToInsightRecord(insightRecords, insightRecordId, noteId) {
+  return insightRecords.map(record =>
+    record.id === insightRecordId
+      ? {
+          ...record,
+          noteIds: [noteId, ...record.noteIds.filter(existingId => existingId !== noteId)],
+        }
+      : record,
+  );
+}
+
+function attachNoteToEngagement(engagements, engagementId, engagementPhase, noteId) {
+  return engagements.map(engagement => {
+    if (engagement.id !== engagementId) {
+      return engagement;
+    }
+
+    const key = engagementPhase === 'pre' ? 'preNoteIds' : 'postNoteIds';
+    return {
+      ...engagement,
+      [key]: [noteId, ...engagement[key].filter(existingId => existingId !== noteId)],
+    };
+  });
+}
+
+function addPortalNote(clientPortal, noteInput) {
+  const normalizedNote = normalizeNoteInput(noteInput);
+  if (!normalizedNote) {
+    return clientPortal;
+  }
+
+  const note = buildPortalNote(normalizedNote);
+  const nextPortal = {
+    ...clientPortal,
+    notes: {
+      ...clientPortal.notes,
+      [note.id]: note,
+    },
+  };
+
+  if (note.engagementId) {
+    return withSortedPortal({
+      ...nextPortal,
+      engagements: attachNoteToEngagement(clientPortal.engagements, note.engagementId, note.engagementPhase, note.id),
+    });
+  }
+
+  if (note.relevance === 'insight' && note.insightRecordId) {
+    return withSortedPortal({
+      ...nextPortal,
+      insightRecords: attachNoteToInsightRecord(clientPortal.insightRecords, note.insightRecordId, note.id),
+    });
+  }
+
+  return withSortedPortal({
+    ...nextPortal,
+    generalNotes: addGeneralNoteId(clientPortal.generalNotes, note.id),
+  });
+}
+
+function updatePortalNote(clientPortal, noteId, updates) {
+  const existingNote = clientPortal.notes[noteId];
+  if (!existingNote) {
+    return clientPortal;
+  }
+
+  const normalizedUpdates = normalizeNoteInput({
+    ...existingNote,
+    ...updates,
+  });
+  if (!normalizedUpdates) {
+    return clientPortal;
+  }
+
+  return {
+    ...clientPortal,
+    notes: {
+      ...clientPortal.notes,
+      [noteId]: {
+        ...existingNote,
+        body: normalizedUpdates.body,
+        durationType: normalizedUpdates.durationType,
+        expiresOn: normalizedUpdates.expiresOn,
+        updatedAt: nowIso(),
+      },
+    },
+  };
+}
+
+function addPendingEngagementNote(clientPortal, scenarioId, noteInput) {
+  const normalizedNote = normalizeNoteInput(noteInput);
+  if (!normalizedNote) {
+    return clientPortal;
+  }
+
+  const note = buildPortalNote(normalizedNote, {
+    relevance: normalizedNote.relevance ?? 'general',
+    insightRecordId: null,
+    engagementId: null,
+    engagementPhase: 'pre',
+  });
+  const existingDraft = clientPortal.pendingEngagementDrafts[scenarioId] ?? {
+    scenarioId,
+    clientId: note.clientId,
+    preNoteIds: [],
+  };
+
+  return {
+    ...clientPortal,
+    notes: {
+      ...clientPortal.notes,
+      [note.id]: note,
+    },
+    pendingEngagementDrafts: {
+      ...clientPortal.pendingEngagementDrafts,
+      [scenarioId]: {
+        ...existingDraft,
+        preNoteIds: [note.id, ...existingDraft.preNoteIds.filter(existingId => existingId !== note.id)],
+      },
+    },
+  };
+}
+
+function confirmPortalEngagement(clientPortal, { clientId, scenarioId, channel, status }) {
+  const confirmedAt = nowIso();
+  const engagementId = `engagement-${makeId()}`;
+  const insightRecordId = getActiveInsightRecordId(clientPortal, scenarioId);
+  const pendingDraft = clientPortal.pendingEngagementDrafts[scenarioId] ?? {
+    scenarioId,
+    clientId,
+    preNoteIds: [],
+  };
+
+  const nextNotes = { ...clientPortal.notes };
+  pendingDraft.preNoteIds.forEach(noteId => {
+    const note = nextNotes[noteId];
+    if (note) {
+      nextNotes[noteId] = {
+        ...note,
+        engagementId,
+        engagementPhase: 'pre',
+        updatedAt: confirmedAt,
+      };
+    }
+  });
+
+  const nextPendingDrafts = { ...clientPortal.pendingEngagementDrafts };
+  delete nextPendingDrafts[scenarioId];
+
+  return withSortedPortal({
+    ...clientPortal,
+    notes: nextNotes,
+    engagements: [
+      {
+        id: engagementId,
+        clientId,
+        scenarioId,
+        insightRecordId,
+        channel,
+        status,
+        confirmedAt,
+        preNoteIds: pendingDraft.preNoteIds,
+        postNoteIds: [],
+      },
+      ...clientPortal.engagements,
+    ],
+    pendingEngagementDrafts: nextPendingDrafts,
+  });
+}
+
+function markActiveInsightShared(clientPortal, scenarioId) {
+  const sharedAt = nowIso();
+  return withSortedPortal({
+    ...clientPortal,
+    insightRecords: clientPortal.insightRecords.map(record => {
+      if (!(record.scenarioId === scenarioId && record.isActive)) {
+        return record;
+      }
+
+      return {
+        ...record,
+        sharedStatus: 'shared',
+        sharedAt: record.sharedAt ?? sharedAt,
+      };
+    }),
+  });
+}
+
 export function createBaseState() {
   return {
     selectedClientId: 'nkosi-retail',
@@ -75,6 +339,7 @@ export function createBaseState() {
     lookupSession: buildLookupSession(),
     sectorFocus: 'retail',
     feedback: {},
+    clientPortal: buildInitialClientPortal(),
     activityFeed: [
       {
         id: 'activity-0',
@@ -125,6 +390,7 @@ export function createInitialState() {
         ...baseState.lookupSession,
         ...savedState.lookupSession,
       },
+      clientPortal: mergeClientPortalState(baseState.clientPortal, savedState.clientPortal),
       toasts: [],
     };
   } catch {
@@ -254,6 +520,66 @@ export function demoReducer(state, action) {
         outreachChoice: action.choice,
       };
 
+    case 'ADD_PORTAL_NOTE': {
+      const nextClientPortal = addPortalNote(state.clientPortal, action.note);
+      if (nextClientPortal === state.clientPortal) {
+        return state;
+      }
+
+      return {
+        ...state,
+        clientPortal: nextClientPortal,
+        toasts: pushToast(state.toasts, 'Internal note saved.', 'positive'),
+      };
+    }
+
+    case 'UPDATE_PORTAL_NOTE': {
+      const nextClientPortal = updatePortalNote(state.clientPortal, action.noteId, action.note);
+      if (nextClientPortal === state.clientPortal) {
+        return state;
+      }
+
+      return {
+        ...state,
+        clientPortal: nextClientPortal,
+        toasts: pushToast(state.toasts, 'Internal note updated.', 'positive'),
+      };
+    }
+
+    case 'ADD_PENDING_ENGAGEMENT_NOTE': {
+      const nextClientPortal = addPendingEngagementNote(state.clientPortal, action.scenarioId, action.note);
+      if (nextClientPortal === state.clientPortal) {
+        return state;
+      }
+
+      return {
+        ...state,
+        clientPortal: nextClientPortal,
+        toasts: pushToast(state.toasts, 'Pre-engagement note saved.', 'positive'),
+      };
+    }
+
+    case 'ADD_ENGAGEMENT_NOTE': {
+      const nextClientPortal = addPortalNote(state.clientPortal, {
+        ...action.note,
+        engagementId: action.engagementId,
+        engagementPhase: action.engagementPhase,
+      });
+      if (nextClientPortal === state.clientPortal) {
+        return state;
+      }
+
+      return {
+        ...state,
+        clientPortal: nextClientPortal,
+        toasts: pushToast(
+          state.toasts,
+          `${action.engagementPhase === 'pre' ? 'Pre' : 'Post'}-engagement note saved.`,
+          'positive',
+        ),
+      };
+    }
+
     case 'CONFIRM_OUTREACH': {
       const scenario = getScenarioById(state.activeScenarioId);
       const client = getClientById(state.selectedClientId);
@@ -267,6 +593,12 @@ export function demoReducer(state, action) {
         alerts: updateAlertCollection(state.alerts, scenario.id, {
           status: 'actioned',
           updatedLabel: confirmationLabel,
+        }),
+        clientPortal: confirmPortalEngagement(state.clientPortal, {
+          clientId: client.id,
+          scenarioId: scenario.id,
+          channel: state.outreachChoice,
+          status: confirmationLabel,
         }),
         journeyProgress: {
           ...state.journeyProgress,
@@ -349,6 +681,9 @@ export function demoReducer(state, action) {
       }[action.mode];
       return {
         ...state,
+        clientPortal: ['send', 'present'].includes(action.mode)
+          ? markActiveInsightShared(state.clientPortal, state.activeScenarioId)
+          : state.clientPortal,
         journeyProgress: {
           ...state.journeyProgress,
           insight: 'delivery',

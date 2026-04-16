@@ -1,11 +1,12 @@
 import { TrendAreaChart } from '../../components/Charts';
 import { ActionLink, InsightCard, JourneyStepper, MetricGrid, PageHeader, SectionPanel, useJourneyStep } from '../../components/UI';
+import { JourneyNoteAction } from '../../components/InternalNotes';
 import { useDemoState } from '../../state/DemoStateProvider';
 import { getViewContext, insightSteps } from '../pageContext';
 
 export default function ClientInsightPage() {
   const { state } = useDemoState();
-  const { client, insight } = getViewContext(state);
+  const { activeInsightRecord, client, insight } = getViewContext(state);
 
   useJourneyStep('insight', 'client');
 
@@ -15,7 +16,12 @@ export default function ClientInsightPage() {
         eyebrow="Insight Delivery"
         title="Client insight summary"
         description="The RM starts with a concise summary of what the client data is showing before moving into the fuller AI interpretation."
-        actions={<ActionLink to="/insights/insight">Open detailed insight</ActionLink>}
+        actions={
+          <>
+            <JourneyNoteAction clientId={client.id} insightRecordId={activeInsightRecord?.id} />
+            <ActionLink to="/insights/insight">Open detailed insight</ActionLink>
+          </>
+        }
       />
 
       <JourneyStepper steps={insightSteps} currentStep="client" />

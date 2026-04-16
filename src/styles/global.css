@@ -910,6 +910,150 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
   gap: 0.9rem;
 }
 
+.note-composer {
+  width: min(760px, 100%);
+}
+
+.note-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.note-textarea {
+  min-height: 220px;
+}
+
+.note-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.note-item {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--surface-soft);
+  box-shadow: var(--shadow-soft);
+}
+
+.note-item p,
+.portal-record-toggle p,
+.portal-checkbox span {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.portal-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.portal-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 8;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) auto;
+  gap: 0.85rem;
+  align-items: end;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-soft);
+}
+
+.portal-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 46px;
+  padding: 0.8rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.portal-checkbox input {
+  width: auto;
+  margin: 0;
+}
+
+.portal-section-body {
+  display: grid;
+  gap: 0.85rem;
+  max-height: 620px;
+  overflow: auto;
+  padding-right: 0.25rem;
+  scrollbar-gutter: stable;
+}
+
+.portal-record-stack {
+  align-content: start;
+}
+
+.portal-record-card {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, #ffffff 0%, #fcfbfa 100%);
+  box-shadow: var(--shadow-soft);
+}
+
+.portal-record-card__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.portal-record-toggle {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0;
+  text-align: left;
+  color: inherit;
+}
+
+.portal-record-toggle h4,
+.portal-note-group h3 {
+  margin: 0 0 0.35rem;
+}
+
+.portal-record-actions {
+  display: grid;
+  gap: 0.65rem;
+  justify-items: end;
+  flex: 0 0 auto;
+}
+
+.portal-record-detail {
+  display: grid;
+  gap: 1rem;
+  padding-top: 0.95rem;
+  border-top: 1px solid var(--line);
+}
+
+.portal-engagement-detail {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.portal-note-group {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1rem;
+  border-radius: 10px;
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+}
+
 @keyframes routeFade {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
@@ -970,6 +1114,12 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
     grid-template-columns: 1fr;
   }
 
+  .portal-toolbar,
+  .note-form-grid,
+  .portal-engagement-detail {
+    grid-template-columns: 1fr 1fr;
+  }
+
   .chat-composer {
     flex-direction: column;
     align-items: stretch;
@@ -982,6 +1132,21 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
 
   .dashboard-grid, .two-column-grid, .three-column-grid, .summary-grid, .choice-grid, .stats-grid, .cards-grid, .metric-grid, .narrative-grid, .overlay-grid, .bundle-review-grid {
     grid-template-columns: 1fr;
+  }
+
+  .portal-toolbar,
+  .note-form-grid,
+  .portal-engagement-detail {
+    grid-template-columns: 1fr;
+  }
+
+  .portal-record-card__header {
+    flex-direction: column;
+  }
+
+  .portal-record-actions {
+    justify-items: flex-start;
+    width: 100%;
   }
 
   .content-frame { padding: 1rem; }
