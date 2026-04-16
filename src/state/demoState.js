@@ -37,13 +37,46 @@ function pushActivity(activityFeed, title, detail, tone = 'info') {
   return [{ id: makeId(), title, detail, tone, timestamp: timestampLabel() }, ...activityFeed].slice(0, 8);
 }
 
-function buildLookupSession(responseId = 'lookup-growth-retail') {
+function buildLookupContext(selectedClientId = 'nkosi-retail', overrides = {}) {
+  return {
+    intentMode: 'generic',
+    clientScopeMode: 'selected',
+    selectedClientIds: selectedClientId ? [selectedClientId] : [],
+    ...overrides,
+  };
+}
+
+function normalizeLookupContext(context = {}, selectedClientId = 'nkosi-retail') {
+  const baseContext = buildLookupContext(selectedClientId);
+  return {
+    ...baseContext,
+    ...context,
+    selectedClientIds: Array.isArray(context.selectedClientIds)
+      ? [...new Set(context.selectedClientIds)]
+      : baseContext.selectedClientIds,
+  };
+}
+
+function buildLookupSession(selectedClientId = 'nkosi-retail') {
   return {
     query: '',
     pendingQuery: '',
     status: 'idle',
-    responseId,
+    responseId: null,
     messages: [],
+    context: buildLookupContext(selectedClientId),
+    selectedAgentId: null,
+  };
+}
+
+function normalizeLookupSession(lookupSession = {}, selectedClientId = 'nkosi-retail') {
+  const baseSession = buildLookupSession(selectedClientId);
+  return {
+    ...baseSession,
+    ...lookupSession,
+    messages: Array.isArray(lookupSession.messages) ? lookupSession.messages : baseSession.messages,
+    context: normalizeLookupContext(lookupSession.context, selectedClientId),
+    selectedAgentId: lookupSession.selectedAgentId ?? null,
   };
 }
 
@@ -53,7 +86,7 @@ function focusScenarioState(state, scenario) {
     selectedClientId: scenario.clientId,
     activeScenarioId: scenario.id,
     sectorFocus: scenario.sectorId,
-    lookupSession: buildLookupSession(scenario.lookupResponseId),
+    lookupSession: buildLookupSession(scenario.clientId),
   };
 }
 
@@ -336,7 +369,7 @@ export function createBaseState() {
     bundleSelection: buildInitialBundleSelection(),
     insightDrafts: buildInitialInsightDrafts(),
     outreachChoice: 'meeting',
-    lookupSession: buildLookupSession(),
+    lookupSession: buildLookupSession('nkosi-retail'),
     sectorFocus: 'retail',
     feedback: {},
     clientPortal: buildInitialClientPortal(),
@@ -370,6 +403,7 @@ export function createInitialState() {
   try {
     const savedState = JSON.parse(sessionStorage.getItem(storageKey));
     if (!savedState) return baseState;
+    const selectedClientId = savedState.selectedClientId ?? baseState.selectedClientId;
 
     return {
       ...baseState,
@@ -386,10 +420,7 @@ export function createInitialState() {
         ...baseState.insightDrafts,
         ...savedState.insightDrafts,
       },
-      lookupSession: {
-        ...baseState.lookupSession,
-        ...savedState.lookupSession,
-      },
+      lookupSession: normalizeLookupSession(savedState.lookupSession, selectedClientId),
       clientPortal: mergeClientPortalState(baseState.clientPortal, savedState.clientPortal),
       toasts: [],
     };
@@ -407,7 +438,7 @@ export function demoReducer(state, action) {
         selectedClientId: action.clientId,
         activeScenarioId: scenario.id,
         sectorFocus: scenario.sectorId,
-        lookupSession: buildLookupSession(scenario.lookupResponseId),
+        lookupSession: buildLookupSession(action.clientId),
       };
     }
 
@@ -520,6 +551,55 @@ export function demoReducer(state, action) {
         outreachChoice: action.choice,
       };
 
+    case 'SET_LOOKUP_INTENT_MODE':
+      return {
+        ...state,
+        lookupSession: {
+          ...state.lookupSession,
+          context: {
+            ...state.lookupSession.context,
+            intentMode: action.intentMode,
+          },
+        },
+      };
+
+    case 'SET_LOOKUP_CLIENT_SCOPE_MODE':
+      return {
+        ...state,
+        lookupSession: {
+          ...state.lookupSession,
+          context: {
+            ...state.lookupSession.context,
+            clientScopeMode: action.clientScopeMode,
+          },
+        },
+      };
+
+    case 'TOGGLE_LOOKUP_CLIENT': {
+      const selectedClientIds = state.lookupSession.context.selectedClientIds.includes(action.clientId)
+        ? state.lookupSession.context.selectedClientIds.filter(clientId => clientId !== action.clientId)
+        : [...state.lookupSession.context.selectedClientIds, action.clientId];
+      return {
+        ...state,
+        lookupSession: {
+          ...state.lookupSession,
+          context: {
+            ...state.lookupSession.context,
+            selectedClientIds,
+          },
+        },
+      };
+    }
+
+    case 'SET_LOOKUP_AGENT':
+      return {
+        ...state,
+        lookupSession: {
+          ...state.lookupSession,
+          selectedAgentId: action.agentId,
+        },
+      };
+
     case 'ADD_PORTAL_NOTE': {
       const nextClientPortal = addPortalNote(state.clientPortal, action.note);
       if (nextClientPortal === state.clientPortal) {
@@ -614,30 +694,35 @@ export function demoReducer(state, action) {
       };
     }
 
-    case 'START_LOOKUP':
+    case 'START_LOOKUP': {
       if (!action.query?.trim()) return state;
+      const resetConversation = action.reset ?? false;
+      const nextQuery = action.query.trim();
+      const nextMessages = resetConversation
+        ? [{ id: makeId(), role: 'user', text: nextQuery }]
+        : [...state.lookupSession.messages, { id: makeId(), role: 'user', text: nextQuery }];
       return {
         ...state,
         lookupSession: {
           ...state.lookupSession,
-          query: action.query.trim(),
-          pendingQuery: action.query.trim(),
+          query: nextQuery,
+          pendingQuery: nextQuery,
           status: 'loading',
-          messages: [
-            ...state.lookupSession.messages,
-            { id: makeId(), role: 'user', text: action.query.trim() },
-          ],
+          responseId: resetConversation ? null : state.lookupSession.responseId,
+          messages: nextMessages,
         },
         journeyProgress: {
           ...state.journeyProgress,
           lookup: 'response',
         },
       };
+    }
 
     case 'COMPLETE_LOOKUP':
       return {
         ...state,
         lookupSession: {
+          ...state.lookupSession,
           query: action.query,
           pendingQuery: '',
           status: 'complete',

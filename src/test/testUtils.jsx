@@ -24,6 +24,10 @@ export function buildTestState(overrides = {}) {
     lookupSession: {
       ...base.lookupSession,
       ...overrides.lookupSession,
+      context: {
+        ...base.lookupSession.context,
+        ...overrides.lookupSession?.context,
+      },
     },
     clientPortal: {
       ...base.clientPortal,

@@ -1,55 +1,28 @@
+import { getCitations } from './evidenceData';
+
 const priorityRank = { P1: 1, P2: 2, P3: 3 };
 
-export const sourceCatalog = {
-  merchantPulse: {
-    id: 'merchantPulse',
-    label: 'Merchant settlement extract',
-    type: 'Transactional data',
-    reference: 'Merchant settlement extract | Last 90 days of card and merchant inflows',
-  },
-  cashCycle: {
-    id: 'cashCycle',
-    label: 'Liquidity and cash-flow monitor',
-    type: 'Treasury analytics',
-    reference: 'Treasury analytics note | Daily balances, cash conversion, and liquidity coverage',
-  },
-  creditPolicy: {
-    id: 'creditPolicy',
-    label: 'Pre-approved credit policy',
-    type: 'Internal policy',
-    reference: 'Credit appetite memo | Pre-approved line and eligibility review',
-  },
-  procurementWatch: {
-    id: 'procurementWatch',
-    label: 'Supplier payment timing extract',
-    type: 'Transactional data',
-    reference: 'Accounts payable timing extract | Supplier settlement behavior across the last two cycles',
-  },
-  cibResearch: {
-    id: 'cibResearch',
-    label: 'Sector expert paper',
-    type: 'Sector knowledge',
-    reference: 'Sector expert paper | Trading conditions and operating responses across the sector',
-  },
-  freightSignals: {
-    id: 'freightSignals',
-    label: 'Transport settlement signal note',
-    type: 'Sector knowledge',
-    reference: 'Transport settlement note | Corridor delays, diesel pressure, and fleet utilization',
-  },
-  marketLens: {
-    id: 'marketLens',
-    label: 'Market operating lens',
-    type: 'Sector knowledge',
-    reference: 'Market operating lens | Sector margin pressure and working-capital implications',
-  },
-  relationshipNotes: {
-    id: 'relationshipNotes',
-    label: 'Relationship manager notes',
-    type: 'RM context',
-    reference: 'RM notes | Client operating context, strategy signals, and recent engagement log',
-  },
-};
+const citedText = (text, citationIds = []) => ({ text, citationIds });
+const paragraphBlock = (id, segments) => ({ id, type: 'paragraph', segments });
+const bulletBlock = (id, items) => ({
+  id,
+  type: 'bullets',
+  items: items.map((segments, index) => ({
+    id: `${id}-item-${index + 1}`,
+    segments,
+  })),
+});
+const numberedBlock = (id, items) => ({
+  id,
+  type: 'numbered',
+  items: items.map((segments, index) => ({
+    id: `${id}-item-${index + 1}`,
+    segments,
+  })),
+});
+const tableCell = segments => ({ segments });
+const tableRow = (id, cells) => ({ id, cells });
+const tableBlock = (id, columns, rows) => ({ id, type: 'table', columns, rows });
 
 export const clients = [
   {
@@ -137,6 +110,8 @@ export const productBundles = {
     ],
   },
 };
+
+const allProducts = Object.values(productBundles).flatMap(bundle => bundle.products);
 
 export const scenarios = [
   {
@@ -259,24 +234,35 @@ export const insightPacks = {
       { label: 'Average operating balance', value: 'R8.4m', meta: 'Held above seasonal plan' },
       { label: 'Overdraft utilization', value: '22%', meta: 'Stable over three cycles' },
     ],
-    transactionalNarrative: 'The model is reading the client account, collections, and cash-flow data together with sector expert commentary to decide whether the signal is structural or temporary.',
-    llmBreakdown: [
-      {
-        id: 'growth-retail-paragraph-1',
-        text: 'The latest transactional extract shows merchant settlements up 18% over the last 90 days, average operating balances holding above R8.4m, and overdraft utilization staying flat at 22%. In other words, volume growth is flowing through to cash rather than being absorbed by working-capital strain.',
-        sourceIds: ['merchantPulse', 'cashCycle'],
-      },
-      {
-        id: 'growth-retail-paragraph-2',
-        text: 'That matters in the current retail knowledge base because sector specialists are describing a sharper divide between operators funding expansion from real trading momentum and those relying on late-cycle borrowing. Nkosi currently sits in the first group: cash discipline is intact while demand is firming.',
-        sourceIds: ['cibResearch', 'relationshipNotes'],
-      },
-      {
-        id: 'growth-retail-paragraph-3',
-        text: 'The practical implication is that the RM can frame this as a controlled expansion discussion, supported by a pre-approved term loan and a working-capital buffer. The transactional data supports a proactive conversation now, before stock build and site rollout start pulling on liquidity.',
-        sourceIds: ['cashCycle', 'creditPolicy'],
-      },
-    ],
+    transactionalNarrative: 'The model is reading the client account, collections, and cash-flow data alongside SystemicLogic SME growth papers on niche positioning and tailored financing structures.',
+    richResponse: {
+      title: 'Detailed model interpretation',
+      blocks: [
+        paragraphBlock('growth-retail-context', [
+          citedText('The model is reading the client account, collections, and cash-flow data alongside SystemicLogic SME growth papers on niche positioning and tailored financing structures.', ['merchantPulse', 'cashCycle', 'kbWinningNiche']),
+        ]),
+        paragraphBlock('growth-retail-data', [
+          citedText('The latest transactional extract shows merchant settlements up 18% over the last 90 days, average operating balances holding above R8.4m, and overdraft utilization staying flat at 22%. ', ['merchantPulse', 'cashCycle']),
+          citedText('Volume growth is therefore flowing through to cash rather than being absorbed by working-capital strain.', ['cashCycle']),
+        ]),
+        bulletBlock('growth-retail-evidence', [
+          [
+            citedText('The client story is strongest when the RM leads with stronger takings and stable liquidity rather than a generic growth script.', ['merchantPulse', 'cashCycle']),
+          ],
+          [
+            citedText('The SME paper reinforces that banks win these moments by leading with a focused proposition instead of a broad, undifferentiated offer.', ['kbWinningNiche']),
+          ],
+        ]),
+        numberedBlock('growth-retail-action', [
+          [
+            citedText('Frame the conversation around two-site expansion capacity while cash discipline is still visible in the operating account.', ['merchantPulse', 'cashCycle']),
+          ],
+          [
+            citedText('Package the term loan with a working-capital buffer so the recommendation mirrors the tailored two-tranche financing approach described in the SME paper.', ['kbWinningTailoredFinance', 'cashCycle']),
+          ],
+        ]),
+      ],
+    },
     bundleEvidence: {
       metrics: [
         { label: 'Liquidity cover', value: '2.8x', meta: 'Average weekly commitments' },
@@ -304,7 +290,7 @@ That combination suggests you may be well placed to fund two additional sites wi
 
 We would like to discuss a simple package combining expansion funding with a working-capital buffer so that stock build and site rollout can stay aligned.`,
     trendData: [{ period: 'Jan', signal: 62 }, { period: 'Feb', signal: 68 }, { period: 'Mar', signal: 74 }, { period: 'Apr', signal: 81 }, { period: 'May', signal: 87 }],
-    sourceIds: ['merchantPulse', 'cashCycle', 'cibResearch', 'creditPolicy'],
+    sourceIds: ['merchantPulse', 'cashCycle', 'kbWinningNiche', 'kbWinningTailoredFinance'],
   },
   'insight-liquidity-manufacturing': {
     headline: 'Mahlangu Components needs pre-emptive liquidity cover before procurement intensity peaks.',
@@ -319,24 +305,47 @@ We would like to discuss a simple package combining expansion funding with a wor
       { label: 'Debtor days', value: '54 days', meta: '+7 day movement' },
       { label: 'Cash runway', value: '31 days', meta: 'Below normal operating comfort' },
     ],
-    transactionalNarrative: 'The model is combining payment timing, receivables behavior, and current balance patterns with manufacturing sector guidance on procurement volatility.',
-    llmBreakdown: [
-      {
-        id: 'liquidity-manufacturing-paragraph-1',
-        text: 'The client transactional view shows supplier payments bunching earlier, debtor days widening to 54 days, and average cash runway compressing to 31 days. None of those indicators is critical on its own, but together they point to a tightening working-capital cycle before procurement intensity peaks.',
-        sourceIds: ['procurementWatch', 'cashCycle'],
-      },
-      {
-        id: 'liquidity-manufacturing-paragraph-2',
-        text: 'Sector papers for manufacturing SMEs describe the same pattern: procurement windows are becoming less predictable and businesses with slower receivables recovery are seeing funding gaps appear earlier in the quarter. That sector read gives context, but the signal itself is grounded in Mahlangu Components current payment and balance behavior.',
-        sourceIds: ['cibResearch', 'relationshipNotes'],
-      },
-      {
-        id: 'liquidity-manufacturing-paragraph-3',
-        text: 'The RM should therefore position a stabilization package rather than wait for a pressure call. A revolver, invoice discounting, and cash visibility tooling directly address the timing gap the transactional data is already showing.',
-        sourceIds: ['creditPolicy', 'cashCycle'],
-      },
-    ],
+    transactionalNarrative: 'The model is combining payment timing, receivables behaviour, and current balance patterns with SystemicLogic papers on proactive risk management and process discipline.',
+    richResponse: {
+      title: 'Detailed model interpretation',
+      blocks: [
+        paragraphBlock('liquidity-manufacturing-context', [
+          citedText('The model is combining payment timing, receivables behaviour, and current balance patterns with SystemicLogic papers on proactive risk management and process discipline.', ['procurementWatch', 'cashCycle', 'kbCollectionsStrategic', 'kbRiskReactive']),
+        ]),
+        paragraphBlock('liquidity-manufacturing-data', [
+          citedText('The client transactional view shows supplier payments bunching earlier, debtor days widening to 54 days, and average cash runway compressing to 31 days. ', ['procurementWatch', 'cashCycle']),
+          citedText('None of those indicators is critical on its own, but together they point to a tightening working-capital cycle before procurement intensity peaks.', ['cashCycle', 'kbRiskReactive']),
+        ]),
+        bulletBlock('liquidity-manufacturing-pressure', [
+          [
+            citedText('Earlier supplier settlements mean the funding gap is arriving before the client would normally feel it in headline balances.', ['procurementWatch', 'kbCollectionsStrategic']),
+          ],
+          [
+            citedText('Longer receivables recovery reduces the room to wait, which is why better process visibility matters before the next cycle hardens.', ['procurementWatch', 'cashCycle', 'kbCollectionsProcess']),
+          ],
+        ]),
+        tableBlock(
+          'liquidity-manufacturing-table',
+          [
+            { id: 'signal', label: 'Signal' },
+            { id: 'meaning', label: 'What it means' },
+            { id: 'response', label: 'Recommended response' },
+          ],
+          [
+            tableRow('liquidity-manufacturing-row-1', [
+              tableCell([citedText('Supplier payments are landing earlier than the prior cycle.', ['procurementWatch'])]),
+              tableCell([citedText('Pressure is building before the client reaches a visibly stressed state.', ['kbCollectionsStrategic', 'kbRiskReactive'])]),
+              tableCell([citedText('Use a flexible revolver to absorb procurement timing pressure.', ['cashCycle'])]),
+            ]),
+            tableRow('liquidity-manufacturing-row-2', [
+              tableCell([citedText('Debtor days have widened to 54 days and runway is down to 31 days.', ['procurementWatch', 'cashCycle'])]),
+              tableCell([citedText('The process paper argues for earlier visibility and intervention before operating friction compounds.', ['kbCollectionsProcess'])]),
+              tableCell([citedText('Pair receivables acceleration with daily cash visibility.', ['cashCycle', 'kbCollectionsStrategic'])]),
+            ]),
+          ],
+        ),
+      ],
+    },
     bundleEvidence: {
       metrics: [
         { label: 'Average collections lag', value: '+7 days', meta: 'Quarter on quarter' },
@@ -364,7 +373,7 @@ Sector specialists are seeing similar timing volatility across manufacturing SME
 
 We would like to discuss a practical working-capital package that can smooth cash timing, improve visibility, and keep procurement activity moving without unnecessary funding friction.`,
     trendData: [{ period: 'Jan', signal: 71 }, { period: 'Feb', signal: 66 }, { period: 'Mar', signal: 63 }, { period: 'Apr', signal: 59 }, { period: 'May', signal: 54 }],
-    sourceIds: ['procurementWatch', 'cashCycle', 'creditPolicy', 'relationshipNotes'],
+    sourceIds: ['procurementWatch', 'cashCycle', 'kbCollectionsStrategic', 'kbCollectionsProcess', 'kbRiskReactive'],
   },
   'insight-sector-logistics': {
     headline: 'Transit Flow Logistics should lock in resilience funding before sector pressure hits harder.',
@@ -379,24 +388,34 @@ We would like to discuss a practical working-capital package that can smooth cas
       { label: 'Liquidity buffer', value: '1.7x', meta: 'Weekly payroll cover' },
       { label: 'Diesel pressure', value: '+11%', meta: 'Outside six-month range' },
     ],
-    transactionalNarrative: 'The model is linking the client receivables pattern and current liquidity buffer to transport sector papers on settlement delays and margin pressure.',
-    llmBreakdown: [
-      {
-        id: 'sector-logistics-paragraph-1',
-        text: 'The client ledger shows corridor settlements arriving six days later than the recent norm while the liquidity buffer has narrowed to roughly 1.7 times weekly payroll. On the client data alone, that still leaves room to act, but the direction of travel is negative.',
-        sourceIds: ['cashCycle', 'freightSignals'],
-      },
-      {
-        id: 'sector-logistics-paragraph-2',
-        text: 'Transport sector experts are also flagging the same combination of pressure points: delayed settlements, diesel volatility, and a higher risk of margin compression for operators carrying normal working-capital buffers. The sector knowledge base is therefore not replacing the client evidence; it is explaining why the client trend matters now.',
-        sourceIds: ['freightSignals', 'marketLens'],
-      },
-      {
-        id: 'sector-logistics-paragraph-3',
-        text: 'That makes this a resilience conversation. The RM can credibly connect a margin line, settlement optimization, and treasury support to the transactional evidence already visible in the account, rather than waiting for a harder liquidity event.',
-        sourceIds: ['creditPolicy', 'relationshipNotes'],
-      },
-    ],
+    transactionalNarrative: 'The model is linking client settlement timing and liquidity cover with SystemicLogic risk papers on reactive postures and integrated response design.',
+    richResponse: {
+      title: 'Detailed model interpretation',
+      blocks: [
+        paragraphBlock('sector-logistics-context', [
+          citedText('The model is linking client settlement timing and liquidity cover with SystemicLogic risk papers on reactive postures and integrated response design.', ['transportLedger', 'cashCycle', 'kbRiskReactive', 'kbRiskIntegrated']),
+        ]),
+        paragraphBlock('sector-logistics-data', [
+          citedText('The client ledger shows corridor settlements arriving six days later than the recent norm while the liquidity buffer has narrowed to roughly 1.7 times weekly payroll. ', ['transportLedger', 'cashCycle']),
+          citedText('On the client data alone, there is still room to act, but the direction of travel is negative.', ['cashCycle']),
+        ]),
+        paragraphBlock('sector-logistics-kb', [
+          citedText('The risk paper is useful here because it treats reactive posture as a core weakness once linked pressures begin to move together. ', ['kbRiskReactive']),
+          citedText('That makes the sector context additive: it explains why settlement drag and cost pressure should be handled as one integrated management problem rather than as isolated symptoms.', ['kbRiskIntegrated']),
+        ]),
+        numberedBlock('sector-logistics-action', [
+          [
+            citedText('Start with the client ledger: settlements are slower, liquidity cover is tightening, and the RM can already show the direction of travel.', ['transportLedger', 'cashCycle']),
+          ],
+          [
+            citedText('Explain that the knowledge base warns against waiting for a harder event once connected risks have begun to compound.', ['kbRiskReactive']),
+          ],
+          [
+            citedText('Move into a resilience package that treats margin protection, cash timing, and treasury support as one integrated response.', ['kbRiskIntegrated', 'cashCycle']),
+          ],
+        ]),
+      ],
+    },
     bundleEvidence: {
       metrics: [
         { label: 'Settlement drag', value: '+6 days', meta: 'Compared with rolling baseline' },
@@ -424,7 +443,7 @@ Across the transport sector, specialists are seeing delayed corridor settlements
 
 We would like to discuss a resilience package focused on margin protection, cash timing, and treasury support so that you can respond early and preserve flexibility.`,
     trendData: [{ period: 'Jan', signal: 74 }, { period: 'Feb', signal: 72 }, { period: 'Mar', signal: 68 }, { period: 'Apr', signal: 61 }, { period: 'May', signal: 55 }],
-    sourceIds: ['freightSignals', 'cibResearch', 'marketLens', 'creditPolicy'],
+    sourceIds: ['transportLedger', 'cashCycle', 'kbRiskReactive', 'kbRiskIntegrated'],
   },
   'insight-growth-distributor': {
     headline: 'Meridian Trade Grid is ready for controlled expansion into adjacent sectors.',
@@ -439,24 +458,38 @@ We would like to discuss a resilience package focused on margin protection, cash
       { label: 'Stock turn', value: '+12%', meta: 'Without cash drag' },
       { label: 'Collections cycle', value: '24 days', meta: 'Holding steady through growth' },
     ],
-    transactionalNarrative: 'The model is reading sales, inventory, and collection behavior together, then using distribution sector papers to assess whether the current momentum is durable enough for expansion.',
-    llmBreakdown: [
-      {
-        id: 'growth-distributor-paragraph-1',
-        text: 'Meridian is showing 22% growth in digital sales, improved stock turn, and a collections cycle that has stayed at 24 days even as volumes increased. That combination usually matters more than top-line growth on its own because it shows the business is scaling without losing cash discipline.',
-        sourceIds: ['merchantPulse', 'cashCycle'],
-      },
-      {
-        id: 'growth-distributor-paragraph-2',
-        text: 'The sector knowledge base for tech-enabled distribution points to the same conclusion: operators that preserve cash conversion while expanding are in the strongest position to move into adjacent categories. Sector context is therefore supporting the read on the client account rather than acting as a separate proof point.',
-        sourceIds: ['marketLens', 'relationshipNotes'],
-      },
-      {
-        id: 'growth-distributor-paragraph-3',
-        text: 'The RM can turn that into a measured growth conversation by pairing expansion funding with treasury and collections tooling. The transactional evidence suggests there is room to support growth now, provided execution discipline remains part of the package.',
-        sourceIds: ['creditPolicy', 'cashCycle'],
-      },
-    ],
+    transactionalNarrative: 'The model is reading digital sales, stock movement, and collections quality together with SystemicLogic papers on focused SME propositions and operating-model discipline.',
+    richResponse: {
+      title: 'Detailed model interpretation',
+      blocks: [
+        paragraphBlock('growth-distributor-context', [
+          citedText('The model is reading digital sales, stock movement, and collections quality together with SystemicLogic papers on focused SME propositions and operating-model discipline.', ['inventoryVelocity', 'cashCycle', 'kbWinningNiche', 'kbTechOperatingModel']),
+        ]),
+        paragraphBlock('growth-distributor-data', [
+          citedText('Meridian is showing 22% growth in digital sales, improved stock turn, and a collections cycle that has stayed at 24 days even as volumes increased. ', ['inventoryVelocity', 'cashCycle']),
+          citedText('That combination matters because it shows the business is scaling without losing cash discipline.', ['cashCycle']),
+        ]),
+        bulletBlock('growth-distributor-evidence', [
+          [
+            citedText('Growth is arriving alongside cleaner stock movement and stable collections, so the RM can talk about quality of growth rather than raw volume.', ['inventoryVelocity', 'cashCycle']),
+          ],
+          [
+            citedText('The SME and technology papers both reinforce that stronger propositions are specific and operationally grounded, not just larger versions of yesterday’s offer.', ['kbWinningNiche', 'kbTechOperatingModel']),
+          ],
+        ]),
+        numberedBlock('growth-distributor-action', [
+          [
+            citedText('Confirm where adjacent-sector expansion will place the most pressure on working capital and stock timing.', ['inventoryVelocity']),
+          ],
+          [
+            citedText('Pair the term loan with a working-capital buffer so the recommendation remains tailored to the client’s operating pattern.', ['kbWinningTailoredFinance', 'cashCycle']),
+          ],
+          [
+            citedText('Add treasury support because the technology paper argues that scaling outcomes increasingly depend on the operating model itself.', ['kbTechOperatingModel']),
+          ],
+        ]),
+      ],
+    },
     bundleEvidence: {
       metrics: [
         { label: 'Cash conversion stability', value: '24 days', meta: 'Stable through rapid growth' },
@@ -484,7 +517,7 @@ That pattern suggests you may be well placed to expand into adjacent sectors wit
 
 We would welcome a discussion on a focused growth package that combines funding capacity with treasury support to keep expansion disciplined.`,
     trendData: [{ period: 'Jan', signal: 64 }, { period: 'Feb', signal: 69 }, { period: 'Mar', signal: 76 }, { period: 'Apr', signal: 81 }, { period: 'May', signal: 84 }],
-    sourceIds: ['merchantPulse', 'cashCycle', 'marketLens', 'relationshipNotes'],
+    sourceIds: ['inventoryVelocity', 'cashCycle', 'kbWinningNiche', 'kbWinningTailoredFinance', 'kbTechOperatingModel'],
   },
 };
 
@@ -503,114 +536,169 @@ export const suggestedQueries = [
   'How do I connect transactional data to sector knowledge in a client discussion?',
 ];
 
+export const lookupIntentOptions = [
+  {
+    id: 'generic',
+    label: 'Generic lookup',
+    description: 'Search across the whole knowledge base and client ecosystem.',
+  },
+  {
+    id: 'kb-only',
+    label: 'Knowledge base only',
+    description: 'Exclude all client context and keep the lookup grounded only in the knowledge base.',
+  },
+  {
+    id: 'client-only',
+    label: 'Client context only',
+    description: 'Exclude all knowledge base information and use only client context.',
+  },
+];
+
+export const lookupAgentPresets = [
+  {
+    id: 'pre-meeting-brief',
+    label: 'Pre-meeting brief',
+    description: 'Prepare a concise briefing for the next client interaction.',
+  },
+  {
+    id: 'revenue-opportunity-scan',
+    label: 'Revenue opportunity scan',
+    description: 'Identify and rank the strongest commercial opportunities.',
+  },
+  {
+    id: 'client-risk-assessment',
+    label: 'Client risk assessment',
+    description: 'Summarize current exposure, trend, and watchpoints.',
+  },
+];
+
+export const lookupAgentPlaceholder = {
+  id: 'build-agent',
+  label: 'Build agent',
+  description: 'Create a custom advisory agent tuned to a specific workflow.',
+  status: 'Coming soon',
+};
+
 export const lookupResponses = {
   'lookup-growth-retail': {
+    scenarioId: 'growth-retail',
     prompt: 'How should I position expansion funding for a retail client with stronger takings?',
     keywords: ['retail', 'expansion', 'takings', 'growth'],
     title: 'Position the discussion around controlled expansion, not generic lending.',
     confidence: 88,
-    summary: 'Lead with the client transaction story first, then use the sector paper to explain why the timing matters now.',
-    answerParagraphs: [
-      {
-        id: 'lookup-growth-retail-1',
-        text: 'Start with the client evidence. Merchant settlements are up, operating balances have stayed healthy, and overdraft use has not moved with the higher trading volumes. That tells the client you are reacting to what their own business is doing, not to a generic growth script.',
-        sourceIds: ['merchantPulse', 'cashCycle'],
-      },
-      {
-        id: 'lookup-growth-retail-2',
-        text: 'Then bring in the retail sector view as context. Sector specialists are seeing stronger operators move earlier on expansion because they are still funding growth from disciplined cash conversion. That makes the timing of the conversation credible without turning it into a comparison exercise.',
-        sourceIds: ['cibResearch', 'relationshipNotes'],
-      },
-      {
-        id: 'lookup-growth-retail-3',
-        text: 'From there, move into a simple package discussion: expansion funding for the rollout, plus a working-capital buffer to keep stock build aligned with cash timing. The story should remain about execution confidence rather than about credit alone.',
-        sourceIds: ['creditPolicy', 'cashCycle'],
-      },
-    ],
+    summary: 'Lead with the client transaction story first, then use the SME paper to explain why a focused proposition makes sense now.',
+    richResponse: {
+      title: 'Response',
+      blocks: [
+        paragraphBlock('lookup-growth-retail-summary', [
+          citedText('Lead with the client transaction story first, then use the SME paper to explain why a focused proposition makes sense now.', ['merchantPulse', 'cashCycle', 'kbWinningNiche']),
+        ]),
+        numberedBlock('lookup-growth-retail-steps', [
+          [
+            citedText('Start with the client evidence: merchant settlements are up, operating balances have stayed healthy, and overdraft use has not moved with the higher trading volumes.', ['merchantPulse', 'cashCycle']),
+          ],
+          [
+            citedText('Then use the SME paper as context by explaining that growth conversations are strongest when the bank leads with a clear niche proposition rather than a generic offer.', ['kbWinningNiche']),
+          ],
+          [
+            citedText('Move into a simple package discussion: expansion funding for the rollout plus a working-capital buffer that mirrors the tailored financing structure described in the paper.', ['kbWinningTailoredFinance', 'cashCycle']),
+          ],
+        ]),
+      ],
+    },
     recommendedAction: 'Set up an advisory meeting and review the Growth / Expansion bundle.',
     productIds: ['term-loan', 'wc-buffer', 'merchant-upgrade'],
-    sourceIds: ['merchantPulse', 'cashCycle', 'cibResearch', 'creditPolicy'],
+    sourceIds: ['merchantPulse', 'cashCycle', 'kbWinningNiche', 'kbWinningTailoredFinance'],
   },
   'lookup-liquidity-manufacturing': {
+    scenarioId: 'liquidity-manufacturing',
     prompt: 'What can I recommend to smooth procurement pressure for a manufacturing SME?',
     keywords: ['manufacturing', 'procurement', 'liquidity', 'smooth'],
     title: 'Frame the solution as cycle stabilization across payables, receivables, and visibility.',
     confidence: 83,
-    summary: 'The strongest answer is to describe the timing gap already visible in the account and then show how the bundle closes it.',
-    answerParagraphs: [
-      {
-        id: 'lookup-liquidity-manufacturing-1',
-        text: 'The transactional signal is straightforward: supplier payments are arriving earlier, receivables are taking longer to settle, and cash runway is narrowing. That gives you a concrete operating-cycle story before balances look visibly stressed.',
-        sourceIds: ['procurementWatch', 'cashCycle'],
-      },
-      {
-        id: 'lookup-liquidity-manufacturing-2',
-        text: 'Manufacturing sector papers support that reading by showing that procurement volatility is appearing earlier in the quarter for SMEs with similar operating patterns. Use that sector knowledge to explain why it is sensible to act now, not to imply the client is being compared against anyone else.',
-        sourceIds: ['cibResearch', 'relationshipNotes'],
-      },
-      {
-        id: 'lookup-liquidity-manufacturing-3',
-        text: 'Recommend a stabilization package that combines flexible liquidity, receivables acceleration, and daily cash visibility. That keeps the conversation practical and aligned to the cash-flow timing problem the client is actually facing.',
-        sourceIds: ['creditPolicy', 'cashCycle'],
-      },
-    ],
+    summary: 'The strongest answer is to describe the timing gap already visible in the account, then show how earlier intervention and better visibility close it.',
+    richResponse: {
+      title: 'Response',
+      blocks: [
+        paragraphBlock('lookup-liquidity-manufacturing-summary', [
+          citedText('The strongest answer is to describe the timing gap already visible in the account, then show how earlier intervention and better visibility close it.', ['procurementWatch', 'cashCycle', 'kbCollectionsStrategic']),
+        ]),
+        bulletBlock('lookup-liquidity-manufacturing-points', [
+          [
+            citedText('Start with the operating-cycle signal: supplier payments are arriving earlier, receivables are taking longer to settle, and runway is narrowing.', ['procurementWatch', 'cashCycle']),
+          ],
+          [
+            citedText('Use the collections paper to explain why acting early is sensible. It frames visibility and intervention as strategic capabilities, not as late-stage clean-up.', ['kbCollectionsStrategic', 'kbCollectionsProcess']),
+          ],
+          [
+            citedText('Recommend a stabilization package that combines flexible liquidity, receivables acceleration, and daily cash visibility so the solution maps directly to the timing gap in the account.', ['cashCycle', 'kbCollectionsStrategic']),
+          ],
+        ]),
+      ],
+    },
     recommendedAction: 'Use the Liquidity Stabilisation bundle and start with a same-day RM call.',
     productIds: ['revolver', 'invoice-discounting', 'cash-console'],
-    sourceIds: ['procurementWatch', 'cashCycle', 'creditPolicy'],
+    sourceIds: ['procurementWatch', 'cashCycle', 'kbCollectionsStrategic', 'kbCollectionsProcess'],
   },
   'lookup-sector-logistics': {
+    scenarioId: 'sector-logistics',
     prompt: 'How do I explain the transport sector signal to a logistics client?',
     keywords: ['transport', 'logistics', 'sector', 'signal'],
     title: 'Translate sector pressure into margin protection and working-capital resilience.',
     confidence: 86,
-    summary: 'Explain that the signal is grounded in the client ledger first, with sector knowledge clarifying why the trend should be acted on now.',
-    answerParagraphs: [
-      {
-        id: 'lookup-sector-logistics-1',
-        text: 'Begin with what is already visible in the client account: settlement timing has stretched, the liquidity buffer is narrowing, and the direction of travel has turned negative. That keeps the discussion anchored in the client situation rather than in abstract market commentary.',
-        sourceIds: ['cashCycle', 'freightSignals'],
-      },
-      {
-        id: 'lookup-sector-logistics-2',
-        text: 'Next, explain that transport sector specialists are seeing delayed settlements and higher fuel pressure at the same time across the market. The sector note is useful because it explains why a six-day shift in settlements matters more now than it would in a calmer cost environment.',
-        sourceIds: ['freightSignals', 'marketLens'],
-      },
-      {
-        id: 'lookup-sector-logistics-3',
-        text: 'That leads naturally into a resilience discussion: margin protection, collections optimization, and treasury support are all designed to preserve flexibility before operational pressure escalates.',
-        sourceIds: ['creditPolicy', 'relationshipNotes'],
-      },
-    ],
+    summary: 'Explain that the signal is grounded in the client ledger first, with the risk paper clarifying why the trend should be acted on now.',
+    richResponse: {
+      title: 'Response',
+      blocks: [
+        paragraphBlock('lookup-sector-logistics-summary', [
+          citedText('Explain that the signal is grounded in the client ledger first, with the risk paper clarifying why the trend should be acted on now.', ['transportLedger', 'cashCycle', 'kbRiskReactive']),
+        ]),
+        numberedBlock('lookup-sector-logistics-steps', [
+          [
+            citedText('Begin with what is already visible in the client account: settlement timing has stretched, the liquidity buffer is narrowing, and the direction of travel has turned negative.', ['transportLedger', 'cashCycle']),
+          ],
+          [
+            citedText('Then explain that the risk paper warns against reactive posture once linked pressures begin to move together. That is why the settlement shift matters more now than it would in a calmer operating environment.', ['kbRiskReactive', 'kbRiskIntegrated']),
+          ],
+          [
+            citedText('That leads naturally into a resilience discussion: margin protection, collections optimization, and treasury support are all designed to preserve flexibility before operational pressure escalates.', ['kbRiskIntegrated', 'cashCycle']),
+          ],
+        ]),
+      ],
+    },
     recommendedAction: 'Lead with the Sector Resilience bundle and include current transport commentary.',
     productIds: ['margin-line', 'collections-sweep', 'hedging-desk'],
-    sourceIds: ['freightSignals', 'marketLens', 'cashCycle'],
+    sourceIds: ['transportLedger', 'cashCycle', 'kbRiskReactive', 'kbRiskIntegrated'],
   },
   'lookup-growth-distributor': {
+    scenarioId: 'growth-distributor',
     prompt: 'Which pre-approved products fit a growth-ready distributor?',
     keywords: ['distributor', 'growth', 'pre-approved', 'products'],
     title: 'Match the package to disciplined growth, not to raw sales momentum.',
     confidence: 84,
     summary: 'The key is to show that growth is converting into cash cleanly, then position funding and treasury support around that operating quality.',
-    answerParagraphs: [
-      {
-        id: 'lookup-growth-distributor-1',
-        text: 'The client transaction profile is positive because digital sales growth is strong, stock turn is improving, and collections have stayed disciplined. That means the client is scaling without creating obvious cash drag.',
-        sourceIds: ['merchantPulse', 'cashCycle'],
-      },
-      {
-        id: 'lookup-growth-distributor-2',
-        text: 'Sector knowledge for tech-enabled distribution reinforces that this is the right moment to discuss expansion support. Businesses maintaining cash conversion while they scale are the ones most able to absorb additional growth capacity.',
-        sourceIds: ['marketLens', 'relationshipNotes'],
-      },
-      {
-        id: 'lookup-growth-distributor-3',
-        text: 'Lead with the pre-approved term loan and working-capital buffer, then add treasury support to preserve the collection and cash-flow discipline that makes the signal compelling in the first place.',
-        sourceIds: ['creditPolicy', 'cashCycle'],
-      },
-    ],
+    richResponse: {
+      title: 'Response',
+      blocks: [
+        paragraphBlock('lookup-growth-distributor-summary', [
+          citedText('The key is to show that growth is converting into cash cleanly, then position funding and treasury support around that operating quality.', ['inventoryVelocity', 'cashCycle']),
+        ]),
+        bulletBlock('lookup-growth-distributor-points', [
+          [
+            citedText('Start with the client profile: digital sales growth is strong, stock turn is improving, and collections have stayed disciplined. That means the client is scaling without creating obvious cash drag.', ['inventoryVelocity', 'cashCycle']),
+          ],
+          [
+            citedText('Use the knowledge base to reinforce the shape of the offer. The SME paper favours focused propositions, and the tech paper ties better scaling outcomes to the operating model itself.', ['kbWinningNiche', 'kbTechOperatingModel']),
+          ],
+          [
+            citedText('Lead with the pre-approved term loan and working-capital buffer, then add treasury support so the package preserves the operating discipline that makes the signal compelling.', ['kbWinningTailoredFinance', 'cashCycle']),
+          ],
+        ]),
+      ],
+    },
     recommendedAction: 'Send a growth-focused follow-up and tee up a deeper advisory discussion.',
     productIds: ['term-loan', 'wc-buffer', 'fx-lite'],
-    sourceIds: ['merchantPulse', 'cashCycle', 'marketLens', 'relationshipNotes'],
+    sourceIds: ['inventoryVelocity', 'cashCycle', 'kbWinningNiche', 'kbWinningTailoredFinance', 'kbTechOperatingModel'],
   },
 };
 
@@ -662,7 +750,9 @@ export const getBundleById = bundleId => productBundles[bundleId];
 export const getInsightPackById = insightPackId => insightPacks[insightPackId];
 export const getSectorBriefingById = sectorId => sectorBriefings[sectorId];
 export const getLookupResponseById = responseId => lookupResponses[responseId];
-export const getSources = sourceIds => sourceIds.map(sourceId => sourceCatalog[sourceId]).filter(Boolean);
+export const getLookupAgentById = agentId => lookupAgentPresets.find(agent => agent.id === agentId) ?? null;
+export const getProductById = productId => allProducts.find(product => product.id === productId) ?? null;
+export const getSources = sourceIds => getCitations(sourceIds);
 
 export function resolveLookupResponse(query, activeScenarioId, fallbackResponseId = null) {
   const normalizedQuery = query.trim().toLowerCase();

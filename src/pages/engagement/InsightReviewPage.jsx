@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Settings2, X } from 'lucide-react';
 import { ActionLink, FeedbackStrip, InsightCard, JourneyStepper, MetricGrid, PageHeader, SectionPanel, StatusPill, useJourneyStep } from '../../components/UI';
 import { JourneyNoteAction } from '../../components/InternalNotes';
+import RichEvidenceNarrative from '../../components/RichEvidenceNarrative';
 import { useDemoState } from '../../state/DemoStateProvider';
 import { engagementSteps, getViewContext } from '../pageContext';
 
@@ -34,15 +35,15 @@ export default function InsightReviewPage() {
             confidence={insight.confidence}
             whyNow={insight.whyNow}
             sourceIds={insight.sourceIds}
+            showSources={false}
             narrative={{
               whatHappened: insight.whatHappened,
               whyItMatters: insight.whyItMatters,
               whatToDoNext: insight.whatToDoNext,
             }}
             recommendedAction={insight.recommendedAction}
-            detailIntro={insight.transactionalNarrative}
-            detailParagraphs={insight.llmBreakdown}
           >
+            <RichEvidenceNarrative response={insight.richResponse} />
             <FeedbackStrip
               contextKey={`engagement-${client.id}`}
               actions={

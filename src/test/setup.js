@@ -4,6 +4,10 @@ import { cleanup } from '@testing-library/react';
 
 beforeEach(() => {
   sessionStorage.clear();
+
+  if (!Element.prototype.scrollIntoView) {
+    Element.prototype.scrollIntoView = () => {};
+  }
 });
 
 afterEach(() => {

@@ -53,6 +53,64 @@ describe('journey walkthroughs', () => {
     expect(screen.getByText(/Working Capital Revolver/i)).toBeInTheDocument();
   }, 15000);
 
+  it('renders the pre-meeting brief preset with specific-client context across response and recommendation views', async () => {
+    const user = userEvent.setup();
+    renderApp('/lookup/search');
+
+    await user.click(screen.getByRole('button', { name: /Pre-meeting brief/i }));
+    await user.click(screen.getByRole('button', { name: /Run lookup/i }));
+
+    expect((await screen.findAllByText(/Executive summary/i, {}, { timeout: 3000 })).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Recommended talking points/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/Client scope: Nkosi Retail Group/i)).toBeInTheDocument();
+    expect(screen.getByText(/Preset: Pre-meeting brief/i)).toBeInTheDocument();
+
+    await user.click(screen.getByRole('link', { name: /Open recommendation output/i }));
+
+    expect(screen.getAllByText(/Executive summary/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Recommended talking points/i).length).toBeGreaterThan(0);
+  }, 15000);
+
+  it('keeps client filters hidden for knowledge base only and still renders the default scripted lookup output', async () => {
+    const user = userEvent.setup();
+    renderApp('/lookup/search');
+
+    await user.click(screen.getByRole('radio', { name: /Knowledge base only/i }));
+    expect(screen.queryByText(/Selected clients/i)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/Nkosi Retail Group/i)).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /How do I explain the transport sector signal to a logistics client\?/i }));
+
+    expect(await screen.findByText(/Translate sector pressure into margin protection/i, {}, { timeout: 3000 })).toBeInTheDocument();
+    expect(screen.getByText(/Preset: No agent selected/i)).toBeInTheDocument();
+  }, 15000);
+
+  it('renders ranked revenue opportunities in the existing product order', async () => {
+    const user = userEvent.setup();
+    renderApp('/lookup/search');
+
+    await user.click(screen.getByRole('button', { name: /Revenue opportunity scan/i }));
+    await user.click(screen.getByRole('button', { name: /Which pre-approved products fit a growth-ready distributor\?/i }));
+
+    expect((await screen.findAllByText(/Opportunity summary/i, {}, { timeout: 3000 })).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/1\. Expansion Term Loan - Site rollout and fit-out funding\./i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/2\. Working Capital Buffer - Short-cycle liquidity cover\./i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Product or solution mapping/i).length).toBeGreaterThan(0);
+  }, 15000);
+
+  it('renders the client risk assessment preset structure and confidence section', async () => {
+    const user = userEvent.setup();
+    renderApp('/lookup/search');
+
+    await user.click(screen.getByRole('button', { name: /Client risk assessment/i }));
+    await user.click(screen.getByRole('button', { name: /How do I explain the transport sector signal to a logistics client\?/i }));
+
+    expect((await screen.findAllByText(/Risk overview/i, {}, { timeout: 3000 })).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Trend analysis/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Confidence and limitations/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Overall posture: deteriorating\./i).length).toBeGreaterThan(0);
+  }, 15000);
+
   it('walks the sector journey from overview to client relevance', async () => {
     const user = userEvent.setup();
     renderApp('/sector/overview');

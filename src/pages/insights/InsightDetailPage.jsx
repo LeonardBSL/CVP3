@@ -1,5 +1,6 @@
 import { ActionLink, InsightCard, JourneyStepper, MetricGrid, PageHeader, SectionPanel, useJourneyStep } from '../../components/UI';
 import { JourneyNoteAction } from '../../components/InternalNotes';
+import RichEvidenceNarrative from '../../components/RichEvidenceNarrative';
 import { useDemoState } from '../../state/DemoStateProvider';
 import { getViewContext, insightSteps } from '../pageContext';
 
@@ -31,15 +32,16 @@ export default function InsightDetailPage() {
             confidence={insight.confidence}
             whyNow={insight.whyNow}
             sourceIds={insight.sourceIds}
+            showSources={false}
             narrative={{
               whatHappened: insight.whatHappened,
               whyItMatters: insight.whyItMatters,
               whatToDoNext: insight.whatToDoNext,
             }}
             recommendedAction={insight.recommendedAction}
-            detailIntro={insight.transactionalNarrative}
-            detailParagraphs={insight.llmBreakdown}
-          />
+          >
+            <RichEvidenceNarrative response={insight.richResponse} />
+          </InsightCard>
         </SectionPanel>
 
         <SectionPanel title="Client transaction view" subtitle="The structured summary stays grounded in the client account and cash-flow profile.">

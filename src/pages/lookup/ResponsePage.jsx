@@ -1,13 +1,17 @@
 import { startTransition, useEffect, useState } from 'react';
-import { ActionLink, JourneyStepper, PageHeader, SectionPanel, SourceAnchoredNarrative, SourceChips, StatusPill, useJourneyStep } from '../../components/UI';
-import { getLookupResponseById, resolveLookupResponseId, suggestedQueries } from '../../data/demoData';
+import LookupAgentOutput from '../../components/LookupAgentOutput';
+import { ActionLink, JourneyStepper, PageHeader, SectionPanel, SourceChips, StatusPill, useJourneyStep } from '../../components/UI';
+import RichEvidenceNarrative from '../../components/RichEvidenceNarrative';
+import { resolveLookupResponseId, suggestedQueries } from '../../data/demoData';
 import { useDemoState } from '../../state/DemoStateProvider';
-import { lookupSteps } from '../pageContext';
+import { getLookupPresentationForResponse, getLookupViewContext, lookupSteps } from '../pageContext';
 
 export default function ResponsePage() {
   const [followUp, setFollowUp] = useState('');
   const { state, dispatch } = useDemoState();
   const { activeScenarioId, lookupSession } = state;
+  const latestView = getLookupViewContext(state);
+  const { agentPresentation, contextSummary, lookupResponse } = latestView;
 
   useJourneyStep('lookup', 'response');
 
@@ -27,9 +31,6 @@ export default function ResponsePage() {
     return () => window.clearTimeout(timerId);
   }, [activeScenarioId, dispatch, lookupSession.pendingQuery, lookupSession.responseId, lookupSession.status]);
 
-  const latestAssistantMessage = [...lookupSession.messages].reverse().find(message => message.role === 'assistant');
-  const latestResponse = latestAssistantMessage ? getLookupResponseById(latestAssistantMessage.responseId) : null;
-
   function runLookup(nextQuery) {
     const finalQuery = nextQuery.trim();
     if (!finalQuery || lookupSession.status === 'loading') return;
@@ -46,10 +47,16 @@ export default function ResponsePage() {
         eyebrow="Advisory Lookup"
         title="AI response screen"
         description="The lookup now behaves like a running advisory chat so the RM can ask a question, review the response, and continue with follow-up prompts."
-        actions={latestResponse ? <ActionLink to="/lookup/recommendation">Open recommendation output</ActionLink> : null}
+        actions={lookupResponse ? <ActionLink to="/lookup/recommendation">Open recommendation output</ActionLink> : null}
       />
 
       <JourneyStepper steps={lookupSteps} currentStep="response" />
+
+      <div className="lookup-context-summary">
+        <StatusPill tone="neutral">Intent: {contextSummary.intent}</StatusPill>
+        <StatusPill tone="neutral">Client scope: {contextSummary.clientScope}</StatusPill>
+        <StatusPill tone="neutral">Preset: {contextSummary.agent}</StatusPill>
+      </div>
 
       <div className="two-column-grid">
         <SectionPanel title="Advisory chat" subtitle="Ask a question, then keep the conversation going with follow-ups." accent="accent">
@@ -74,17 +81,21 @@ export default function ResponsePage() {
                 );
               }
 
-              const response = getLookupResponseById(message.responseId);
+              const messageView = getLookupPresentationForResponse(state, message.responseId);
 
               return (
                 <article key={message.id} className="chat-message chat-message--assistant">
                   <div className="chat-bubble chat-bubble--assistant">
                     <div className="chat-message__meta">
-                      <h4>{response.title}</h4>
-                      <StatusPill tone="positive">{response.confidence}% confidence</StatusPill>
+                      <h4>{messageView.lookupResponse.title}</h4>
+                      <StatusPill tone="positive">{messageView.lookupResponse.confidence}% confidence</StatusPill>
                     </div>
-                    <SourceAnchoredNarrative title="Response" intro={response.summary} paragraphs={response.answerParagraphs} />
-                    <SourceChips sourceIds={response.sourceIds} />
+
+                    {messageView.agentPresentation ? (
+                      <LookupAgentOutput presentation={messageView.agentPresentation} />
+                    ) : (
+                      <RichEvidenceNarrative response={messageView.lookupResponse.richResponse} />
+                    )}
                   </div>
                 </article>
               );
@@ -132,24 +143,28 @@ export default function ResponsePage() {
         </SectionPanel>
 
         <SectionPanel title="Latest response" subtitle="Recommendation output always reflects the most recent assistant answer.">
-          {latestResponse ? (
-            <div className="panel-stack">
-              <article className="list-item">
-                <div className="list-item__top">
-                  <h4>Current answer</h4>
-                  <StatusPill tone="positive">{latestResponse.confidence}% confidence</StatusPill>
-                </div>
-                <p>{latestResponse.summary}</p>
-              </article>
-              <article className="list-item">
-                <h4>Recommended action</h4>
-                <p>{latestResponse.recommendedAction}</p>
-              </article>
-              <article className="list-item">
-                <h4>Grounding sources</h4>
-                <SourceChips sourceIds={latestResponse.sourceIds} />
-              </article>
-            </div>
+          {lookupResponse ? (
+            agentPresentation ? (
+              <LookupAgentOutput presentation={agentPresentation} />
+            ) : (
+              <div className="panel-stack">
+                <article className="list-item">
+                  <div className="list-item__top">
+                    <h4>Current answer</h4>
+                    <StatusPill tone="positive">{lookupResponse.confidence}% confidence</StatusPill>
+                  </div>
+                  <p>{lookupResponse.summary}</p>
+                </article>
+                <article className="list-item">
+                  <h4>Recommended action</h4>
+                  <p>{lookupResponse.recommendedAction}</p>
+                </article>
+                <article className="list-item">
+                  <h4>Grounding sources</h4>
+                  <SourceChips sourceIds={lookupResponse.sourceIds} />
+                </article>
+              </div>
+            )
           ) : (
             <article className="list-item">
               <h4>No response yet</h4>

@@ -1,11 +1,16 @@
-import { describe, expect, it } from 'vitest';
-import { demoReducer, createBaseState } from '../state/demoState';
+import { afterEach, describe, expect, it } from 'vitest';
+import { getLookupPresentationForResponse } from '../pages/pageContext';
+import { createBaseState, createInitialState, demoReducer, storageKey } from '../state/demoState';
 
 function getActiveInsightRecord(state, scenarioId = 'growth-retail') {
   return state.clientPortal.insightRecords.find(record => record.scenarioId === scenarioId && record.isActive);
 }
 
 describe('demo reducer', () => {
+  afterEach(() => {
+    sessionStorage.clear();
+  });
+
   it('switches client context and scenario together', () => {
     const nextState = demoReducer(createBaseState(), {
       type: 'SELECT_CLIENT',
@@ -46,6 +51,44 @@ describe('demo reducer', () => {
     expect(termState.bundleSelection['growth-retail'].customTerms['term-loan']).toBe('48 months');
   });
 
+  it('starts lookup with the default local context filters and no preset agent', () => {
+    const baseState = createBaseState();
+
+    expect(baseState.lookupSession.context).toEqual({
+      intentMode: 'generic',
+      clientScopeMode: 'selected',
+      selectedClientIds: ['nkosi-retail'],
+    });
+    expect(baseState.lookupSession.selectedAgentId).toBeNull();
+    expect(baseState.lookupSession.responseId).toBeNull();
+  });
+
+  it('preserves selected clients when moving in and out of knowledge base only mode', () => {
+    const baseState = demoReducer(createBaseState(), {
+      type: 'TOGGLE_LOOKUP_CLIENT',
+      clientId: 'mahlangu-manufacturing',
+    });
+    const kbOnlyState = demoReducer(baseState, {
+      type: 'SET_LOOKUP_INTENT_MODE',
+      intentMode: 'kb-only',
+    });
+    const restoredState = demoReducer(kbOnlyState, {
+      type: 'SET_LOOKUP_INTENT_MODE',
+      intentMode: 'generic',
+    });
+
+    expect(restoredState.lookupSession.context.selectedClientIds).toEqual(['nkosi-retail', 'mahlangu-manufacturing']);
+  });
+
+  it('stores the selected lookup preset agent', () => {
+    const nextState = demoReducer(createBaseState(), {
+      type: 'SET_LOOKUP_AGENT',
+      agentId: 'pre-meeting-brief',
+    });
+
+    expect(nextState.lookupSession.selectedAgentId).toBe('pre-meeting-brief');
+  });
+
   it('edits and resets the client-facing insight draft', () => {
     const editedState = demoReducer(createBaseState(), {
       type: 'SET_INSIGHT_DRAFT',
@@ -76,6 +119,76 @@ describe('demo reducer', () => {
     expect(startedState.lookupSession.messages[0]).toMatchObject({ role: 'user' });
     expect(completedState.lookupSession.messages).toHaveLength(2);
     expect(completedState.lookupSession.messages[1]).toMatchObject({ role: 'assistant', responseId: 'lookup-sector-logistics' });
+  });
+
+  it('resets the lookup thread and latest response when a fresh search starts from the search page', () => {
+    const baseState = {
+      ...createBaseState(),
+      lookupSession: {
+        ...createBaseState().lookupSession,
+        responseId: 'lookup-growth-retail',
+        messages: [
+          { id: 'user-1', role: 'user', text: 'Old question' },
+          { id: 'assistant-1', role: 'assistant', responseId: 'lookup-growth-retail' },
+        ],
+      },
+    };
+    const nextState = demoReducer(baseState, {
+      type: 'START_LOOKUP',
+      query: 'Which pre-approved products fit a growth-ready distributor?',
+      reset: true,
+    });
+
+    expect(nextState.lookupSession.responseId).toBeNull();
+    expect(nextState.lookupSession.messages).toHaveLength(1);
+    expect(nextState.lookupSession.messages[0]).toMatchObject({
+      role: 'user',
+      text: 'Which pre-approved products fit a growth-ready distributor?',
+    });
+  });
+
+  it('hydrates older saved lookup state with the new local lookup defaults', () => {
+    sessionStorage.setItem(
+      storageKey,
+      JSON.stringify({
+        selectedClientId: 'meridian-distributor',
+        lookupSession: {
+          query: 'Legacy lookup',
+          pendingQuery: '',
+          status: 'complete',
+          responseId: 'lookup-growth-distributor',
+          messages: [],
+        },
+      }),
+    );
+
+    const hydratedState = createInitialState();
+
+    expect(hydratedState.lookupSession.context).toEqual({
+      intentMode: 'generic',
+      clientScopeMode: 'selected',
+      selectedClientIds: ['meridian-distributor'],
+    });
+    expect(hydratedState.lookupSession.selectedAgentId).toBeNull();
+  });
+
+  it('resolves lookup presentation context from the response id instead of the active scenario', () => {
+    const state = {
+      ...createBaseState(),
+      activeScenarioId: 'growth-retail',
+      lookupSession: {
+        ...createBaseState().lookupSession,
+        responseId: 'lookup-liquidity-manufacturing',
+        selectedAgentId: 'client-risk-assessment',
+        messages: [{ id: 'assistant-1', role: 'assistant', responseId: 'lookup-liquidity-manufacturing' }],
+      },
+    };
+
+    const lookupView = getLookupPresentationForResponse(state);
+
+    expect(lookupView.scenario.id).toBe('liquidity-manufacturing');
+    expect(lookupView.client.id).toBe('mahlangu-manufacturing');
+    expect(lookupView.agentPresentation.title).toBe('Client risk assessment');
   });
 
   it('confirms outreach and marks the alert actioned', () => {

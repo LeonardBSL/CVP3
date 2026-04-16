@@ -2,6 +2,7 @@ import { CheckCircle2, ChevronRight, Download, Mail, Phone, Presentation, Thumbs
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getSources } from '../data/demoData';
+import { getCitationKindLabel } from '../data/evidenceData';
 import { useDemoState } from '../state/DemoStateProvider';
 
 export function useJourneyStep(journey, step) {
@@ -54,8 +55,8 @@ export function SourceChips({ sourceIds }) {
     <div className="source-chip-row">
       {sources.map(source => (
         <span key={source.id} className="source-chip">
-          <strong>{source.type}</strong>
-          {source.label}
+          <strong>{getCitationKindLabel(source)}</strong>
+          {source.title}
         </span>
       ))}
     </div>
@@ -127,6 +128,7 @@ export function InsightCard({
   detailIntro = null,
   detailParagraphs = [],
   detailTitle = 'Detailed model interpretation',
+  showSources = true,
   children = null,
 }) {
   return (
@@ -166,7 +168,7 @@ export function InsightCard({
 
       <SourceAnchoredNarrative title={detailTitle} intro={detailIntro} paragraphs={detailParagraphs} />
 
-      <SourceChips sourceIds={sourceIds} />
+      {showSources ? <SourceChips sourceIds={sourceIds} /> : null}
       {children}
     </div>
   );

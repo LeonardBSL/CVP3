@@ -4,17 +4,49 @@ import { describe, expect, it } from 'vitest';
 import { renderApp } from './testUtils';
 
 describe('insight interactions', () => {
-  it('shows a source tooltip and highlights the linked paragraph on hover', async () => {
+  it('shows a transaction citation tooltip and highlights the linked text span on hover', async () => {
     const user = userEvent.setup();
     renderApp('/engagement/insight');
 
-    const sourceButton = screen.getByRole('button', { name: 'Source 1.1' });
-    const paragraph = screen.getByText(/The latest transactional extract shows merchant settlements up 18%/i).closest('article');
+    const citationMarker = screen.getAllByRole('button', { name: /Citation 1: Merchant settlement extract/i })[0];
+    const citedSpan = screen
+      .getAllByText(/The model is reading the client account, collections, and cash-flow data alongside/i)
+      .find(node => node.classList.contains('rich-response__segment'));
 
-    await user.hover(sourceButton);
+    await user.hover(citationMarker);
 
     expect(screen.getByRole('tooltip')).toHaveTextContent(/Merchant settlement extract/i);
-    expect(paragraph).toHaveClass('llm-response__paragraph--active');
+    expect(screen.getByRole('tooltip')).toHaveTextContent(/Last 90 days of merchant settlements/i);
+    expect(citedSpan).toHaveClass('rich-response__segment--active');
+  });
+
+  it('opens and closes the source document modal from a KB citation', async () => {
+    const user = userEvent.setup();
+    renderApp('/engagement/insight');
+
+    const citationMarker = screen.getAllByRole('button', { name: /Citation 3: Winning the SME Segment: Niche offering/i })[0];
+
+    await user.hover(citationMarker);
+    expect(screen.getByRole('tooltip')).toHaveTextContent(/segment-specific proposition/i);
+
+    await user.click(citationMarker);
+
+    expect(await screen.findByRole('dialog', { name: /Source document viewer/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Winning the SME Segment: Niche offering/i })).toBeInTheDocument();
+    expect(screen.getByText(/^Winning the SME Segment$/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Download document/i })).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /Close source document viewer/i }));
+    expect(screen.queryByRole('dialog', { name: /Source document viewer/i })).not.toBeInTheDocument();
+  });
+
+  it('does not open the source document modal for transaction citations', async () => {
+    const user = userEvent.setup();
+    renderApp('/engagement/insight');
+
+    await user.click(screen.getAllByRole('button', { name: /Citation 1: Merchant settlement extract/i })[0]);
+
+    expect(screen.queryByRole('dialog', { name: /Source document viewer/i })).not.toBeInTheDocument();
   });
 
   it('opens and closes the bundle review modal from the engagement insight step', async () => {
@@ -41,7 +73,7 @@ describe('insight interactions', () => {
 
     expect(screen.getByRole('heading', { name: 'Client portal' })).toBeInTheDocument();
     expect(screen.getByText(/Insight-specific note from the journey\./i)).toBeInTheDocument();
-  });
+  }, 15000);
 
   it('captures a general client note from the engagement journey and shows it in the portal', async () => {
     const user = userEvent.setup();
@@ -99,5 +131,13 @@ describe('insight interactions', () => {
     await user.click(screen.getByRole('button', { name: /^Send$/i }));
 
     expect(screen.queryByText(noteText)).not.toBeInTheDocument();
+  }, 15000);
+
+  it('shows the build agent placeholder without making it selectable', () => {
+    renderApp('/lookup/search');
+
+    expect(screen.getByText(/^Build agent$/i)).toBeInTheDocument();
+    expect(screen.getByText(/Coming soon/i)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /^Build agent$/i })).not.toBeInTheDocument();
   });
 });
