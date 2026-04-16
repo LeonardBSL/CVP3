@@ -5,7 +5,6 @@ import collectionsRecoveriesPdf from '../assets/kb/SL26008 - Unlocking Value thr
 import techTrendsPdf from '../assets/kb/SL26020 - Tech Trends 2026 Social Media_v2[30].pdf';
 import interconnectedRiskPdf from '../assets/kb/SystemicLogic Thought Paper Series_Anticipating the Unseen_Proactive Risk Management in an Interconnected Risk Landscape (1).pdf';
 import wealthCxPdf from '../assets/kb/SystemicLogic Thought Paper Series_The Pinnacle of Financial Services_Unraveling the Imperative of CX in Wealth Management.pdf';
-import riskInterdependencyPdf from '../assets/kb/SystemicLogic Thought Paper Series_The Power of Foresight_Unveiling the Potential of Risk Interdependency Analysis for Strategic Risk Selection and Prioritisation in Financial Institutions.pdf';
 import winningSmeSegmentPdf from '../assets/kb/SystemicLogic Thought Paper Series_Winning the SME Segment.pdf';
 
 export const kbDocuments = {
@@ -50,12 +49,6 @@ export const kbDocuments = {
     title: 'The Pinnacle of Financial Services',
     fileName: 'SystemicLogic Thought Paper Series_The Pinnacle of Financial Services_Unraveling the Imperative of CX in Wealth Management.pdf',
     url: wealthCxPdf,
-  },
-  riskInterdependency: {
-    id: 'riskInterdependency',
-    title: 'The Power of Foresight',
-    fileName: 'SystemicLogic Thought Paper Series_The Power of Foresight_Unveiling the Potential of Risk Interdependency Analysis for Strategic Risk Selection and Prioritisation in Financial Institutions.pdf',
-    url: riskInterdependencyPdf,
   },
   winningSmeSegment: {
     id: 'winningSmeSegment',
