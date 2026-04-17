@@ -1,6 +1,7 @@
+import { ArrowLeft, ArrowRight, Settings2, Sparkles, X } from 'lucide-react';
 import { useState } from 'react';
-import { Settings2, X } from 'lucide-react';
-import { ActionLink, FeedbackStrip, InsightCard, JourneyStepper, MetricGrid, PageHeader, SectionPanel, StatusPill, useJourneyStep } from '../../components/UI';
+import { Link } from 'react-router-dom';
+import { EngagementJourneyStepper, FeedbackStrip, useJourneyStep } from '../../components/UI';
 import { JourneyNoteAction } from '../../components/InternalNotes';
 import RichEvidenceNarrative from '../../components/RichEvidenceNarrative';
 import { useDemoState } from '../../state/DemoStateProvider';
@@ -14,73 +15,119 @@ export default function InsightReviewPage() {
   useJourneyStep('engagement', 'insight');
 
   return (
-    <div className="page">
-      <PageHeader
-        eyebrow="Advisory Engagement"
-        title="Insight review screen"
-        description="The RM sees a structured signal summary first, then a fuller model explanation grounded in the client transaction profile and sector knowledge base."
-        actions={
-          <>
-            <JourneyNoteAction clientId={client.id} insightRecordId={activeInsightRecord?.id} />
-            <ActionLink to="/engagement/outreach">Choose outreach</ActionLink>
-          </>
-        }
-      />
+    <div className="ri-page engagement-page">
+      <Link className="portal-breadcrumb" to="/dashboard">
+        <ArrowLeft size={20} />
+        <span>Back to Dashboard</span>
+      </Link>
 
-      <JourneyStepper steps={engagementSteps} currentStep="insight" />
+      <section className="engagement-route-header">
+        <h2>Advisory Engagement</h2>
+      </section>
 
-      <div className="two-column-grid">
-        <SectionPanel title={insight.headline} subtitle={`${client.name} | ${client.persona}`} accent="accent">
-          <InsightCard
-            confidence={insight.confidence}
-            whyNow={insight.whyNow}
-            sourceIds={insight.sourceIds}
-            showSources={false}
-            narrative={{
-              whatHappened: insight.whatHappened,
-              whyItMatters: insight.whyItMatters,
-              whatToDoNext: insight.whatToDoNext,
-            }}
-            recommendedAction={insight.recommendedAction}
-          >
-            <RichEvidenceNarrative response={insight.richResponse} />
-            <FeedbackStrip
-              contextKey={`engagement-${client.id}`}
-              actions={
-                <button type="button" className="button button--secondary" onClick={() => setBundleOpen(true)}>
-                  <Settings2 size={16} />
-                  Review bundle
-                </button>
-              }
-            />
-          </InsightCard>
-        </SectionPanel>
+      <section className="ri-panel engagement-stepper-panel">
+        <EngagementJourneyStepper steps={engagementSteps} currentStep="insight" />
+      </section>
 
-        <SectionPanel title="Transactional evidence" subtitle="Client data stays separate from sector context, but both are interpreted in one recommendation.">
-          <MetricGrid items={insight.transactionalMetrics} />
-          <div className="panel-stack">
-            <article className="list-item">
-              <h4>Model read</h4>
-              <p>{insight.transactionalNarrative}</p>
-            </article>
-            <article className="list-item">
-              <div className="list-item__top">
-                <h4>Current bundle</h4>
-                <StatusPill tone={scenario.severity}>{bundle.title}</StatusPill>
-              </div>
-              <p>{selectedProducts.map(product => product.name).join(', ')}</p>
-            </article>
-            <article className="list-item">
-              <h4>RM focus</h4>
-              <p>{client.focus}</p>
-            </article>
+      <section className="ri-panel engagement-main-panel">
+        <div className="engagement-panel-header">
+          <div>
+            <h3>{insight.headline}</h3>
+            <p>
+              {client.name} | {client.persona}
+            </p>
           </div>
-        </SectionPanel>
-      </div>
+          <div className="engagement-header-actions">
+            <JourneyNoteAction clientId={client.id} insightRecordId={activeInsightRecord?.id} buttonTone="ghost" />
+          </div>
+        </div>
+
+        <article className="engagement-insight-banner">
+          <div className="engagement-insight-banner__icon">
+            <Sparkles size={26} />
+          </div>
+          <div>
+            <strong>AI-generated insight</strong>
+            <span>{insight.confidence}% confidence</span>
+          </div>
+        </article>
+
+        <div className="engagement-detail-stack">
+          <article className="engagement-detail-block">
+            <span>Why now surfaced</span>
+            <p>{insight.whyNow}</p>
+          </article>
+          <article className="engagement-detail-block">
+            <span>What happened</span>
+            <p>{insight.whatHappened}</p>
+          </article>
+          <article className="engagement-detail-block">
+            <span>Why it matters</span>
+            <p>{insight.whyItMatters}</p>
+          </article>
+          <article className="engagement-detail-block">
+            <span>What to do next</span>
+            <p>{insight.whatToDoNext}</p>
+          </article>
+        </div>
+      </section>
+
+      <section className="ri-panel engagement-main-panel">
+        <RichEvidenceNarrative response={insight.richResponse} />
+      </section>
+
+      <section className="ri-panel engagement-main-panel">
+        <div className="engagement-section-heading">
+          <h3>Transactional evidence</h3>
+          <p>Client data stays separate from sector context, but both are interpreted in one recommendation.</p>
+        </div>
+
+        <div className="engagement-stat-grid">
+          {insight.transactionalMetrics.map(metric => (
+            <article key={metric.label} className="engagement-stat-card">
+              <span>{metric.label}</span>
+              <strong>{metric.value}</strong>
+              {metric.meta ? <p>{metric.meta}</p> : null}
+            </article>
+          ))}
+        </div>
+
+        <div className="engagement-context-stack">
+          <article className="engagement-context-card">
+            <h4>Model read</h4>
+            <p>{insight.transactionalNarrative}</p>
+          </article>
+
+          <article className="engagement-highlight-card">
+            <span>Current bundle</span>
+            <strong>{bundle.title}</strong>
+            <p>{selectedProducts.map(product => product.name).join(', ')}</p>
+            <div className="engagement-highlight-card__divider" />
+            <span>RM focus</span>
+            <p>{client.focus}</p>
+          </article>
+        </div>
+
+        <FeedbackStrip
+          className="engagement-feedback"
+          contextKey={`engagement-${client.id}`}
+          actions={
+            <button type="button" className="button button--ghost" onClick={() => setBundleOpen(true)}>
+              <Settings2 size={16} />
+              Review bundle
+            </button>
+          }
+        />
+      </section>
+
+      <Link className="engagement-primary-cta" to="/engagement/outreach">
+        <span>Choose outreach</span>
+        <ArrowRight size={22} />
+      </Link>
 
       {bundleOpen ? (
         <div className="overlay-backdrop">
-          <div className="overlay-card bundle-review-panel" role="dialog" aria-modal="true" aria-label="Review bundle">
+          <div className="overlay-card bundle-review-panel engagement-bundle-modal" role="dialog" aria-modal="true" aria-label="Review bundle">
             <div className="overlay-header">
               <div>
                 <p className="eyebrow">Review bundle</p>
@@ -128,7 +175,6 @@ export default function InsightReviewPage() {
                         <div className="inline-meta">
                           <span>{product.pricing}</span>
                           <span>{product.eligibility}</span>
-                          <StatusPill tone={product.preApproved ? 'positive' : 'neutral'}>{product.preApproved ? 'Pre-approved' : 'Optional'}</StatusPill>
                         </div>
 
                         {product.termOptions?.length ? (
@@ -167,7 +213,15 @@ export default function InsightReviewPage() {
                   </div>
                 </div>
 
-                <MetricGrid items={insight.bundleEvidence.metrics} />
+                <div className="engagement-stat-grid engagement-stat-grid--modal">
+                  {insight.bundleEvidence.metrics.map(metric => (
+                    <article key={metric.label} className="engagement-stat-card">
+                      <span>{metric.label}</span>
+                      <strong>{metric.value}</strong>
+                      {metric.meta ? <p>{metric.meta}</p> : null}
+                    </article>
+                  ))}
+                </div>
 
                 <div className="panel-stack">
                   {insight.bundleEvidence.notes.map(note => (

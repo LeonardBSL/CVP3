@@ -1,9 +1,20 @@
-import { useState } from 'react';
+import {
+  ArrowLeft,
+  CalendarDays,
+  ChevronDown,
+  ChevronUp,
+  Mail,
+  Phone,
+  Search,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { clients } from '../../data/demoData';
 import { isPortalNoteExpired } from '../../data/clientPortalData';
 import { InternalNoteComposer } from '../../components/InternalNotes';
-import { PageHeader, SectionPanel, StatusPill } from '../../components/UI';
+import { StatusPill } from '../../components/UI';
 import { useDemoState } from '../../state/DemoStateProvider';
+import { getPortalRecordVisibility } from '../pageContext';
 
 function sortByNewest(items, key) {
   return [...items].sort((left, right) => new Date(right[key]) - new Date(left[key]));
@@ -33,6 +44,18 @@ function channelLabel(channel) {
     email: 'Email',
     meeting: 'Meeting',
   }[channel] ?? channel;
+}
+
+function channelIcon(channel) {
+  if (channel === 'email') {
+    return Mail;
+  }
+
+  if (channel === 'call') {
+    return Phone;
+  }
+
+  return CalendarDays;
 }
 
 function noteTone(note) {
@@ -65,23 +88,23 @@ function noteMatchesVisibility(note, { searchValue, durationFilter, showExpired 
   return note.body.toLowerCase().includes(searchValue);
 }
 
-function NoteRows({ notes, emptyMessage, onEdit }) {
+function PortalNoteList({ emptyMessage, notes, onEdit }) {
   if (!notes.length) {
-    return <p>{emptyMessage}</p>;
+    return <p className="portal-empty-message">{emptyMessage}</p>;
   }
 
   return (
-    <div className="note-list">
+    <div className="portal-note-list">
       {notes.map(note => (
-        <article key={note.id} className="note-item">
-          <div className="list-item__top">
-            <div className="inline-pills">
-              <StatusPill tone={noteTone(note)}>{noteDurationLabel(note)}</StatusPill>
-              <StatusPill tone="neutral">Updated {formatTimestamp(note.updatedAt)}</StatusPill>
+        <article key={note.id} className={`portal-note-card portal-note-card--${noteTone(note)}`}>
+          <div className="portal-note-card__header">
+            <div className="portal-note-card__meta">
+              <span>{noteDurationLabel(note)}</span>
+              <span>Updated {formatTimestamp(note.updatedAt)}</span>
             </div>
             <button
               type="button"
-              className="button button--ghost"
+              className="portal-inline-action"
               aria-label={`Edit note ${note.body.slice(0, 32)}`}
               onClick={() => onEdit(note)}
             >
@@ -104,6 +127,7 @@ export default function ClientPortalPage() {
   const [showExpired, setShowExpired] = useState(false);
   const [expandedInsights, setExpandedInsights] = useState({});
   const [expandedEngagements, setExpandedEngagements] = useState({});
+  const [showAllInsights, setShowAllInsights] = useState(false);
   const [composerState, setComposerState] = useState(null);
 
   const client = clients.find(item => item.id === state.selectedClientId) ?? clients[0];
@@ -124,6 +148,10 @@ export default function ClientPortalPage() {
     state.clientPortal.engagements.filter(engagement => engagement.clientId === client.id),
     'confirmedAt',
   );
+
+  useEffect(() => {
+    setShowAllInsights(false);
+  }, [client.id, durationFilter, normalizedSearch, sharedFilter, showExpired]);
 
   const visibleGeneralNotes = clientGeneralNotes.filter(note =>
     noteMatchesVisibility(note, {
@@ -178,6 +206,8 @@ export default function ClientPortalPage() {
       ...visibleNotesForRecord(engagement.postNoteIds),
     ].length > 0;
   });
+
+  const visibleInsightState = getPortalRecordVisibility(visibleInsights, showAllInsights, 2);
 
   function openComposer(config) {
     setComposerState(config);
@@ -269,87 +299,105 @@ export default function ClientPortalPage() {
   const showEngagementSection = noteTypeFilter === 'all' || noteTypeFilter === 'engagement';
 
   return (
-    <div className="page">
-      <PageHeader
-        eyebrow="Client Portal"
-        title="Client portal"
-        description="Navigate client profiles, review the full internal history of insights and engagements, and manage internal notes without exposing them to the client."
-      />
+    <div className="ri-page portal-page">
+      <Link className="portal-breadcrumb" to="/dashboard">
+        <ArrowLeft size={20} />
+        <span>Back to Dashboard</span>
+      </Link>
 
-      <div className="portal-toolbar">
-        <label className="topbar-field">
-          <span>Client profile</span>
-          <select
-            aria-label="Client portal client"
-            value={client.id}
-            onChange={event => dispatch({ type: 'SELECT_CLIENT', clientId: event.target.value })}
-          >
-            {clients.map(option => (
-              <option key={option.id} value={option.id}>
-                {option.name}
-              </option>
-            ))}
-          </select>
-        </label>
+      <section className="portal-header">
+        <h2>Client Portal</h2>
+        <p>
+          Navigate client profiles, review the full internal history of insights and engagements, and manage internal notes
+          without exposing them to the client.
+        </p>
+      </section>
 
-        <label className="topbar-field">
-          <span>Search</span>
-          <input
-            aria-label="Client portal search"
-            type="search"
-            placeholder="Search notes, insights, and engagements"
-            value={searchValue}
-            onChange={event => setSearchValue(event.target.value)}
-          />
-        </label>
+      <section className="ri-panel portal-filter-panel">
+        <div className="portal-filter-panel__row portal-filter-panel__row--full">
+          <label className="topbar-field topbar-field--full">
+            <span>Client profile</span>
+            <select
+              aria-label="Client portal client"
+              value={client.id}
+              onChange={event => dispatch({ type: 'SELECT_CLIENT', clientId: event.target.value })}
+            >
+              {clients.map(option => (
+                <option key={option.id} value={option.id}>
+                  {option.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
 
-        <label className="topbar-field">
-          <span>Insight sharing</span>
-          <select aria-label="Insight sharing filter" value={sharedFilter} onChange={event => setSharedFilter(event.target.value)}>
-            <option value="all">All insights</option>
-            <option value="shared">Shared only</option>
-          </select>
-        </label>
+        <div className="portal-filter-panel__row portal-filter-panel__row--full">
+          <label className="portal-search-field">
+            <span>Search</span>
+            <div className="portal-search-field__input">
+              <Search size={22} />
+              <input
+                aria-label="Client portal search"
+                type="search"
+                placeholder="Search notes, insights, and engagements"
+                value={searchValue}
+                onChange={event => setSearchValue(event.target.value)}
+              />
+            </div>
+          </label>
+        </div>
 
-        <label className="topbar-field">
-          <span>Note type</span>
-          <select aria-label="Note type filter" value={noteTypeFilter} onChange={event => setNoteTypeFilter(event.target.value)}>
-            <option value="all">All sections</option>
-            <option value="general">General notes</option>
-            <option value="insight">Insights</option>
-            <option value="engagement">Engagements</option>
-          </select>
-        </label>
+        <div className="portal-filter-panel__row portal-filter-panel__row--filters">
+          <label className="topbar-field">
+            <span>Insight sharing</span>
+            <select aria-label="Insight sharing filter" value={sharedFilter} onChange={event => setSharedFilter(event.target.value)}>
+              <option value="all">All insights</option>
+              <option value="shared">Shared only</option>
+            </select>
+          </label>
 
-        <label className="topbar-field">
-          <span>Duration</span>
-          <select aria-label="Note duration filter" value={durationFilter} onChange={event => setDurationFilter(event.target.value)}>
-            <option value="all">All durations</option>
-            <option value="permanent">Permanent</option>
-            <option value="time-constrained">Time constrained</option>
-          </select>
-        </label>
+          <label className="topbar-field">
+            <span>Note type</span>
+            <select aria-label="Note type filter" value={noteTypeFilter} onChange={event => setNoteTypeFilter(event.target.value)}>
+              <option value="all">All sections</option>
+              <option value="general">General notes</option>
+              <option value="insight">Insights</option>
+              <option value="engagement">Engagements</option>
+            </select>
+          </label>
 
-        <label className="portal-checkbox">
-          <input checked={showExpired} type="checkbox" onChange={event => setShowExpired(event.target.checked)} />
-          <span>Show expired</span>
-        </label>
-      </div>
+          <label className="topbar-field">
+            <span>Duration</span>
+            <select aria-label="Note duration filter" value={durationFilter} onChange={event => setDurationFilter(event.target.value)}>
+              <option value="all">All durations</option>
+              <option value="permanent">Permanent</option>
+              <option value="time-constrained">Time constrained</option>
+            </select>
+          </label>
 
-      <div className="portal-grid">
+          <label className="portal-checkbox">
+            <input checked={showExpired} type="checkbox" onChange={event => setShowExpired(event.target.checked)} />
+            <span>Show expired</span>
+          </label>
+        </div>
+      </section>
+
+      <div className="portal-sections">
         {showGeneralSection ? (
-          <SectionPanel
-            title="General notes"
-            subtitle={`${client.name} | Internal relationship context`}
-            action={
+          <section className="portal-section">
+            <div className="portal-section__header">
+              <div>
+                <h3>General notes</h3>
+                <p>{client.name} | Internal relationship context</p>
+              </div>
               <button
                 type="button"
-                className="button button--ghost"
+                className="portal-outline-button"
                 onClick={() =>
                   openComposer({
                     mode: 'create',
                     scope: 'general',
-                    title: 'Add general client note',
+                    title: 'Add general note',
                     description: 'This note is stored against the client profile and never reaches the client.',
                     submitLabel: 'Save general note',
                   })
@@ -357,22 +405,24 @@ export default function ClientPortalPage() {
               >
                 Add general note
               </button>
-            }
-          >
-            <div className="portal-section-body">
-              <NoteRows notes={visibleGeneralNotes} emptyMessage="No general notes match the current filters." onEdit={handleEditNote} />
             </div>
-          </SectionPanel>
+
+            <PortalNoteList notes={visibleGeneralNotes} emptyMessage="No general notes match the current filters." onEdit={handleEditNote} />
+          </section>
         ) : null}
 
         {showInsightSection ? (
-          <SectionPanel
-            title="Insights"
-            subtitle="All generated insights for this client, including shared and unshared history."
-          >
-            <div className="portal-section-body portal-record-stack">
-              {visibleInsights.length ? (
-                visibleInsights.map(record => {
+          <section className="portal-section">
+            <div className="portal-section__header">
+              <div>
+                <h3>Insights</h3>
+                <p>All generated insights for this client, including shared and unshared history.</p>
+              </div>
+            </div>
+
+            <div className="portal-record-stack">
+              {visibleInsightState.visibleRecords.length ? (
+                visibleInsightState.visibleRecords.map(record => {
                   const recordNotes = visibleNotesForRecord(record.noteIds);
                   const expanded = expandedInsights[record.id] ?? record.isActive;
 
@@ -382,6 +432,8 @@ export default function ClientPortalPage() {
                         <button
                           type="button"
                           className="portal-record-toggle"
+                          aria-label={`Toggle insight ${record.headline}`}
+                          aria-expanded={expanded}
                           onClick={() =>
                             setExpandedInsights(current => ({
                               ...current,
@@ -389,26 +441,27 @@ export default function ClientPortalPage() {
                             }))
                           }
                         >
-                          <div className="panel-stack">
-                            <div className="inline-pills">
+                          <div className="portal-record-card__summary">
+                            <div className="portal-record-card__pills">
                               <StatusPill tone={record.sharedStatus === 'shared' ? 'positive' : 'neutral'}>
                                 {record.sharedStatus === 'shared' ? 'Shared' : 'Unshared'}
                               </StatusPill>
                               {record.isActive ? <StatusPill tone="warning">Active</StatusPill> : null}
-                              <StatusPill tone="neutral">{formatTimestamp(record.generatedAt)}</StatusPill>
+                              <span className="portal-muted-text">{formatTimestamp(record.generatedAt)}</span>
                             </div>
-                            <div>
+                            <div className="portal-record-card__copy">
                               <h4>{record.headline}</h4>
                               <p>{record.summary}</p>
                             </div>
                           </div>
+                          {expanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                         </button>
 
-                        <div className="portal-record-actions">
-                          <StatusPill tone="neutral">{recordNotes.length} note{recordNotes.length === 1 ? '' : 's'}</StatusPill>
+                        <div className="portal-record-card__actions">
+                          <span className="portal-note-count">{recordNotes.length} note{recordNotes.length === 1 ? '' : 's'}</span>
                           <button
                             type="button"
-                            className="button button--ghost"
+                            className="portal-inline-action"
                             onClick={() =>
                               openComposer({
                                 mode: 'create',
@@ -426,38 +479,51 @@ export default function ClientPortalPage() {
                       </div>
 
                       {expanded ? (
-                        <div className="portal-record-detail">
-                          <NoteRows notes={recordNotes} emptyMessage="No insight notes match the current filters." onEdit={handleEditNote} />
+                        <div className="portal-record-card__detail">
+                          <PortalNoteList notes={recordNotes} emptyMessage="No insight notes match the current filters." onEdit={handleEditNote} />
                         </div>
                       ) : null}
                     </article>
                   );
                 })
               ) : (
-                <p>No insights match the current filters.</p>
+                <p className="portal-empty-message">No insights match the current filters.</p>
               )}
             </div>
-          </SectionPanel>
+
+            {visibleInsightState.hasMore ? (
+              <button type="button" className="portal-load-more" onClick={() => setShowAllInsights(true)}>
+                Load more insights ({visibleInsightState.remainingCount} more)
+              </button>
+            ) : null}
+          </section>
         ) : null}
 
         {showEngagementSection ? (
-          <SectionPanel
-            title="Engagements"
-            subtitle="Advisory engagements are kept separate, with pre- and post-engagement notes grouped clearly."
-          >
-            <div className="portal-section-body portal-record-stack">
+          <section className="portal-section">
+            <div className="portal-section__header">
+              <div>
+                <h3>Engagements</h3>
+                <p>Advisory engagements are kept separate, with pre- and post-engagement notes grouped clearly.</p>
+              </div>
+            </div>
+
+            <div className="portal-record-stack">
               {visibleEngagements.length ? (
                 visibleEngagements.map(engagement => {
+                  const Icon = channelIcon(engagement.channel);
                   const preNotes = visibleNotesForRecord(engagement.preNoteIds);
                   const postNotes = visibleNotesForRecord(engagement.postNoteIds);
                   const expanded = expandedEngagements[engagement.id] ?? false;
 
                   return (
-                    <article key={engagement.id} className="portal-record-card">
+                    <article key={engagement.id} className="portal-engagement-card">
                       <div className="portal-record-card__header">
                         <button
                           type="button"
-                          className="portal-record-toggle"
+                          className="portal-record-toggle portal-record-toggle--engagement"
+                          aria-label={`Toggle engagement ${channelLabel(engagement.channel)} ${engagement.status}`}
+                          aria-expanded={expanded}
                           onClick={() =>
                             setExpandedEngagements(current => ({
                               ...current,
@@ -465,35 +531,35 @@ export default function ClientPortalPage() {
                             }))
                           }
                         >
-                          <div className="panel-stack">
-                            <div className="inline-pills">
-                              <StatusPill tone="neutral">{channelLabel(engagement.channel)}</StatusPill>
-                              <StatusPill tone="positive">{engagement.status}</StatusPill>
-                              <StatusPill tone="neutral">{formatTimestamp(engagement.confirmedAt)}</StatusPill>
-                            </div>
-                            <div>
-                              <h4>{channelLabel(engagement.channel)} engagement</h4>
-                              <p>{engagement.status}</p>
+                          <div className="portal-engagement-card__summary">
+                            <span className={`portal-engagement-card__icon portal-engagement-card__icon--${engagement.channel}`}>
+                              <Icon size={24} />
+                            </span>
+                            <div className="portal-engagement-card__copy">
+                              <div className="portal-engagement-card__headline">
+                                <h4>{channelLabel(engagement.channel)}</h4>
+                                <span>{formatTimestamp(engagement.confirmedAt)}</span>
+                              </div>
+                              <p>{channelLabel(engagement.channel)} engagement</p>
+                              <strong>{engagement.status}</strong>
+                              <span>{preNotes.length + postNotes.length} note{preNotes.length + postNotes.length === 1 ? '' : 's'}</span>
                             </div>
                           </div>
+                          {expanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                         </button>
-
-                        <div className="portal-record-actions">
-                          <StatusPill tone="neutral">{preNotes.length + postNotes.length} note{preNotes.length + postNotes.length === 1 ? '' : 's'}</StatusPill>
-                        </div>
                       </div>
 
                       {expanded ? (
-                        <div className="portal-record-detail portal-engagement-detail">
-                          <div className="portal-note-group">
-                            <div className="panel-header">
+                        <div className="portal-record-card__detail portal-record-card__detail--engagement">
+                          <section className="portal-note-group">
+                            <div className="portal-note-group__header">
                               <div>
-                                <h3>Pre-engagement notes</h3>
+                                <h5>Pre-engagement notes</h5>
                                 <p>Captured before the outreach was confirmed.</p>
                               </div>
                               <button
                                 type="button"
-                                className="button button--ghost"
+                                className="portal-inline-action"
                                 onClick={() =>
                                   openComposer({
                                     mode: 'create',
@@ -508,18 +574,18 @@ export default function ClientPortalPage() {
                                 Add pre-engagement note
                               </button>
                             </div>
-                            <NoteRows notes={preNotes} emptyMessage="No pre-engagement notes match the current filters." onEdit={handleEditNote} />
-                          </div>
+                            <PortalNoteList notes={preNotes} emptyMessage="No pre-engagement notes match the current filters." onEdit={handleEditNote} />
+                          </section>
 
-                          <div className="portal-note-group">
-                            <div className="panel-header">
+                          <section className="portal-note-group">
+                            <div className="portal-note-group__header">
                               <div>
-                                <h3>Post-engagement notes</h3>
+                                <h5>Post-engagement notes</h5>
                                 <p>Captured after the outreach was confirmed.</p>
                               </div>
                               <button
                                 type="button"
-                                className="button button--ghost"
+                                className="portal-inline-action"
                                 onClick={() =>
                                   openComposer({
                                     mode: 'create',
@@ -534,18 +600,18 @@ export default function ClientPortalPage() {
                                 Add post-engagement note
                               </button>
                             </div>
-                            <NoteRows notes={postNotes} emptyMessage="No post-engagement notes match the current filters." onEdit={handleEditNote} />
-                          </div>
+                            <PortalNoteList notes={postNotes} emptyMessage="No post-engagement notes match the current filters." onEdit={handleEditNote} />
+                          </section>
                         </div>
                       ) : null}
                     </article>
                   );
                 })
               ) : (
-                <p>No engagements match the current filters.</p>
+                <p className="portal-empty-message">No engagements match the current filters.</p>
               )}
             </div>
-          </SectionPanel>
+          </section>
         ) : null}
       </div>
 

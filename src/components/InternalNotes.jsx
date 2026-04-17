@@ -171,13 +171,14 @@ export function JourneyNoteAction({
   insightRecordId,
   buttonLabel = 'Add internal note',
   buttonTone = 'secondary',
+  buttonClassName = '',
 }) {
   const [open, setOpen] = useState(false);
   const { dispatch } = useDemoState();
 
   return (
     <>
-      <button type="button" className={`button button--${buttonTone}`} onClick={() => setOpen(true)}>
+      <button type="button" className={`button button--${buttonTone} ${buttonClassName}`.trim()} onClick={() => setOpen(true)}>
         {buttonLabel}
       </button>
       <InternalNoteComposer

@@ -1,4 +1,4 @@
-import { CheckCircle2, ChevronRight, Download, Mail, Phone, Presentation, ThumbsDown, ThumbsUp, X } from 'lucide-react';
+import { Check, CheckCircle2, ChevronRight, Download, Mail, Phone, Presentation, ThumbsDown, ThumbsUp, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getSources } from '../data/demoData';
@@ -54,7 +54,7 @@ export function SourceChips({ sourceIds }) {
   return (
     <div className="source-chip-row">
       {sources.map(source => (
-        <span key={source.id} className="source-chip">
+        <span key={source.id} className={`source-chip source-chip--${source.kind ?? 'neutral'}`}>
           <strong>{getCitationKindLabel(source)}</strong>
           {source.title}
         </span>
@@ -200,10 +200,103 @@ export function JourneyStepper({ steps, currentStep }) {
   );
 }
 
-export function FeedbackStrip({ contextKey, actions = null }) {
+export function InsightJourneyStepper({ steps, currentStep, ariaLabel = 'Insight delivery progress' }) {
+  return (
+    <ol className="insight-stepper" aria-label={ariaLabel}>
+      {steps.map((step, index) => {
+        const active = step.id === currentStep;
+
+        return (
+          <li key={step.id} className={`insight-step ${active ? 'insight-step--active' : ''}`}>
+            <div className="insight-step__marker">
+              <span className="insight-step__circle" aria-hidden="true">
+                {index + 1}
+              </span>
+              <span className="insight-step__label">{step.label}</span>
+            </div>
+            {index < steps.length - 1 ? <span className="insight-step__line" aria-hidden="true" /> : null}
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
+export function LookupJourneyTabs({ currentStep }) {
+  const steps = [
+    { id: 'search', label: 'Search', to: '/lookup/search' },
+    { id: 'response', label: 'Response', to: '/lookup/response' },
+    { id: 'recommendation', label: 'Recommendation', to: '/lookup/recommendation' },
+  ];
+
+  return (
+    <nav className="lookup-journey-tabs" aria-label="Advisory lookup progress">
+      {steps.map(step => (
+        <Link
+          key={step.id}
+          className={`lookup-journey-tab ${currentStep === step.id ? 'lookup-journey-tab--active' : ''}`}
+          to={step.to}
+          aria-current={currentStep === step.id ? 'step' : undefined}
+        >
+          <span>{step.label}</span>
+        </Link>
+      ))}
+    </nav>
+  );
+}
+
+export function SectorJourneyTabs({ currentStep }) {
+  const steps = [
+    { id: 'overview', label: 'Overview', to: '/sector/overview' },
+    { id: 'deep-dive', label: 'Deep Dive', to: '/sector/deep-dive' },
+    { id: 'client-relevance', label: 'Client Relevance', to: '/sector/client-relevance' },
+  ];
+
+  return (
+    <nav className="lookup-journey-tabs sector-journey-tabs" aria-label="Sector briefing progress">
+      {steps.map(step => (
+        <Link
+          key={step.id}
+          className={`lookup-journey-tab sector-journey-tab ${currentStep === step.id ? 'lookup-journey-tab--active sector-journey-tab--active' : ''}`}
+          to={step.to}
+          aria-current={currentStep === step.id ? 'step' : undefined}
+        >
+          <span>{step.label}</span>
+        </Link>
+      ))}
+    </nav>
+  );
+}
+
+export function EngagementJourneyStepper({ steps, currentStep, ariaLabel = 'Advisory engagement progress' }) {
+  const currentIndex = steps.findIndex(step => step.id === currentStep);
+
+  return (
+    <ol className="engagement-stepper" aria-label={ariaLabel}>
+      {steps.map((step, index) => {
+        const state = index < currentIndex ? 'complete' : index === currentIndex ? 'active' : 'upcoming';
+        const lineState = index < currentIndex ? 'complete' : 'upcoming';
+
+        return (
+          <li key={step.id} className={`engagement-step engagement-step--${state}`}>
+            <div className="engagement-step__marker">
+              <span className="engagement-step__circle" aria-hidden="true">
+                {state === 'complete' ? <Check size={22} /> : index + 1}
+              </span>
+              <span className="engagement-step__label">{step.label}</span>
+            </div>
+            {index < steps.length - 1 ? <span className={`engagement-step__line engagement-step__line--${lineState}`} aria-hidden="true" /> : null}
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
+export function FeedbackStrip({ contextKey, actions = null, className = '' }) {
   const { state, dispatch } = useDemoState();
   return (
-    <div className="feedback-strip">
+    <div className={`feedback-strip ${className}`.trim()}>
       <span>Signal useful?</span>
       <button type="button" className={state.feedback[contextKey] === 'up' ? 'feedback-button feedback-button--active' : 'feedback-button'} onClick={() => dispatch({ type: 'CAPTURE_FEEDBACK', contextKey, value: 'up' })}>
         <ThumbsUp size={14} />

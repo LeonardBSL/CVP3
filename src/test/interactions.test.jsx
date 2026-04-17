@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { renderApp } from './testUtils';
@@ -71,7 +71,7 @@ describe('insight interactions', () => {
     await user.click(screen.getByRole('button', { name: /Save note/i }));
     await user.click(screen.getByRole('link', { name: /Client portal/i }));
 
-    expect(screen.getByRole('heading', { name: 'Client portal' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Client Portal' })).toBeInTheDocument();
     expect(screen.getByText(/Insight-specific note from the journey\./i)).toBeInTheDocument();
   }, 15000);
 
@@ -111,6 +111,85 @@ describe('insight interactions', () => {
     await user.click(screen.getByRole('checkbox', { name: /Show expired/i }));
 
     expect(screen.getByText(/Temporary watch item on delayed receivables has expired/i)).toBeInTheDocument();
+  });
+
+  it('shows dashboard aggregates and opens the highest-priority urgent alert from quick actions', async () => {
+    const user = userEvent.setup();
+    renderApp('/dashboard');
+
+    expect(screen.getByText('R486m')).toBeInTheDocument();
+    expect(screen.getByText('2.4hrs')).toBeInTheDocument();
+    expect(screen.getByLabelText(/2 urgent notifications/i)).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /Alerts quick action/i }));
+
+    expect(screen.getByRole('heading', { name: 'Advisory Engagement' })).toBeInTheDocument();
+    expect(screen.getByText(/Transport margin pressure requires proactive cover/i)).toBeInTheDocument();
+  });
+
+  it('starts the advisory journey from the active dashboard alert', async () => {
+    const user = userEvent.setup();
+    renderApp('/dashboard');
+
+    await user.click(screen.getByRole('button', { name: /Start Advisory Journey/i }));
+
+    expect(screen.getByRole('heading', { name: 'Advisory Engagement' })).toBeInTheDocument();
+    expect(screen.getByText(/Expansion capacity signal detected/i)).toBeInTheDocument();
+  });
+
+  it('routes portal notifications back to the dashboard priority alerts section', async () => {
+    const user = userEvent.setup();
+    renderApp('/portal');
+
+    await user.click(screen.getByRole('button', { name: /Notifications/i }));
+
+    expect(await screen.findByRole('heading', { name: 'Relationship Intelligence' })).toBeInTheDocument();
+    await waitFor(() => expect(document.getElementById('priority-alerts')).toHaveFocus());
+  });
+
+  it('loads more portal insights on demand', async () => {
+    const user = userEvent.setup();
+    renderApp('/portal');
+
+    expect(screen.queryByText(/Seasonal trading uplift supported an early working-capital review\./i)).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /Load more insights/i }));
+
+    expect(screen.getByText(/Seasonal trading uplift supported an early working-capital review\./i)).toBeInTheDocument();
+  });
+
+  it('edits a general note directly in the portal', async () => {
+    const user = userEvent.setup();
+    renderApp('/portal');
+
+    await user.click(screen.getAllByRole('button', { name: /Edit note/i })[0]);
+    await user.clear(screen.getByRole('textbox', { name: /Internal note text/i }));
+    await user.type(screen.getByRole('textbox', { name: /Internal note text/i }), 'Updated portal note.');
+    await user.click(screen.getByRole('button', { name: /Save changes/i }));
+
+    expect(screen.getByText(/Updated portal note\./i)).toBeInTheDocument();
+  });
+
+  it('adds insight and engagement notes directly in the portal', async () => {
+    const user = userEvent.setup();
+    renderApp('/portal');
+
+    await user.click(screen.getAllByRole('button', { name: /Add insight note/i })[0]);
+    await user.type(screen.getByRole('textbox', { name: /Internal note text/i }), 'Portal insight note.');
+    await user.click(screen.getByRole('button', { name: /Save insight note/i }));
+    expect(screen.getByText(/Portal insight note\./i)).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /Toggle engagement Email Email drafted/i }));
+
+    await user.click(screen.getByRole('button', { name: /Add pre-engagement note/i }));
+    await user.type(screen.getByRole('textbox', { name: /Internal note text/i }), 'Portal pre-engagement note.');
+    await user.click(screen.getByRole('button', { name: /Save pre-engagement note/i }));
+    expect(screen.getByText(/Portal pre-engagement note\./i)).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /Add post-engagement note/i }));
+    await user.type(screen.getByRole('textbox', { name: /Internal note text/i }), 'Portal post-engagement note.');
+    await user.click(screen.getByRole('button', { name: /Save post-engagement note/i }));
+    expect(screen.getByText(/Portal post-engagement note\./i)).toBeInTheDocument();
   });
 
   it('keeps internal notes out of delivery preview and presentation output', async () => {

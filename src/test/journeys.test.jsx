@@ -9,7 +9,7 @@ describe('journey walkthroughs', () => {
     renderApp('/dashboard');
 
     await user.click(screen.getByRole('button', { name: /Expansion capacity signal detected/i }));
-    expect(screen.getByRole('heading', { name: 'Alert detail view' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Advisory Engagement' })).toBeInTheDocument();
 
     await user.click(screen.getByRole('link', { name: /Review AI recommendation/i }));
     await user.click(screen.getByRole('button', { name: /Review bundle/i }));
@@ -42,14 +42,15 @@ describe('journey walkthroughs', () => {
 
     expect(screen.getByText(/Generating response/i)).toBeInTheDocument();
 
-    expect(await screen.findByText(/Translate sector pressure into margin protection/i, {}, { timeout: 3000 })).toBeInTheDocument();
+    expect((await screen.findAllByText(/Translate sector pressure into margin protection/i, {}, { timeout: 3000 })).length).toBeGreaterThan(0);
     await user.type(screen.getByRole('textbox', { name: /Follow-up question/i }), 'What can I recommend to smooth procurement pressure for a manufacturing SME?');
     await user.click(screen.getByRole('button', { name: /^Send$/i }));
 
-    expect(await screen.findByText(/Frame the solution as cycle stabilization across payables, receivables, and visibility/i, {}, { timeout: 3000 })).toBeInTheDocument();
+    expect((await screen.findAllByText(/Frame the solution as cycle stabilization across payables, receivables, and visibility/i, {}, { timeout: 3000 })).length).toBeGreaterThan(0);
     await user.click(screen.getByRole('link', { name: /Open recommendation output/i }));
 
-    expect(screen.getByRole('heading', { name: 'Recommendation output' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Advisory Lookup' })).toBeInTheDocument();
+    expect(screen.getByText(/Recommended products/i)).toBeInTheDocument();
     expect(screen.getByText(/Working Capital Revolver/i)).toBeInTheDocument();
   }, 15000);
 
@@ -62,8 +63,10 @@ describe('journey walkthroughs', () => {
 
     expect((await screen.findAllByText(/Executive summary/i, {}, { timeout: 3000 })).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/Recommended talking points/i).length).toBeGreaterThan(0);
-    expect(screen.getByText(/Client scope: Nkosi Retail Group/i)).toBeInTheDocument();
-    expect(screen.getByText(/Preset: Pre-meeting brief/i)).toBeInTheDocument();
+    expect(screen.getByText(/^Client Scope$/i)).toBeInTheDocument();
+    expect(screen.getByText(/^Nkosi Retail Group$/i)).toBeInTheDocument();
+    expect(screen.getByText(/^Agent$/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/^Pre-meeting brief$/i).length).toBeGreaterThan(0);
 
     await user.click(screen.getByRole('link', { name: /Open recommendation output/i }));
 
@@ -81,8 +84,9 @@ describe('journey walkthroughs', () => {
 
     await user.click(screen.getByRole('button', { name: /How do I explain the transport sector signal to a logistics client\?/i }));
 
-    expect(await screen.findByText(/Translate sector pressure into margin protection/i, {}, { timeout: 3000 })).toBeInTheDocument();
-    expect(screen.getByText(/Preset: No agent selected/i)).toBeInTheDocument();
+    expect((await screen.findAllByText(/Translate sector pressure into margin protection/i, {}, { timeout: 3000 })).length).toBeGreaterThan(0);
+    expect(screen.getByText(/^Agent$/i)).toBeInTheDocument();
+    expect(screen.getByText(/^None$/i)).toBeInTheDocument();
   }, 15000);
 
   it('renders ranked revenue opportunities in the existing product order', async () => {
@@ -116,12 +120,14 @@ describe('journey walkthroughs', () => {
     renderApp('/sector/overview');
 
     await user.click(screen.getByRole('button', { name: /Transport & Logistics/i }));
-    expect(screen.getByRole('heading', { name: 'Sector deep dive' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Sector Briefing' })).toBeInTheDocument();
+    expect(screen.getByText(/Sector deep dive/i)).toBeInTheDocument();
 
     await user.click(screen.getByRole('link', { name: /Map to client/i }));
-    expect(screen.getByRole('heading', { name: 'Client relevance mapping' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Sector Briefing' })).toBeInTheDocument();
+    expect(screen.getByText(/Client relevance mapping/i)).toBeInTheDocument();
 
     await user.click(screen.getByRole('link', { name: /Move into advisory engagement/i }));
-    expect(screen.getByRole('heading', { name: 'Insight review screen' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Advisory Engagement' })).toBeInTheDocument();
   }, 15000);
 });

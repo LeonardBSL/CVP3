@@ -1,81 +1,115 @@
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import LookupAgentOutput from '../../components/LookupAgentOutput';
-import { ActionLink, JourneyStepper, PageHeader, SectionPanel, StatusPill, useJourneyStep } from '../../components/UI';
+import { LookupJourneyTabs, StatusPill, useJourneyStep } from '../../components/UI';
 import { useDemoState } from '../../state/DemoStateProvider';
-import { getLookupViewContext, lookupSteps } from '../pageContext';
-
-function splitSections(sections = []) {
-  const midpoint = Math.ceil(sections.length / 2);
-  return [sections.slice(0, midpoint), sections.slice(midpoint)];
-}
+import { getLookupViewContext } from '../pageContext';
 
 export default function RecommendationPage() {
   const { state } = useDemoState();
-  const { agent, agentPresentation, lookupResponse, recommendedProducts } = getLookupViewContext(state);
+  const { agentPresentation, lookupResponse, recommendedProducts } = getLookupViewContext(state);
 
   useJourneyStep('lookup', 'recommendation');
 
-  const [leftSections, rightSections] = splitSections(agentPresentation?.sections);
-
   return (
-    <div className="page">
-      <PageHeader
-        eyebrow="Advisory Lookup"
-        title="Recommendation output"
-        description="The lookup completes with products linked to the client transaction story and the sector interpretation behind it."
-        actions={<ActionLink to="/engagement/outreach">Use in engagement</ActionLink>}
-      />
+    <div className="ri-page lookup-page lookup-page--recommendation">
+      <Link className="portal-breadcrumb" to="/dashboard">
+        <ArrowLeft size={20} />
+        <span>Back to Dashboard</span>
+      </Link>
 
-      <JourneyStepper steps={lookupSteps} currentStep="recommendation" />
+      <section className="lookup-route-header">
+        <h2>Advisory Lookup</h2>
+        <p>On-demand intelligence</p>
+      </section>
 
-      <div className="two-column-grid">
-        {agentPresentation ? (
-          <>
-            <SectionPanel title={agent.label} subtitle="Structured output follows the selected preset agent.">
-              <LookupAgentOutput presentation={agentPresentation} sections={leftSections} showSources={false} />
-            </SectionPanel>
+      <section className="ri-panel lookup-stepper-panel">
+        <LookupJourneyTabs currentStep="recommendation" />
+      </section>
 
-            <SectionPanel title="Recommended next view" subtitle="The preset structure carries into the action-planning output.">
-              <LookupAgentOutput presentation={agentPresentation} sections={rightSections} />
-            </SectionPanel>
-          </>
-        ) : (
-          <>
-            <SectionPanel title="Recommended products" subtitle="Product suggestions are linked to the client situation, not returned as a raw list.">
-              <div className="panel-stack">
-                {recommendedProducts.map(product => (
-                  <article key={product.id} className="product-card">
-                    <div className="product-card__top">
-                      <h4>{product.name}</h4>
-                      <StatusPill tone={product.preApproved ? 'positive' : 'neutral'}>{product.preApproved ? 'Pre-approved' : 'Optional'}</StatusPill>
-                    </div>
-                    <p>{product.description}</p>
-                    <div className="inline-meta">
-                      <span>{product.pricing}</span>
-                      <span>{product.eligibility}</span>
-                    </div>
-                  </article>
-                ))}
+      <section className="ri-panel lookup-intro-panel">
+        <div className="lookup-intro-panel__copy">
+          <h3>Recommended products</h3>
+          <p>Product suggestions are linked to the client situation, not returned as a raw list.</p>
+        </div>
+      </section>
+
+      {agentPresentation ? (
+        <section className="ri-panel lookup-block">
+          <div className="lookup-section-heading">
+            <div>
+              <h3>{agentPresentation.title}</h3>
+              <p>The selected agent structure stays attached to the recommendation output.</p>
+            </div>
+          </div>
+          <LookupAgentOutput presentation={agentPresentation} />
+        </section>
+      ) : null}
+
+      {recommendedProducts.length ? (
+        <div className="lookup-product-stack">
+          {recommendedProducts.map(product => (
+            <article key={product.id} className="ri-panel lookup-product-card">
+              <div className="lookup-product-card__top">
+                <div>
+                  <h3>{product.name}</h3>
+                  <StatusPill tone={product.preApproved ? 'warning' : 'neutral'}>{product.preApproved ? 'Pre-approved' : 'Optional'}</StatusPill>
+                </div>
               </div>
-            </SectionPanel>
 
-            <SectionPanel title="Next steps" subtitle="The RM leaves the lookup with an action plan, not just an answer.">
-              <div className="panel-stack">
-                <article className="list-item">
-                  <h4>Recommended action</h4>
-                  <p>{lookupResponse?.recommendedAction}</p>
+              <p className="lookup-product-card__description">{product.description}</p>
+
+              <div className="lookup-product-meta-grid">
+                <article className="lookup-product-meta-card">
+                  <span>{product.id === 'term-loan' ? 'Rate' : product.id === 'wc-buffer' ? 'Limit' : product.id === 'merchant-upgrade' ? 'Incentive' : 'Offer'}</span>
+                  <strong>{product.pricing}</strong>
                 </article>
-                <article className="list-item">
-                  <h4>RM workflow</h4>
-                  <p>Move into engagement outreach or package the result into an insight-delivery conversation.</p>
+                <article className="lookup-product-meta-card">
+                  <span>{product.id === 'term-loan' ? 'Eligibility' : product.id === 'wc-buffer' ? 'Requirements' : product.id === 'merchant-upgrade' ? 'Approval' : 'Eligibility'}</span>
+                  <strong>{product.eligibility}</strong>
                 </article>
-                <ActionLink to="/insights/customize" tone="secondary">
-                  Package as client insight
-                </ActionLink>
               </div>
-            </SectionPanel>
-          </>
-        )}
-      </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <section className="ri-panel lookup-block">
+          <article className="lookup-empty-card">
+            <h4>No recommendation yet</h4>
+            <p>Open the response tab and run a lookup before packaging products into the next-action view.</p>
+          </article>
+        </section>
+      )}
+
+      <section className="ri-panel lookup-block">
+        <div className="lookup-section-heading">
+          <div>
+            <h3>Next steps</h3>
+            <p>The RM leaves the lookup with an action plan, not just an answer.</p>
+          </div>
+        </div>
+
+        <div className="lookup-next-steps-grid">
+          <article className="lookup-next-step-card lookup-next-step-card--action">
+            <span>Recommended action</span>
+            <strong>{lookupResponse?.recommendedAction}</strong>
+          </article>
+          <article className="lookup-next-step-card lookup-next-step-card--workflow">
+            <span>RM workflow</span>
+            <strong>Move into engagement outreach or package the result into an insight-delivery conversation.</strong>
+          </article>
+        </div>
+
+        <div className="lookup-recommendation-actions">
+          <Link className="lookup-primary-cta" to="/insights/customize">
+            <span>Package as client insight</span>
+          </Link>
+          <Link className="lookup-inline-link lookup-inline-link--secondary" to="/engagement/outreach">
+            <span>Use in engagement</span>
+            <ArrowRight size={18} />
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }

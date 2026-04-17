@@ -1,8 +1,9 @@
-import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, MoveUpRight } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { sectorBriefings } from '../../data/demoData';
-import { ActionLink, JourneyStepper, PageHeader, SectionPanel, StatusPill, useJourneyStep } from '../../components/UI';
+import { SectorJourneyTabs, useJourneyStep } from '../../components/UI';
 import { useDemoState } from '../../state/DemoStateProvider';
-import { getViewContext, sectorSteps } from '../pageContext';
+import { getViewContext } from '../pageContext';
 
 export default function OverviewPage() {
   const navigate = useNavigate();
@@ -12,41 +13,62 @@ export default function OverviewPage() {
   useJourneyStep('sector', 'overview');
 
   return (
-    <div className="page">
-      <PageHeader
-        eyebrow="Sector Briefing"
-        title="Sector overview"
-        description="Periodic and triggered sector intelligence gives the RM forward-looking context and a direct route into client relevance."
-        actions={<ActionLink to="/sector/deep-dive">Open current deep dive</ActionLink>}
-      />
+    <div className="ri-page sector-page">
+      <header className="sector-route-header">
+        <Link className="sector-back-link" to="/dashboard">
+          <ArrowLeft size={24} />
+          <span>Back to Dashboard</span>
+        </Link>
+        <h2>Sector Briefing</h2>
+        <p className="sector-route-header__subtitle">Sector overview</p>
+        <p>Periodic and triggered sector intelligence gives the RM forward-looking context and a direct route into client relevance.</p>
+      </header>
 
-      <JourneyStepper steps={sectorSteps} currentStep="overview" />
+      <section className="ri-panel sector-stepper-panel">
+        <SectorJourneyTabs currentStep="overview" />
+      </section>
 
-      <SectionPanel title="Sector signals" subtitle={`Current client context: ${client.name}`}>
-        <div className="cards-grid">
-          {Object.values(sectorBriefings).map(briefing => (
+      <section className="ri-panel sector-intro-panel">
+        <div className="sector-intro-panel__copy">
+          <h3>Sector signals</h3>
+          <p>{`Current client context: ${client.name}`}</p>
+        </div>
+      </section>
+
+      <section className="sector-card-grid" aria-label="Sector signals">
+        {Object.values(sectorBriefings).map(briefing => {
+          const selected = state.sectorFocus === briefing.id || (!state.sectorFocus && client.sectorId === briefing.id);
+
+          return (
             <button
               key={briefing.id}
               type="button"
-              className="sector-card"
+              className={`ri-panel sector-briefing-card ${selected ? 'sector-briefing-card--selected' : ''}`}
               onClick={() => {
                 dispatch({ type: 'SET_SECTOR_FOCUS', sectorId: briefing.id });
                 navigate('/sector/deep-dive');
               }}
             >
-              <div className="client-card__top">
-                <h4>{briefing.name}</h4>
-                <StatusPill tone="neutral">{briefing.growthTrend}</StatusPill>
+              <div className="sector-briefing-card__top">
+                <div className="sector-briefing-card__heading">
+                  <h3>{briefing.name}</h3>
+                  <span className="sector-trend-pill">{briefing.growthTrend}</span>
+                </div>
+                <span className="sector-briefing-card__icon" aria-hidden="true">
+                  <MoveUpRight size={28} />
+                </span>
               </div>
-              <p>{briefing.thesis}</p>
-              <div className="inline-meta">
-                <span>{briefing.riskSignal}</span>
-                <span>{briefing.opportunitySignal}</span>
-              </div>
+
+              <p className="sector-briefing-card__thesis">{briefing.thesis}</p>
+
+              <ul className="sector-bullet-list">
+                <li>{briefing.riskSignal}</li>
+                <li>{briefing.opportunitySignal}</li>
+              </ul>
             </button>
-          ))}
-        </div>
-      </SectionPanel>
+          );
+        })}
+      </section>
     </div>
   );
 }

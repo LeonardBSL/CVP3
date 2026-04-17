@@ -1,8 +1,12 @@
-import { ActionLink, InsightCard, JourneyStepper, MetricGrid, PageHeader, SectionPanel, useJourneyStep } from '../../components/UI';
+import { ArrowLeft, ArrowRight, Sparkles } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { JourneyNoteAction } from '../../components/InternalNotes';
 import RichEvidenceNarrative from '../../components/RichEvidenceNarrative';
+import { InsightJourneyStepper, SourceChips, useJourneyStep } from '../../components/UI';
 import { useDemoState } from '../../state/DemoStateProvider';
 import { getViewContext, insightSteps } from '../pageContext';
+
+const supportNoteTones = ['neutral', 'warm', 'critical'];
 
 export default function InsightDetailPage() {
   const { state } = useDemoState();
@@ -11,51 +15,119 @@ export default function InsightDetailPage() {
   useJourneyStep('insight', 'insight');
 
   return (
-    <div className="page">
-      <PageHeader
-        eyebrow="Insight Delivery"
-        title="Detailed insight view"
-        description="This step combines the client transaction pattern and sector knowledge into one longform AI explanation that the RM can review before client-facing editing."
-        actions={
-          <>
-            <JourneyNoteAction clientId={client.id} insightRecordId={activeInsightRecord?.id} />
-            <ActionLink to="/insights/customize">Customize insight</ActionLink>
-          </>
-        }
-      />
+    <div className="ri-page insight-page">
+      <Link className="portal-breadcrumb" to="/dashboard">
+        <ArrowLeft size={20} />
+        <span>Back to Dashboard</span>
+      </Link>
 
-      <JourneyStepper steps={insightSteps} currentStep="insight" />
+      <section className="engagement-route-header">
+        <h2>Insight Delivery</h2>
+      </section>
 
-      <div className="two-column-grid">
-        <SectionPanel title={insight.headline} subtitle={`${client.name} | ${client.persona}`} accent="accent">
-          <InsightCard
-            confidence={insight.confidence}
-            whyNow={insight.whyNow}
-            sourceIds={insight.sourceIds}
-            showSources={false}
-            narrative={{
-              whatHappened: insight.whatHappened,
-              whyItMatters: insight.whyItMatters,
-              whatToDoNext: insight.whatToDoNext,
-            }}
-            recommendedAction={insight.recommendedAction}
-          >
-            <RichEvidenceNarrative response={insight.richResponse} />
-          </InsightCard>
-        </SectionPanel>
+      <section className="ri-panel engagement-stepper-panel">
+        <InsightJourneyStepper steps={insightSteps} currentStep="insight" />
+      </section>
 
-        <SectionPanel title="Client transaction view" subtitle="The structured summary stays grounded in the client account and cash-flow profile.">
-          <MetricGrid items={insight.transactionalMetrics} />
-          <div className="panel-stack">
-            {insight.bundleEvidence.notes.map(note => (
-              <article key={note.title} className="list-item">
-                <h4>{note.title}</h4>
-                <p>{note.body}</p>
-              </article>
-            ))}
+      <section className="ri-panel engagement-main-panel insight-main-panel">
+        <div className="engagement-panel-header">
+          <div>
+            <h3>{insight.headline}</h3>
+            <p>
+              {client.name} | {client.persona}
+            </p>
           </div>
-        </SectionPanel>
-      </div>
+          <div className="engagement-header-actions">
+            <JourneyNoteAction
+              clientId={client.id}
+              insightRecordId={activeInsightRecord?.id}
+              buttonTone="ghost"
+              buttonClassName="insight-note-action"
+            />
+          </div>
+        </div>
+
+        <article className="engagement-insight-banner">
+          <div className="engagement-insight-banner__icon">
+            <Sparkles size={26} />
+          </div>
+          <div>
+            <strong>AI-generated insight</strong>
+            <span>{insight.confidence}% confidence</span>
+          </div>
+        </article>
+
+        <div className="engagement-detail-stack">
+          <article className="engagement-detail-block">
+            <span>Why now surfaced</span>
+            <p>{insight.whyNow}</p>
+          </article>
+          <article className="engagement-detail-block">
+            <span>What happened</span>
+            <p>{insight.whatHappened}</p>
+          </article>
+          <article className="engagement-detail-block">
+            <span>Why it matters</span>
+            <p>{insight.whyItMatters}</p>
+          </article>
+          <article className="engagement-detail-block">
+            <span>What to do next</span>
+            <p>{insight.whatToDoNext}</p>
+          </article>
+        </div>
+      </section>
+
+      <section className="ri-panel engagement-main-panel insight-rich-response-panel">
+        <div className="engagement-section-heading">
+          <div>
+            <h3>Detailed model interpretation</h3>
+            <p>Retain the grounded detailed response with the existing citations, hover states, and source-document access.</p>
+          </div>
+        </div>
+
+        <RichEvidenceNarrative response={insight.richResponse} />
+
+        <div className="engagement-source-section">
+          <h4>Data sources</h4>
+          <SourceChips sourceIds={insight.sourceIds} />
+        </div>
+      </section>
+
+      <section className="ri-panel insight-transaction-panel">
+        <div className="engagement-section-heading">
+          <div>
+            <h3>Client transaction view</h3>
+            <p>The structured summary stays grounded in the client account and cash-flow profile.</p>
+          </div>
+        </div>
+
+        <div className="engagement-stat-grid">
+          {insight.transactionalMetrics.map(metric => (
+            <article key={metric.label} className="engagement-stat-card">
+              <span>{metric.label}</span>
+              <strong>{metric.value}</strong>
+              {metric.meta ? <p>{metric.meta}</p> : null}
+            </article>
+          ))}
+        </div>
+
+        <div className="insight-support-notes">
+          {insight.bundleEvidence.notes.map((note, index) => (
+            <article
+              key={note.title}
+              className={`insight-support-note insight-support-note--${supportNoteTones[index] ?? 'neutral'}`}
+            >
+              <h4>{note.title}</h4>
+              <p>{note.body}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <Link className="engagement-primary-cta insight-primary-cta" to="/insights/customize">
+        <span>Customize insight</span>
+        <ArrowRight size={22} />
+      </Link>
     </div>
   );
 }

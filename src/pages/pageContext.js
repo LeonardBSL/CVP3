@@ -8,6 +8,7 @@ import {
   getProductById,
   getScenarioById,
   getSectorBriefingById,
+  sortAlerts,
 } from '../data/demoData';
 
 export const engagementSteps = [
@@ -135,6 +136,15 @@ function buildPreMeetingWatchpoints({ scenario, insight, briefing }) {
     `Early warning indicator: ${scenario.alert.whyNow}`,
     `${insight.transactionalMetrics[2]?.label ?? 'Operating trend'} is the watch item to monitor before the next cycle turns.`,
   ];
+}
+
+function parsePortfolioMillions(value = '') {
+  const match = value.match(/R(\d+(?:\.\d+)?)m/i);
+  return match ? Number(match[1]) : 0;
+}
+
+function formatPortfolioMillions(value) {
+  return `R${Math.round(value)}m`;
 }
 
 function buildOpportunityCards(products, selection, insight) {
@@ -471,4 +481,28 @@ export function getLookupPresentationForResponse(state, responseId = null) {
 
 export function getLookupViewContext(state) {
   return getLookupPresentationForResponse(state);
+}
+
+export function getDashboardPresentation(state) {
+  const context = getViewContext(state);
+  const urgentAlerts = state.alerts.filter(alert => ['warning', 'critical'].includes(alert.severity)).sort(sortAlerts);
+  const totalPortfolioValue = clients.reduce((sum, client) => sum + parsePortfolioMillions(client.relationshipValue), 0);
+
+  return {
+    ...context,
+    totalPortfolioLabel: formatPortfolioMillions(totalPortfolioValue),
+    activeClientsCount: clients.length,
+    urgentAlertCount: urgentAlerts.length,
+    avgResponseLabel: '2.4hrs',
+    highestUrgentAlert: urgentAlerts[0] ?? state.alerts[0] ?? null,
+  };
+}
+
+export function getPortalRecordVisibility(records, expanded, limit = 2) {
+  const visibleRecords = expanded ? records : records.slice(0, limit);
+  return {
+    visibleRecords,
+    remainingCount: Math.max(0, records.length - visibleRecords.length),
+    hasMore: records.length > visibleRecords.length,
+  };
 }

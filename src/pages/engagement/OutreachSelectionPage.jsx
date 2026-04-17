@@ -1,112 +1,135 @@
-import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, ArrowRight, CalendarDays, Mail, Phone } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { EngagementPhaseNoteAction } from '../../components/InternalNotes';
+import { EngagementJourneyStepper, useJourneyStep } from '../../components/UI';
 import { useDemoState } from '../../state/DemoStateProvider';
-import { JourneyStepper, OutreachChoiceIcon, PageHeader, SectionPanel, StatusPill, useJourneyStep } from '../../components/UI';
-import { EngagementPhaseNoteAction, JourneyNoteAction } from '../../components/InternalNotes';
 import { engagementSteps, getViewContext } from '../pageContext';
 
 const choices = [
-  { id: 'call', title: 'Call', description: 'Best for early stress or same-day tactical alignment.' },
-  { id: 'email', title: 'Email', description: 'Best for low-friction follow-up once the narrative is clear.' },
-  { id: 'meeting', title: 'Meeting', description: 'Best for strategic package review and relationship depth.' },
+  {
+    id: 'call',
+    title: 'Call',
+    description: 'Best for early stress or same-day tactical alignment.',
+    icon: Phone,
+  },
+  {
+    id: 'email',
+    title: 'Email',
+    description: 'Best for low-friction follow-up once the narrative is clear.',
+    icon: Mail,
+  },
+  {
+    id: 'meeting',
+    title: 'Meeting',
+    description: 'Best for strategic package review and relationship depth.',
+    icon: CalendarDays,
+  },
 ];
 
 export default function OutreachSelectionPage() {
   const navigate = useNavigate();
   const { state, dispatch } = useDemoState();
-  const { activeInsightRecord, client, pendingPreEngagementNotes, scenario, insight } = getViewContext(state);
+  const { client, pendingPreEngagementNotes, scenario, insight } = getViewContext(state);
 
   useJourneyStep('engagement', 'outreach');
 
+  const selectedChoice = choices.find(choice => choice.id === state.outreachChoice) ?? choices[0];
+
   return (
-    <div className="page">
-      <PageHeader
-        eyebrow="Advisory Engagement"
-        title="Outreach selection screen"
-        description="Every insight ends in a clear RM action. The channel is chosen deliberately to match the urgency, trust level, and narrative style of the opportunity."
-        actions={
-          <>
-            <JourneyNoteAction clientId={client.id} insightRecordId={activeInsightRecord?.id} />
-            <button
-              type="button"
-              className="button button--primary"
-              onClick={() => {
-                dispatch({ type: 'CONFIRM_OUTREACH' });
-                navigate('/engagement/confirm');
-              }}
-            >
-              Confirm outreach
-            </button>
-          </>
-        }
-      />
+    <div className="ri-page engagement-page">
+      <Link className="portal-breadcrumb" to="/dashboard">
+        <ArrowLeft size={20} />
+        <span>Back to Dashboard</span>
+      </Link>
 
-      <JourneyStepper steps={engagementSteps} currentStep="outreach" />
+      <section className="engagement-route-header">
+        <h2>Advisory Engagement</h2>
+      </section>
 
-      <div className="two-column-grid">
-        <SectionPanel title="Choose delivery channel" subtitle="Human-led engagement keeps the RM accountable for the final client moment.">
-          <div className="choice-grid">
-            {choices.map(choice => (
+      <section className="ri-panel engagement-stepper-panel">
+        <EngagementJourneyStepper steps={engagementSteps} currentStep="outreach" />
+      </section>
+
+      <section className="ri-panel engagement-main-panel">
+        <div className="engagement-section-heading">
+          <h3>Select outreach channel</h3>
+        </div>
+
+        <div className="engagement-choice-grid">
+          {choices.map(choice => {
+            const Icon = choice.icon;
+            const selected = state.outreachChoice === choice.id;
+
+            return (
               <button
                 key={choice.id}
                 type="button"
-                className="choice-card"
+                className={`engagement-choice-card ${selected ? 'engagement-choice-card--selected' : ''}`}
+                aria-pressed={selected}
                 onClick={() => dispatch({ type: 'SET_OUTREACH_CHOICE', choice: choice.id })}
               >
-                <div className="client-card__top">
-                  <h4>{choice.title}</h4>
-                  <OutreachChoiceIcon choice={choice.id} />
-                </div>
+                <Icon size={34} />
+                <strong>{choice.title}</strong>
                 <p>{choice.description}</p>
-                <StatusPill tone={state.outreachChoice === choice.id ? 'positive' : 'neutral'}>
-                  {state.outreachChoice === choice.id ? 'Selected' : 'Available'}
-                </StatusPill>
               </button>
-            ))}
-          </div>
-        </SectionPanel>
+            );
+          })}
+        </div>
 
-        <SectionPanel
-          title="Outreach preview"
-          subtitle="The RM delivers a packaged recommendation, not a raw model output."
-          action={<EngagementPhaseNoteAction clientId={client.id} scenarioId={scenario.id} phase="pre" buttonTone="ghost" />}
-        >
-          <div className="panel-stack">
-            <article className="list-item">
-              <h4>Target client</h4>
-              <p>{client.name}</p>
-            </article>
-            <article className="list-item">
-              <h4>Opening line</h4>
-              <p>{insight.headline}</p>
-            </article>
-            <article className="list-item">
-              <h4>Recommended emphasis</h4>
-              <p>{scenario.label}: {insight.recommendedAction}</p>
-            </article>
-            <article className="list-item">
-              <h4>Selected channel</h4>
-              <p>{state.outreachChoice}</p>
-            </article>
-            <article className="list-item">
-              <div className="list-item__top">
-                <h4>Pre-engagement notes</h4>
-                <StatusPill tone="neutral">{pendingPreEngagementNotes.length}</StatusPill>
+        <div className="engagement-context-stack">
+          <article className="engagement-context-card">
+            <h4>Outreach preview</h4>
+            <div className="engagement-outreach-preview">
+              <div>
+                <span>Selected channel</span>
+                <strong>{selectedChoice.title}</strong>
               </div>
-              {pendingPreEngagementNotes.length ? (
-                <div className="note-list">
-                  {pendingPreEngagementNotes.map(note => (
-                    <article key={note.id} className="note-item">
-                      <p>{note.body}</p>
-                    </article>
-                  ))}
-                </div>
-              ) : (
-                <p>No pre-engagement notes captured yet.</p>
-              )}
-            </article>
-          </div>
-        </SectionPanel>
-      </div>
+              <div>
+                <span>Opening line</span>
+                <strong>{insight.headline}</strong>
+              </div>
+              <div>
+                <span>Recommended emphasis</span>
+                <strong>
+                  {scenario.label}: {insight.recommendedAction}
+                </strong>
+              </div>
+            </div>
+          </article>
+
+          <article className="engagement-context-card">
+            <div className="engagement-context-card__header">
+              <h4>Pre-engagement notes</h4>
+              <div className="engagement-header-actions">
+                <EngagementPhaseNoteAction clientId={client.id} scenarioId={scenario.id} phase="pre" buttonTone="ghost" />
+              </div>
+            </div>
+            {pendingPreEngagementNotes.length ? (
+              <div className="engagement-note-list">
+                {pendingPreEngagementNotes.map(note => (
+                  <article key={note.id} className="engagement-note-card">
+                    <p>{note.body}</p>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p>No pre-engagement notes captured yet.</p>
+            )}
+          </article>
+        </div>
+      </section>
+
+      <button
+        type="button"
+        className="engagement-primary-cta"
+        onClick={() => {
+          dispatch({ type: 'CONFIRM_OUTREACH' });
+          navigate('/engagement/confirm');
+        }}
+      >
+        <span>Confirm outreach</span>
+        <ArrowRight size={22} />
+      </button>
     </div>
   );
 }
