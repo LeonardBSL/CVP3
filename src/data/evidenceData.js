@@ -174,6 +174,83 @@ export const citationCatalog = {
     quote: 'If your data is not structured for AI, your AI will be slow, expensive, and unreliable.',
     excerpt: 'The paper argues that disciplined, machine-friendly data is a prerequisite for reliable scaling and decision support.',
   },
+  sectorWholesaleMonitor: {
+    id: 'sectorWholesaleMonitor',
+    kind: 'sector',
+    title: 'Wholesale demand and landed-cost monitor',
+    description: 'Sector reference built from order-book, import-cost, and stock-turn signals across wholesale operators.',
+    dataUsed: 'Forward-order momentum, landed-cost volatility, stock-cover ranges, and collections-cycle benchmarks across wholesale channels.',
+  },
+  sectorRetailFranchiseMonitor: {
+    id: 'sectorRetailFranchiseMonitor',
+    kind: 'sector',
+    title: 'Retail and franchise sector monitor',
+    description: 'Sector reference covering footfall, franchise rollout timing, and stock-cover discipline.',
+    dataUsed: 'Footfall recovery, card-spend trend, franchise rollout cadence, stock-cover ranges, and collections discipline across retail operators.',
+  },
+  sectorAgricultureMonitor: {
+    id: 'sectorAgricultureMonitor',
+    kind: 'sector',
+    title: 'Agriculture operating monitor',
+    description: 'Sector reference covering rainfall variability, input costs, and delivery-cycle risk.',
+    dataUsed: 'Rainfall outlook, input-cost pressure, delivery timing, harvest working-capital needs, and commodity cash-conversion patterns.',
+  },
+  sectorTransportLogisticsMonitor: {
+    id: 'sectorTransportLogisticsMonitor',
+    kind: 'sector',
+    title: 'Transport and logistics pressure monitor',
+    description: 'Sector reference covering fuel pressure, corridor settlement timing, and fleet utilization.',
+    dataUsed: 'Diesel-cost volatility, settlement timing on key corridors, fleet utilization, receivables lag, and liquidity-buffer movement.',
+  },
+  sectorManufacturingMonitor: {
+    id: 'sectorManufacturingMonitor',
+    kind: 'sector',
+    title: 'Manufacturing cycle monitor',
+    description: 'Sector reference covering procurement timing, production cadence, and receivables aging.',
+    dataUsed: 'Procurement lead times, order-book visibility, production schedules, receivables aging, and working-capital pressure benchmarks.',
+  },
+  sectorPublicSectorMonitor: {
+    id: 'sectorPublicSectorMonitor',
+    kind: 'sector',
+    title: 'Public sector payment and budget monitor',
+    description: 'Sector reference covering budget execution, payment timing, and tender pipeline movement.',
+    dataUsed: 'Budget drawdown timing, municipal payment aging, tender pipeline changes, concentration risk, and invoice-cycle performance.',
+  },
+  sectorProfessionalServicesMonitor: {
+    id: 'sectorProfessionalServicesMonitor',
+    kind: 'sector',
+    title: 'Professional services fee-realisation monitor',
+    description: 'Sector reference covering utilization, debtor days, and pipeline conversion.',
+    dataUsed: 'Utilization benchmarks, fee realization, debtor days, retainer stability, and pipeline conversion across professional services firms.',
+  },
+  policyExpansionAppetite: {
+    id: 'policyExpansionAppetite',
+    kind: 'policy',
+    title: 'SME expansion appetite standard',
+    description: 'Internal reference for rollout funding, affordability triggers, and advisory escalation.',
+    dataUsed: 'Current guidance on fit-out and rollout funding, affordability guardrails, and trigger conditions for escalation into advisory structuring.',
+  },
+  policyWorkingCapitalDiscipline: {
+    id: 'policyWorkingCapitalDiscipline',
+    kind: 'policy',
+    title: 'Working-capital discipline standard',
+    description: 'Internal reference for liquidity runway, collections stability, and buffer sizing.',
+    dataUsed: 'Liquidity runway thresholds, collections-stability requirements, overdraft tolerance, and sizing guidance for working-capital buffers.',
+  },
+  policyReceivablesCoverage: {
+    id: 'policyReceivablesCoverage',
+    kind: 'policy',
+    title: 'Receivables and supplier-timing standard',
+    description: 'Internal reference for intervening when timing mismatches begin to widen.',
+    dataUsed: 'Policy thresholds for supplier acceleration, receivables aging, early-intervention triggers, and daily visibility requirements.',
+  },
+  policyPublicSectorPayment: {
+    id: 'policyPublicSectorPayment',
+    kind: 'policy',
+    title: 'Public-sector payment-risk standard',
+    description: 'Internal reference for debtor concentration, invoice-cycle controls, and liquidity cover.',
+    dataUsed: 'Controls for debtor concentration, invoice-cycle monitoring, liquidity-cover thresholds, and escalation paths for delayed public-sector payments.',
+  },
 };
 
 export const sourceCatalog = citationCatalog;
@@ -187,5 +264,9 @@ export function getKbDocument(documentId) {
 }
 
 export function getCitationKindLabel(citation) {
-  return citation.kind === 'kb' ? 'Knowledge base' : 'Client data';
+  if (citation.kind === 'kb') return 'Knowledge base';
+  if (citation.kind === 'transaction') return 'Client data';
+  if (citation.kind === 'sector') return 'Sector intelligence';
+  if (citation.kind === 'policy') return 'Policy';
+  return 'Reference';
 }

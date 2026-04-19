@@ -1,6 +1,6 @@
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { SectorJourneyTabs, useJourneyStep } from '../../components/UI';
+import { SectorJourneyTabs, SourceChips, useJourneyStep } from '../../components/UI';
 import { useDemoState } from '../../state/DemoStateProvider';
 import { getViewContext } from '../pageContext';
 
@@ -49,6 +49,13 @@ export default function ClientRelevancePage() {
             <h3>Recommended RM action</h3>
             <p>{insight.recommendedAction}</p>
           </article>
+
+          {briefing.sourceIds?.length ? (
+            <article className="sector-client-card sector-client-card--references">
+              <h3>Reference set</h3>
+              <SourceChips sourceIds={briefing.sourceIds} />
+            </article>
+          ) : null}
         </div>
       </section>
 

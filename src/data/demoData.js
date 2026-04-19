@@ -65,7 +65,7 @@ export const clients = [
     id: 'meridian-distributor',
     name: 'Meridian Trade Grid',
     persona: 'Tech-enabled distributor',
-    sectorId: 'distribution',
+    sectorId: 'wholesale',
     focus: 'Cross-sector growth and treasury discipline',
     relationshipValue: 'R95m portfolio',
     revenueTrend: '+22% YoY',
@@ -199,7 +199,7 @@ export const scenarios = [
     shortLabel: 'Growth',
     severity: 'positive',
     clientId: 'meridian-distributor',
-    sectorId: 'distribution',
+    sectorId: 'wholesale',
     bundleId: 'growthExpansion',
     insightPackId: 'insight-growth-distributor',
     lookupResponseId: 'lookup-growth-distributor',
@@ -522,10 +522,440 @@ We would welcome a discussion on a focused growth package that combines funding 
 };
 
 export const sectorBriefings = {
-  retail: { id: 'retail', name: 'Retail', thesis: 'Operators with disciplined cash conversion are best positioned to move early on expansion decisions.', growthTrend: '+7% sector momentum', riskSignal: 'Inventory timing remains sensitive', opportunitySignal: 'Expansion-ready operators gaining share', commentary: 'Sector expert papers point to a cleaner divide between operators preserving cash discipline and those relying on late-cycle funding support.', trendData: [{ period: 'Q1', growth: 51, risk: 43 }, { period: 'Q2', growth: 56, risk: 41 }, { period: 'Q3', growth: 61, risk: 39 }, { period: 'Q4', growth: 68, risk: 37 }], drivers: ['Footfall recovery is concentrated in stronger operators.', 'Collections quality remains a differentiator.', 'Expansion appetite is building where liquidity remains controlled.'] },
-  manufacturing: { id: 'manufacturing', name: 'Manufacturing', thesis: 'Procurement volatility is increasing the value of treasury visibility and flexible liquidity structures.', growthTrend: '+3% sector momentum', riskSignal: 'Procurement timing volatility elevated', opportunitySignal: 'Receivables finance is underused', commentary: 'Sector specialists are seeing earlier funding gaps emerge where procurement cycles move faster than receivables recovery.', trendData: [{ period: 'Q1', growth: 48, risk: 52 }, { period: 'Q2', growth: 46, risk: 58 }, { period: 'Q3', growth: 44, risk: 61 }, { period: 'Q4', growth: 47, risk: 57 }], drivers: ['Funding gaps are appearing earlier.', 'Receivables timing remains inconsistent.', 'Payment tooling can reduce operational stress.'] },
-  transport: { id: 'transport', name: 'Transport & Logistics', thesis: 'Margin pressure is rising as fuel volatility and settlement delays compound each other.', growthTrend: '+4% sector momentum', riskSignal: 'Margin compression accelerating', opportunitySignal: 'Resilience funding and treasury advice are timely', commentary: 'Sector knowledge is most useful when it is translated into client-level working-capital and margin-protection actions before operations are disrupted.', trendData: [{ period: 'Q1', growth: 54, risk: 46 }, { period: 'Q2', growth: 53, risk: 52 }, { period: 'Q3', growth: 49, risk: 61 }, { period: 'Q4', growth: 45, risk: 68 }], drivers: ['Fuel cost pressure is outside the recent range.', 'Settlement timing is widening on key corridors.', 'Fleet efficiency conversations are regaining relevance.'] },
-  distribution: { id: 'distribution', name: 'Tech-enabled Distribution', thesis: 'Digitally enabled distributors are using cash discipline and stock turn as strategic growth advantages.', growthTrend: '+9% sector momentum', riskSignal: 'Treasury discipline must scale with growth', opportunitySignal: 'Expansion planning is accelerating', commentary: 'Sector papers suggest the strongest distributors are pairing growth with disciplined cash conversion rather than chasing volume alone.', trendData: [{ period: 'Q1', growth: 57, risk: 35 }, { period: 'Q2', growth: 62, risk: 34 }, { period: 'Q3', growth: 68, risk: 32 }, { period: 'Q4', growth: 74, risk: 33 }], drivers: ['Digital conversion rates are improving.', 'Collections velocity remains strong.', 'Expansion appetite is broadening beyond core verticals.'] },
+  wholesale: {
+    id: 'wholesale',
+    name: 'Wholesale',
+    thesis: 'Wholesalers with disciplined inventory turns and clean collections are absorbing demand without overextending working capital.',
+    growthTrend: '+6% sector momentum',
+    riskSignal: 'Imported cost pressure remains volatile',
+    opportunitySignal: 'Inventory finance and treasury planning gaining relevance',
+    commentary: 'The best wholesale operators are not simply chasing volume. They are using tighter stock discipline, stronger cash conversion, and better landed-cost visibility to create room for controlled growth.',
+    trendData: [{ period: 'Q1', growth: 49, risk: 46 }, { period: 'Q2', growth: 55, risk: 44 }, { period: 'Q3', growth: 61, risk: 43 }, { period: 'Q4', growth: 66, risk: 41 }],
+    drivers: ['Restocking demand is returning selectively across stronger buyer cohorts.', 'Margin quality is still exposed to landed-cost volatility.', 'Treasury discipline is becoming a competitive differentiator.'],
+    statCards: [
+      { label: 'Order-book pulse', value: '+6%', meta: 'Restocking demand improving' },
+      { label: 'Margin watch', value: 'Moderate', meta: 'Import costs still volatile' },
+      { label: 'Advisory angle', value: 'Inventory timing', meta: 'Fund working capital with tighter visibility' },
+    ],
+    sourceIds: ['sectorWholesaleMonitor', 'policyWorkingCapitalDiscipline', 'kbWinningTailoredFinance', 'kbTechStructuredData'],
+    richResponse: {
+      title: 'Detailed sector report',
+      blocks: [
+        paragraphBlock('sector-wholesale-summary', [
+          citedText('Wholesale demand is improving, but the strongest operators are the ones keeping inventory turns disciplined and collections tight while landed-cost volatility remains elevated. ', ['sectorWholesaleMonitor']),
+          citedText('That matters because the current working-capital discipline standard still favours clients who can demonstrate visible liquidity control before additional stock finance is layered on.', ['policyWorkingCapitalDiscipline']),
+        ]),
+        bulletBlock('sector-wholesale-drivers', [
+          [
+            citedText('Forward-order momentum is returning, but it is uneven enough that inventory timing still matters more than topline growth on its own.', ['sectorWholesaleMonitor']),
+          ],
+          [
+            citedText('The sector story becomes stronger when the RM can show that funding will preserve operating discipline rather than simply add leverage to a volatile import cycle.', ['policyWorkingCapitalDiscipline', 'kbWinningTailoredFinance']),
+          ],
+          [
+            citedText('Structured, machine-friendly operating data is becoming part of the advisory edge because it helps separate healthy restocking from hidden working-capital drag.', ['kbTechStructuredData']),
+          ],
+        ]),
+        tableBlock(
+          'sector-wholesale-table',
+          [
+            { id: 'lens', label: 'Lens' },
+            { id: 'current', label: 'Current read' },
+            { id: 'rm', label: 'RM implication' },
+          ],
+          [
+            tableRow('sector-wholesale-row-1', [
+              tableCell([citedText('Demand')]),
+              tableCell([citedText('Selective restocking is visible in stronger order books.', ['sectorWholesaleMonitor'])]),
+              tableCell([citedText('Lead with clients that can show repeat collections strength before scaling stock.', ['policyWorkingCapitalDiscipline'])]),
+            ]),
+            tableRow('sector-wholesale-row-2', [
+              tableCell([citedText('Margin')]),
+              tableCell([citedText('Landed-cost volatility is still a live pressure point.', ['sectorWholesaleMonitor'])]),
+              tableCell([citedText('Position treasury visibility and inventory discipline as part of the package, not an afterthought.', ['kbTechStructuredData'])]),
+            ]),
+            tableRow('sector-wholesale-row-3', [
+              tableCell([citedText('Funding')]),
+              tableCell([citedText('Two-tranche working-capital structures remain the cleanest fit for operators scaling carefully.', ['kbWinningTailoredFinance'])]),
+              tableCell([citedText('Anchor the conversation in control of timing and cash conversion.', ['policyWorkingCapitalDiscipline'])]),
+            ]),
+          ],
+        ),
+      ],
+    },
+  },
+  retail: {
+    id: 'retail',
+    name: 'Retail & Franchise',
+    thesis: 'Operators with disciplined cash conversion are best positioned to move early on expansion decisions.',
+    growthTrend: '+7% sector momentum',
+    riskSignal: 'Inventory timing remains sensitive',
+    opportunitySignal: 'Expansion-ready operators gaining share',
+    commentary: 'Retail and franchise momentum is improving, but the cleanest expansion stories are still coming from operators that can show stable collections, healthy operating balances, and controlled stock timing.',
+    trendData: [{ period: 'Q1', growth: 51, risk: 43 }, { period: 'Q2', growth: 56, risk: 41 }, { period: 'Q3', growth: 61, risk: 39 }, { period: 'Q4', growth: 68, risk: 37 }],
+    drivers: ['Footfall recovery is concentrated in stronger operators.', 'Collections quality remains a differentiator.', 'Expansion appetite is building where liquidity remains controlled.'],
+    statCards: [
+      { label: 'Footfall pulse', value: '+7%', meta: 'Selective recovery holding' },
+      { label: 'Rollout appetite', value: 'Rising', meta: 'Franchise expansion returning' },
+      { label: 'Advisory angle', value: 'Expansion', meta: 'Package growth funding with liquidity control' },
+    ],
+    sourceIds: ['sectorRetailFranchiseMonitor', 'policyExpansionAppetite', 'kbWinningNiche', 'kbWinningTailoredFinance'],
+    richResponse: {
+      title: 'Detailed sector report',
+      blocks: [
+        paragraphBlock('sector-retail-summary', [
+          citedText('Retail and franchise operators are moving back into expansion mode, but the sector is still rewarding operators who can prove collections stability and tight cash conversion first. ', ['sectorRetailFranchiseMonitor']),
+          citedText('The current expansion appetite standard reinforces that rollout conversations are strongest when they are grounded in operating control rather than rescue funding.', ['policyExpansionAppetite']),
+        ]),
+        bulletBlock('sector-retail-drivers', [
+          [
+            citedText('Footfall recovery is not broad-based enough to make generic growth funding the right lead-in for every client.', ['sectorRetailFranchiseMonitor']),
+          ],
+          [
+            citedText('The SME segment paper supports a focused proposition: lead with the operator story, not with a generic lending script.', ['kbWinningNiche']),
+          ],
+          [
+            citedText('Bundling term funding with a working-capital buffer remains the most credible structure where stock build and site rollout need to move together.', ['kbWinningTailoredFinance', 'policyExpansionAppetite']),
+          ],
+        ]),
+        tableBlock(
+          'sector-retail-table',
+          [
+            { id: 'lens', label: 'Lens' },
+            { id: 'current', label: 'Current read' },
+            { id: 'rm', label: 'RM implication' },
+          ],
+          [
+            tableRow('sector-retail-row-1', [
+              tableCell([citedText('Demand')]),
+              tableCell([citedText('Footfall and store activity are improving, but selectively.', ['sectorRetailFranchiseMonitor'])]),
+              tableCell([citedText('Prioritize operators with visible collections discipline before positioning rollout funding.', ['policyExpansionAppetite'])]),
+            ]),
+            tableRow('sector-retail-row-2', [
+              tableCell([citedText('Positioning')]),
+              tableCell([citedText('Growth conversations are winning when they are proposition-led and client-specific.', ['kbWinningNiche'])]),
+              tableCell([citedText('Frame Absa as the bank helping the client scale with control, not just providing debt.', ['kbWinningNiche'])]),
+            ]),
+            tableRow('sector-retail-row-3', [
+              tableCell([citedText('Structure')]),
+              tableCell([citedText('Bundled growth and liquidity structures match rollout timing better than a single funding line.', ['kbWinningTailoredFinance'])]),
+              tableCell([citedText('Lead with execution readiness and working-capital protection.', ['policyExpansionAppetite'])]),
+            ]),
+          ],
+        ),
+      ],
+    },
+  },
+  agriculture: {
+    id: 'agriculture',
+    name: 'Agriculture',
+    thesis: 'Agriculture conversations are shifting toward input-cost discipline, harvest timing, and liquidity resilience rather than commodity optimism alone.',
+    growthTrend: '+5% sector momentum',
+    riskSignal: 'Input and weather variability remain elevated',
+    opportunitySignal: 'Seasonal working-capital planning is gaining urgency',
+    commentary: 'Agriculture outcomes are still being shaped by weather and input-cost variability, which makes disciplined seasonal funding and payment timing more important than relying on commodity upside alone.',
+    trendData: [{ period: 'Q1', growth: 46, risk: 58 }, { period: 'Q2', growth: 51, risk: 55 }, { period: 'Q3', growth: 57, risk: 52 }, { period: 'Q4', growth: 60, risk: 49 }],
+    drivers: ['Input-cost pressure remains uneven across subsectors.', 'Harvest-cycle timing still dictates liquidity needs.', 'Resilient operators are planning seasonal cover earlier.'],
+    statCards: [
+      { label: 'Seasonal pulse', value: '+5%', meta: 'Harvest activity stabilizing' },
+      { label: 'Risk watch', value: 'Elevated', meta: 'Weather and input costs volatile' },
+      { label: 'Advisory angle', value: 'Seasonality', meta: 'Match funding to delivery and cash cycles' },
+    ],
+    sourceIds: ['sectorAgricultureMonitor', 'policyWorkingCapitalDiscipline', 'policyReceivablesCoverage', 'kbRiskIntegrated'],
+    richResponse: {
+      title: 'Detailed sector report',
+      blocks: [
+        paragraphBlock('sector-agriculture-summary', [
+          citedText('Agriculture momentum is improving, but the real determinant of resilience is still how well operators align input spending, harvest timing, and receivables collection through the season. ', ['sectorAgricultureMonitor']),
+          citedText('That keeps the working-capital discipline and receivables-coverage standards highly relevant, especially where cash gaps appear before harvest receipts land.', ['policyWorkingCapitalDiscipline', 'policyReceivablesCoverage']),
+        ]),
+        bulletBlock('sector-agriculture-drivers', [
+          [
+            citedText('Weather and input variability continue to make generic optimism a poor substitute for disciplined seasonal planning.', ['sectorAgricultureMonitor']),
+          ],
+          [
+            citedText('Integrated risk thinking is useful here because the sector story only becomes clear when cash timing, production risk, and debtor performance are read together.', ['kbRiskIntegrated']),
+          ],
+          [
+            citedText('RM conversations should focus on resilience through the cycle: seasonal liquidity cover, receivables discipline, and early visibility on repayment timing.', ['policyWorkingCapitalDiscipline', 'policyReceivablesCoverage']),
+          ],
+        ]),
+        tableBlock(
+          'sector-agriculture-table',
+          [
+            { id: 'lens', label: 'Lens' },
+            { id: 'current', label: 'Current read' },
+            { id: 'rm', label: 'RM implication' },
+          ],
+          [
+            tableRow('sector-agriculture-row-1', [
+              tableCell([citedText('Seasonality')]),
+              tableCell([citedText('Harvest and delivery timing still dominate cash needs.', ['sectorAgricultureMonitor'])]),
+              tableCell([citedText('Frame liquidity cover around the seasonal calendar, not a flat annual cycle.', ['policyWorkingCapitalDiscipline'])]),
+            ]),
+            tableRow('sector-agriculture-row-2', [
+              tableCell([citedText('Receivables')]),
+              tableCell([citedText('Settlement lags can widen quickly when delivery cycles slip.', ['policyReceivablesCoverage'])]),
+              tableCell([citedText('Use early-intervention language before delayed receipts start to compound.', ['policyReceivablesCoverage'])]),
+            ]),
+            tableRow('sector-agriculture-row-3', [
+              tableCell([citedText('Risk view')]),
+              tableCell([citedText('The sector must be read through connected operational and financial signals.', ['kbRiskIntegrated'])]),
+              tableCell([citedText('Lead with resilience and planning discipline rather than commodity optimism.', ['kbRiskIntegrated'])]),
+            ]),
+          ],
+        ),
+      ],
+    },
+  },
+  transport: {
+    id: 'transport',
+    name: 'Transport & Logistics',
+    thesis: 'Margin pressure is rising as fuel volatility and settlement delays compound each other.',
+    growthTrend: '+4% sector momentum',
+    riskSignal: 'Margin compression accelerating',
+    opportunitySignal: 'Resilience funding and treasury advice are timely',
+    commentary: 'Transport and logistics operators are being squeezed by linked pressures: fuel moves, slower settlements, and thinner day-to-day liquidity. The advisory opportunity is strongest before those pressures fully translate into operational disruption.',
+    trendData: [{ period: 'Q1', growth: 54, risk: 46 }, { period: 'Q2', growth: 53, risk: 52 }, { period: 'Q3', growth: 49, risk: 61 }, { period: 'Q4', growth: 45, risk: 68 }],
+    drivers: ['Fuel cost pressure is outside the recent range.', 'Settlement timing is widening on key corridors.', 'Fleet efficiency conversations are regaining relevance.'],
+    statCards: [
+      { label: 'Settlement pressure', value: '+6 days', meta: 'Corridor timing widening' },
+      { label: 'Fuel watch', value: '+11%', meta: 'Volatility above recent range' },
+      { label: 'Advisory angle', value: 'Resilience', meta: 'Protect margin and flexibility early' },
+    ],
+    sourceIds: ['sectorTransportLogisticsMonitor', 'policyWorkingCapitalDiscipline', 'kbRiskReactive', 'kbRiskIntegrated'],
+    richResponse: {
+      title: 'Detailed sector report',
+      blocks: [
+        paragraphBlock('sector-transport-summary', [
+          citedText('Transport and logistics pressure is no longer a single-issue story. Fuel volatility, settlement delays, and narrowing liquidity buffers are moving together in a way that is starting to compress operating flexibility. ', ['sectorTransportLogisticsMonitor']),
+          citedText('That makes early working-capital discipline more important than waiting for the pressure to show up as a full credit event.', ['policyWorkingCapitalDiscipline']),
+        ]),
+        bulletBlock('sector-transport-drivers', [
+          [
+            citedText('Reactive posture is risky here because linked pressures can compound before management action catches up.', ['kbRiskReactive']),
+          ],
+          [
+            citedText('The more useful lens is integrated risk: read fuel, settlements, payroll cover, and liquidity in one operating story.', ['kbRiskIntegrated', 'sectorTransportLogisticsMonitor']),
+          ],
+          [
+            citedText('RM discussions should move toward margin protection, collections optimization, and treasury support before operations are forced into defensive decisions.', ['policyWorkingCapitalDiscipline']),
+          ],
+        ]),
+        tableBlock(
+          'sector-transport-table',
+          [
+            { id: 'lens', label: 'Lens' },
+            { id: 'current', label: 'Current read' },
+            { id: 'rm', label: 'RM implication' },
+          ],
+          [
+            tableRow('sector-transport-row-1', [
+              tableCell([citedText('Fuel')]),
+              tableCell([citedText('Fuel volatility remains outside the recent range.', ['sectorTransportLogisticsMonitor'])]),
+              tableCell([citedText('Frame treasury support as part of margin protection, not a separate conversation.', ['kbRiskIntegrated'])]),
+            ]),
+            tableRow('sector-transport-row-2', [
+              tableCell([citedText('Settlement')]),
+              tableCell([citedText('Receivables timing is widening on critical corridors.', ['sectorTransportLogisticsMonitor'])]),
+              tableCell([citedText('Position collections and liquidity cover before the lag compounds into operational strain.', ['policyWorkingCapitalDiscipline'])]),
+            ]),
+            tableRow('sector-transport-row-3', [
+              tableCell([citedText('Posture')]),
+              tableCell([citedText('The sector penalizes reactive responses once linked signals turn together.', ['kbRiskReactive'])]),
+              tableCell([citedText('Lead with resilience actions while the client still has room to act.', ['kbRiskIntegrated'])]),
+            ]),
+          ],
+        ),
+      ],
+    },
+  },
+  manufacturing: {
+    id: 'manufacturing',
+    name: 'Manufacturing',
+    thesis: 'Procurement volatility is increasing the value of treasury visibility and flexible liquidity structures.',
+    growthTrend: '+3% sector momentum',
+    riskSignal: 'Procurement timing volatility elevated',
+    opportunitySignal: 'Receivables finance is underused',
+    commentary: 'Manufacturing conversations increasingly turn on timing mismatches: procurement costs arrive earlier while cash conversion is slower to recover. That makes visibility, intervention timing, and receivables support central to the advisory story.',
+    trendData: [{ period: 'Q1', growth: 48, risk: 52 }, { period: 'Q2', growth: 46, risk: 58 }, { period: 'Q3', growth: 44, risk: 61 }, { period: 'Q4', growth: 47, risk: 57 }],
+    drivers: ['Funding gaps are appearing earlier.', 'Receivables timing remains inconsistent.', 'Payment tooling can reduce operational stress.'],
+    statCards: [
+      { label: 'Procurement watch', value: 'Early', meta: 'Supplier timing still bunching' },
+      { label: 'Receivables gap', value: '+7 days', meta: 'Collections not catching up yet' },
+      { label: 'Advisory angle', value: 'Stabilisation', meta: 'Use visibility plus liquidity support' },
+    ],
+    sourceIds: ['sectorManufacturingMonitor', 'policyReceivablesCoverage', 'kbCollectionsStrategic', 'kbTechStructuredData'],
+    richResponse: {
+      title: 'Detailed sector report',
+      blocks: [
+        paragraphBlock('sector-manufacturing-summary', [
+          citedText('Manufacturing remains a timing story more than a volume story: procurement is often arriving earlier than receivables recovery, which puts pressure on otherwise healthy operating cycles. ', ['sectorManufacturingMonitor']),
+          citedText('That is why the current receivables-coverage standard and collections strategy references remain so relevant in the sector conversation.', ['policyReceivablesCoverage', 'kbCollectionsStrategic']),
+        ]),
+        bulletBlock('sector-manufacturing-drivers', [
+          [
+            citedText('Funding gaps are appearing earlier, which means visibility matters before liquidity pressure becomes visible in traditional lagging indicators.', ['sectorManufacturingMonitor', 'kbTechStructuredData']),
+          ],
+          [
+            citedText('Collections and recoveries thinking is useful even for performing clients because it reframes visibility and intervention as strategic capabilities.', ['kbCollectionsStrategic']),
+          ],
+          [
+            citedText('RM conversations should focus on cycle stabilization: flexible liquidity, receivables acceleration, and earlier operational visibility.', ['policyReceivablesCoverage']),
+          ],
+        ]),
+        tableBlock(
+          'sector-manufacturing-table',
+          [
+            { id: 'lens', label: 'Lens' },
+            { id: 'current', label: 'Current read' },
+            { id: 'rm', label: 'RM implication' },
+          ],
+          [
+            tableRow('sector-manufacturing-row-1', [
+              tableCell([citedText('Procurement')]),
+              tableCell([citedText('Supplier timing is still moving ahead of cash recovery.', ['sectorManufacturingMonitor'])]),
+              tableCell([citedText('Lead with timing relief and visibility rather than generic facility expansion.', ['policyReceivablesCoverage'])]),
+            ]),
+            tableRow('sector-manufacturing-row-2', [
+              tableCell([citedText('Collections')]),
+              tableCell([citedText('Receivables aging remains inconsistent across operators.', ['sectorManufacturingMonitor'])]),
+              tableCell([citedText('Use collections strategy language to justify earlier intervention.', ['kbCollectionsStrategic'])]),
+            ]),
+            tableRow('sector-manufacturing-row-3', [
+              tableCell([citedText('Data readiness')]),
+              tableCell([citedText('Better structured operating data improves decision timing.', ['kbTechStructuredData'])]),
+              tableCell([citedText('Position treasury visibility as part of the operating model, not just reporting.', ['kbTechStructuredData'])]),
+            ]),
+          ],
+        ),
+      ],
+    },
+  },
+  'public-sector': {
+    id: 'public-sector',
+    name: 'Public Sector',
+    thesis: 'Public-sector counterparties are creating opportunity where payment discipline is improving, but delayed invoice cycles still require liquidity resilience and tighter debtor controls.',
+    growthTrend: '+2% sector momentum',
+    riskSignal: 'Payment timing remains uneven across entities',
+    opportunitySignal: 'Structured debtor visibility is becoming more valuable',
+    commentary: 'The public-sector story is not simply about exposure appetite. It is about whether payment timing, budget execution, and debtor concentration are being monitored tightly enough for RM conversations to move from caution into structured opportunity.',
+    trendData: [{ period: 'Q1', growth: 42, risk: 59 }, { period: 'Q2', growth: 45, risk: 57 }, { period: 'Q3', growth: 47, risk: 54 }, { period: 'Q4', growth: 50, risk: 52 }],
+    drivers: ['Budget drawdowns remain uneven across entities.', 'Debtor concentration can hide liquidity stress.', 'Visibility over invoice cycles is becoming a differentiator.'],
+    statCards: [
+      { label: 'Budget pulse', value: '+2%', meta: 'Execution stabilizing gradually' },
+      { label: 'Payment watch', value: 'Uneven', meta: 'Invoice cycles still volatile' },
+      { label: 'Advisory angle', value: 'Debtor control', meta: 'Preserve liquidity around slower payments' },
+    ],
+    sourceIds: ['sectorPublicSectorMonitor', 'policyPublicSectorPayment', 'kbRiskIntegrated', 'kbCollectionsStrategic'],
+    richResponse: {
+      title: 'Detailed sector report',
+      blocks: [
+        paragraphBlock('sector-public-summary', [
+          citedText('Public-sector opportunities remain real, but they still need to be filtered through payment timing, budget execution, and debtor concentration rather than revenue potential alone. ', ['sectorPublicSectorMonitor']),
+          citedText('That keeps the payment-risk standard central to the conversation because invoice-cycle delays can change liquidity quality quickly even when work remains active.', ['policyPublicSectorPayment']),
+        ]),
+        bulletBlock('sector-public-drivers', [
+          [
+            citedText('Budget drawdowns are stabilizing, but payment timing remains too uneven for generic comfort.', ['sectorPublicSectorMonitor']),
+          ],
+          [
+            citedText('Collections strategy is useful because better process visibility improves action before delayed payments become a working-capital event.', ['kbCollectionsStrategic', 'policyPublicSectorPayment']),
+          ],
+          [
+            citedText('Integrated risk thinking helps the RM connect concentration, invoice-cycle delays, and liquidity cover into one management story.', ['kbRiskIntegrated']),
+          ],
+        ]),
+        tableBlock(
+          'sector-public-table',
+          [
+            { id: 'lens', label: 'Lens' },
+            { id: 'current', label: 'Current read' },
+            { id: 'rm', label: 'RM implication' },
+          ],
+          [
+            tableRow('sector-public-row-1', [
+              tableCell([citedText('Budget timing')]),
+              tableCell([citedText('Budget execution is improving but still uneven by entity.', ['sectorPublicSectorMonitor'])]),
+              tableCell([citedText('Stay selective and keep exposure conversations tied to payment discipline.', ['policyPublicSectorPayment'])]),
+            ]),
+            tableRow('sector-public-row-2', [
+              tableCell([citedText('Debtors')]),
+              tableCell([citedText('Debtor concentration can hide stress until payments slip materially.', ['policyPublicSectorPayment'])]),
+              tableCell([citedText('Lead with debtor visibility and liquidity cover before balance-sheet expansion.', ['policyPublicSectorPayment'])]),
+            ]),
+            tableRow('sector-public-row-3', [
+              tableCell([citedText('Risk framing')]),
+              tableCell([citedText('The sector has to be read through connected operational and liquidity signals.', ['kbRiskIntegrated'])]),
+              tableCell([citedText('Translate caution into a structured management plan, not just a no-go answer.', ['kbCollectionsStrategic'])]),
+            ]),
+          ],
+        ),
+      ],
+    },
+  },
+  'professional-services': {
+    id: 'professional-services',
+    name: 'Professional Services',
+    thesis: 'Professional services firms are strongest when utilization, fee realization, and debtor control stay aligned as pipeline conversion improves.',
+    growthTrend: '+5% sector momentum',
+    riskSignal: 'Debtor days can widen quickly when pipeline quality drops',
+    opportunitySignal: 'Advisory-led treasury and growth positioning gaining traction',
+    commentary: 'Professional services conversations often look asset-light on paper, but the real sector differentiator is how well firms convert utilization and pipeline into cash without allowing debtor days to drift.',
+    trendData: [{ period: 'Q1', growth: 52, risk: 41 }, { period: 'Q2', growth: 56, risk: 40 }, { period: 'Q3', growth: 60, risk: 39 }, { period: 'Q4', growth: 63, risk: 38 }],
+    drivers: ['Pipeline quality is improving at the top end of the market.', 'Fee realization and utilization remain the key quality filters.', 'Debtor discipline separates healthy growth from hidden strain.'],
+    statCards: [
+      { label: 'Utilization pulse', value: '+5%', meta: 'Quality pipeline improving' },
+      { label: 'Debtor watch', value: 'Tight', meta: 'Collections still the key filter' },
+      { label: 'Advisory angle', value: 'Fee-to-cash', meta: 'Translate growth into cleaner cash conversion' },
+    ],
+    sourceIds: ['sectorProfessionalServicesMonitor', 'policyWorkingCapitalDiscipline', 'kbTechOperatingModel', 'kbWinningNiche'],
+    richResponse: {
+      title: 'Detailed sector report',
+      blocks: [
+        paragraphBlock('sector-professional-summary', [
+          citedText('Professional services firms are benefiting from better pipeline conversion, but the most relevant quality test is still whether utilization and fee realization convert into cash without debtor days drifting. ', ['sectorProfessionalServicesMonitor']),
+          citedText('That is why the working-capital discipline standard matters even in an asset-light sector: operating control still determines how scalable the growth story really is.', ['policyWorkingCapitalDiscipline']),
+        ]),
+        bulletBlock('sector-professional-drivers', [
+          [
+            citedText('The sector is becoming more operating-model driven, with data, workflow, and decisioning quality influencing how efficiently firms scale.', ['kbTechOperatingModel']),
+          ],
+          [
+            citedText('A focused proposition still matters because professional services clients respond better when the discussion is linked to their operating model and collections discipline, not a generic product push.', ['kbWinningNiche']),
+          ],
+          [
+            citedText('RM conversations should connect pipeline quality, debtor control, and treasury discipline into one advisory message.', ['sectorProfessionalServicesMonitor', 'policyWorkingCapitalDiscipline']),
+          ],
+        ]),
+        tableBlock(
+          'sector-professional-table',
+          [
+            { id: 'lens', label: 'Lens' },
+            { id: 'current', label: 'Current read' },
+            { id: 'rm', label: 'RM implication' },
+          ],
+          [
+            tableRow('sector-professional-row-1', [
+              tableCell([citedText('Pipeline')]),
+              tableCell([citedText('Pipeline quality is improving, but selectively.', ['sectorProfessionalServicesMonitor'])]),
+              tableCell([citedText('Anchor growth conversations in utilization and fee realization, not topline alone.', ['sectorProfessionalServicesMonitor'])]),
+            ]),
+            tableRow('sector-professional-row-2', [
+              tableCell([citedText('Collections')]),
+              tableCell([citedText('Debtor control remains the best early warning for stress.', ['policyWorkingCapitalDiscipline'])]),
+              tableCell([citedText('Position treasury and collections discipline as a scaling enabler.', ['policyWorkingCapitalDiscipline'])]),
+            ]),
+            tableRow('sector-professional-row-3', [
+              tableCell([citedText('Advisory posture')]),
+              tableCell([citedText('Stronger firms respond to proposition-led advisory discussions tied to their operating model.', ['kbTechOperatingModel', 'kbWinningNiche'])]),
+              tableCell([citedText('Use a targeted, operating-model-aware story rather than a broad product list.', ['kbWinningNiche'])]),
+            ]),
+          ],
+        ),
+      ],
+    },
+  },
 };
 
 export const suggestedQueries = [

@@ -3176,6 +3176,65 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
   gap: 1.35rem;
 }
 
+.sector-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.sector-stat-card {
+  display: grid;
+  gap: 0.6rem;
+  padding: 1.25rem 1.3rem;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 194, 118, 0.84);
+  background: linear-gradient(180deg, #fff7ef 0%, #fffdfb 100%);
+}
+
+.sector-stat-card:nth-child(2n) {
+  border-color: rgba(255, 150, 182, 0.55);
+  background: linear-gradient(180deg, #fff8fb 0%, #fffdfd 100%);
+}
+
+.sector-stat-card:nth-child(3n) {
+  border-color: rgba(215, 222, 233, 0.88);
+  background: linear-gradient(180deg, #fbfcff 0%, #fffefe 100%);
+}
+
+.sector-stat-card span {
+  color: #9b4200;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.sector-stat-card:nth-child(2n) span {
+  color: #7d0d44;
+}
+
+.sector-stat-card:nth-child(3n) span {
+  color: #2d4469;
+}
+
+.sector-stat-card strong {
+  font-family: var(--heading-font);
+  font-size: clamp(2rem, 2vw + 1rem, 3rem);
+  line-height: 1;
+  color: #7c3500;
+}
+
+.sector-stat-card:nth-child(2n) strong {
+  color: #6a043d;
+}
+
+.sector-stat-card:nth-child(3n) strong {
+  color: #071f47;
+}
+
+.sector-stat-card p {
+  margin: 0;
+  color: #61708a;
+}
+
 .sector-page .chart-shell {
   padding: 0.65rem 0 0;
 }
@@ -3205,6 +3264,96 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
 .sector-detail-card--signal {
   border-color: rgba(255, 184, 109, 0.72);
   background: linear-gradient(180deg, #fff9f1 0%, #fffdf8 100%);
+}
+
+.sector-report-panel,
+.sector-report-panel__header,
+.sector-source-section {
+  display: grid;
+  gap: 1rem;
+}
+
+.sector-report-panel__header h3,
+.sector-source-section h4 {
+  margin: 0;
+  font-family: var(--heading-font);
+  color: #6a043d;
+}
+
+.sector-report-panel__header p,
+.sector-source-section p {
+  margin: 0;
+  color: #61708a;
+}
+
+.sector-page .rich-response > .eyebrow {
+  font-size: clamp(1.8rem, 1.2vw + 1rem, 2.4rem);
+  letter-spacing: 0;
+  text-transform: none;
+  color: #6a043d;
+}
+
+.sector-page .rich-response__body {
+  gap: 1.15rem;
+}
+
+.sector-page .rich-response__paragraph,
+.sector-page .rich-response__list,
+.sector-page .rich-response__table {
+  font-size: 1.04rem;
+  line-height: 1.82;
+  color: #22385a;
+}
+
+.sector-page .rich-response__table-wrap {
+  border-radius: 18px;
+  background: linear-gradient(180deg, #fbfcff 0%, #f5f8fd 100%);
+}
+
+.sector-page .rich-response__table th {
+  color: #6c7c94;
+}
+
+.sector-page .source-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.sector-page .source-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.2rem;
+  padding: 0.55rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid rgba(215, 222, 233, 0.88);
+  background: #f6f8fc;
+  color: #26395b;
+  font-size: 0.94rem;
+}
+
+.sector-page .source-chip strong {
+  color: inherit;
+  font-size: 0.88rem;
+}
+
+.sector-page .source-chip--sector {
+  background: #fff1dc;
+  border-color: rgba(255, 203, 135, 0.86);
+  color: #cb5300;
+}
+
+.sector-page .source-chip--policy {
+  background: #eef3fb;
+  border-color: rgba(184, 200, 223, 0.92);
+  color: #304766;
+}
+
+.sector-page .source-chip--kb {
+  background: #ffe7ea;
+  border-color: rgba(255, 177, 193, 0.88);
+  color: #c3121b;
 }
 
 .sector-chip-row {
@@ -3241,6 +3390,10 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
 .sector-client-card--warm {
   border-color: rgba(255, 184, 109, 0.72);
   background: linear-gradient(180deg, #fff9f1 0%, #fffdf8 100%);
+}
+
+.sector-client-card--references {
+  background: linear-gradient(180deg, #f8fbff 0%, #f6f8fc 100%);
 }
 
 .sector-action-link {
@@ -4056,6 +4209,10 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
   align-items: stretch;
 }
 
+.engagement-feedback > span {
+  grid-column: 1 / -1;
+}
+
 .engagement-feedback .feedback-button {
   min-height: 5rem;
   border-radius: 20px;
@@ -4323,6 +4480,7 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
   .dashboard-quick-actions__grid,
   .dashboard-kpi-grid,
   .sector-journey-tabs,
+  .sector-stat-grid,
   .lookup-setup-grid,
   .lookup-product-meta-grid,
   .lookup-next-steps-grid,
@@ -4382,6 +4540,7 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
   .dashboard-quick-actions__grid,
   .dashboard-kpi-grid,
   .sector-journey-tabs,
+  .sector-stat-grid,
   .lookup-journey-tabs,
   .lookup-choice-grid,
   .lookup-choice-grid--compact,

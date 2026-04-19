@@ -1,7 +1,8 @@
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import RichEvidenceNarrative from '../../components/RichEvidenceNarrative';
 import { SectorPulseChart } from '../../components/Charts';
-import { SectorJourneyTabs, useJourneyStep } from '../../components/UI';
+import { SectorJourneyTabs, SourceChips, useJourneyStep } from '../../components/UI';
 import { useDemoState } from '../../state/DemoStateProvider';
 import { getViewContext } from '../pageContext';
 
@@ -28,7 +29,7 @@ export default function DeepDivePage() {
         <div className="sector-stepper-footer">
           <Link className="sector-inline-link" to="/sector/client-relevance">
             Map to client
-            <span aria-hidden="true">→</span>
+            <span aria-hidden="true">-&gt;</span>
           </Link>
         </div>
       </section>
@@ -41,7 +42,33 @@ export default function DeepDivePage() {
       </section>
 
       <section className="ri-panel sector-chart-panel">
+        {briefing.statCards?.length ? (
+          <div className="sector-stat-grid">
+            {briefing.statCards.map(card => (
+              <article key={card.label} className="sector-stat-card">
+                <span>{card.label}</span>
+                <strong>{card.value}</strong>
+                <p>{card.meta}</p>
+              </article>
+            ))}
+          </div>
+        ) : null}
+
         <SectorPulseChart data={briefing.trendData} />
+      </section>
+
+      <section className="ri-panel sector-report-panel">
+        <div className="sector-report-panel__header">
+          <h3>Detailed sector report</h3>
+          <p>Use the cited sector read and standard references before translating the signal into a client conversation.</p>
+        </div>
+        <RichEvidenceNarrative response={briefing.richResponse} />
+        {briefing.sourceIds?.length ? (
+          <div className="sector-source-section">
+            <h4>Standard references</h4>
+            <SourceChips sourceIds={briefing.sourceIds} />
+          </div>
+        ) : null}
       </section>
 
       <section className="ri-panel sector-deep-dive-panel">
