@@ -1444,7 +1444,7 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
   height: 36px;
   object-fit: contain;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.12);
+  mix-blend-mode: screen;
 }
 
 .ri-brand__copy {
