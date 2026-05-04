@@ -2,17 +2,17 @@
   color-scheme: light;
   font-family: 'Manrope', sans-serif;
   --heading-font: 'Poppins', 'Manrope', sans-serif;
-  --bg: #f8f4f1;
-  --bg-elevated: #f2ece8;
+  --bg: #f3f4f6;
+  --bg-elevated: #e8eaed;
   --surface: #ffffff;
-  --surface-muted: #f7f3f0;
-  --surface-soft: #fbf8f6;
-  --surface-strong: #efe7e2;
-  --line: #e3d9d2;
-  --line-strong: #cdbfb6;
-  --text: #231815;
-  --text-muted: #62564f;
-  --text-subtle: #8b7c74;
+  --surface-muted: #f5f6f8;
+  --surface-soft: #f9fafb;
+  --surface-strong: #e2e5ea;
+  --line: #dde1e7;
+  --line-strong: #c4cad4;
+  --text: #111827;
+  --text-muted: #4b5563;
+  --text-subtle: #6b7280;
   --accent: #c00030;
   --accent-dark: #98002e;
   --accent-soft: #fae6eb;
@@ -22,8 +22,8 @@
   --warning-soft: #f8ecd9;
   --critical: #b4232f;
   --critical-soft: #fae5e8;
-  --shadow: 0 18px 40px rgba(35, 24, 21, 0.08);
-  --shadow-soft: 0 8px 18px rgba(35, 24, 21, 0.05);
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.05);
   --focus-ring: 0 0 0 3px rgba(192, 0, 48, 0.14);
 }
 
@@ -450,7 +450,7 @@ select:focus, input:focus, textarea:focus {
 }
 
 .metric-card span { display: block; margin-bottom: 0.6rem; color: var(--text-subtle); font-size: 0.8rem; }
-.metric-card strong { display: block; font-size: 1.45rem; }
+.metric-card strong { display: block; font-size: 1.45rem; font-variant-numeric: tabular-nums; }
 
 .lookup-fieldset {
   display: grid;
@@ -1415,23 +1415,23 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
 }
 
 .ri-shell {
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   display: grid;
   grid-template-columns: 256px minmax(0, 1fr);
   background: linear-gradient(180deg, #f7f7fb 0%, #f1f2f7 100%);
 }
 
 .ri-rail {
-  position: sticky;
-  top: 0;
   display: grid;
   grid-template-rows: auto 1fr auto;
   gap: 1.25rem;
-  min-height: 100vh;
+  height: 100vh;
+  overflow-y: auto;
   padding: 1.4rem 1rem 1.1rem;
   background: linear-gradient(180deg, #4a0022 0%, #5c002c 55%, #520026 100%);
   color: rgba(255, 255, 255, 0.92);
-  box-shadow: 16px 0 32px rgba(40, 10, 24, 0.18);
+  box-shadow: 1px 0 0 rgba(0, 0, 0, 0.12);
 }
 
 .ri-rail__brand {
@@ -1558,14 +1558,12 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
 
 .ri-shell__workspace {
   min-width: 0;
-  background:
-    radial-gradient(circle at top right, rgba(255, 119, 82, 0.09), transparent 26rem),
-    linear-gradient(180deg, #f7f8fb 0%, #eff2f8 100%);
+  background: linear-gradient(180deg, #f7f8fb 0%, #eff2f8 100%);
 }
 
 .ri-content-frame {
-  min-height: 100vh;
-  overflow: auto;
+  height: 100vh;
+  overflow-y: auto;
   padding: 1.5rem 2rem 2rem;
 }
 
@@ -1713,6 +1711,7 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
   font-size: 1.75rem;
   color: var(--text);
   line-height: 1.1;
+  font-variant-numeric: tabular-nums;
 }
 
 .dashboard-kpi-card span {
@@ -1844,6 +1843,7 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
 .dashboard-focus-card__metric strong {
   font-family: var(--heading-font);
   font-size: 1.1rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .dashboard-focus-card__trend {
@@ -2620,6 +2620,7 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
   font-family: var(--heading-font);
   font-size: 1.85rem;
   line-height: 1.1;
+  font-variant-numeric: tabular-nums;
 }
 
 .lookup-response-grid {
@@ -4099,6 +4100,7 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
   font-size: 1.75rem;
   line-height: 1.1;
   color: var(--text);
+  font-variant-numeric: tabular-nums;
 }
 
 .engagement-stat-card:nth-child(2n) strong {
@@ -4570,15 +4572,18 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
 
 @media (max-width: 860px) {
   .ri-shell {
+    height: auto;
+    overflow: visible;
     grid-template-columns: 1fr;
   }
 
   .ri-rail {
-    position: static;
-    min-height: auto;
+    height: auto;
+    overflow-y: visible;
   }
 
   .ri-content-frame {
+    height: auto;
     padding: 1.2rem 1rem 1.5rem;
   }
 

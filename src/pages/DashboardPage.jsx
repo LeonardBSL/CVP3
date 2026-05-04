@@ -132,13 +132,6 @@ export default function DashboardPage() {
 
   return (
     <div className="ri-page dashboard-page">
-      <section className="dashboard-hero">
-        <div className="dashboard-hero__copy">
-          <h2>Relationship Intelligence</h2>
-          <p>Intelligent insights that enable better client conversations and outcomes</p>
-        </div>
-      </section>
-
       <section className="ri-panel dashboard-quick-actions">
         <div className="ri-panel__header">
           <div>
