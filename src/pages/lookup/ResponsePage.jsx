@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BrainCircuit } from 'lucide-react';
 import { startTransition, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import LookupAgentOutput from '../../components/LookupAgentOutput';
@@ -126,7 +126,7 @@ export default function ResponsePage() {
           <div className="lookup-response-panel__header">
             <div className="lookup-response-heading">
               <span className="lookup-response-icon" aria-hidden="true">
-                <Sparkles size={24} />
+                <BrainCircuit size={16} />
               </span>
               <div>
                 <h3>Advisory Response</h3>

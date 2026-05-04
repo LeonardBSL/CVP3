@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BrainCircuit } from 'lucide-react';
 import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { EngagementJourneyStepper, StatusPill, useJourneyStep } from '../../components/UI';
@@ -60,7 +60,7 @@ export default function AlertDetailPage() {
 
         <article className="engagement-insight-banner">
           <div className="engagement-insight-banner__icon">
-            <Sparkles size={26} />
+            <BrainCircuit size={16} />
           </div>
           <div>
             <strong>AI-generated insight</strong>

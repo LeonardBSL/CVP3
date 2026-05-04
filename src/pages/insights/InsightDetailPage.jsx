@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BrainCircuit } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { JourneyNoteAction } from '../../components/InternalNotes';
 import RichEvidenceNarrative from '../../components/RichEvidenceNarrative';
@@ -49,7 +49,7 @@ export default function InsightDetailPage() {
 
         <article className="engagement-insight-banner">
           <div className="engagement-insight-banner__icon">
-            <Sparkles size={26} />
+            <BrainCircuit size={16} />
           </div>
           <div>
             <strong>AI-generated insight</strong>

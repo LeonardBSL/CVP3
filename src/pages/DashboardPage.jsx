@@ -3,7 +3,7 @@ import {
   CircleAlert,
   Clock3,
   DollarSign,
-  Sparkles,
+  Lightbulb,
   Target,
   TrendingUp,
   Users,
@@ -82,7 +82,7 @@ export default function DashboardPage() {
     {
       label: 'Insights',
       meta: null,
-      icon: Sparkles,
+      icon: Lightbulb,
       onClick: () => navigate('/insights/client'),
     },
     {
@@ -157,7 +157,7 @@ export default function DashboardPage() {
                 onClick={action.onClick}
                 aria-label={`${action.label} quick action`}
               >
-                <Icon size={32} />
+                <Icon size={16} />
                 <strong>{action.label}</strong>
                 {action.meta ? <span className="dashboard-action-card__badge">{action.meta}</span> : <span className="dashboard-action-card__spacer" aria-hidden="true" />}
               </button>
@@ -171,7 +171,7 @@ export default function DashboardPage() {
           const Icon = metric.icon;
           return (
             <article key={metric.label} className={`dashboard-kpi-card dashboard-kpi-card--${metric.tone}`}>
-              <Icon size={28} />
+              <Icon size={16} />
               <strong>{metric.value}</strong>
               <span>{metric.label}</span>
               <p>{metric.meta}</p>
@@ -204,7 +204,7 @@ export default function DashboardPage() {
                       <h4>{alert.title}</h4>
                       <p>{alertClient.name}</p>
                     </div>
-                    <ArrowRight size={22} />
+                    <ArrowRight size={14} />
                   </div>
                   <p>{alert.updatedLabel}</p>
                   <span className="dashboard-priority-alert__tag">
@@ -226,7 +226,7 @@ export default function DashboardPage() {
           <div className="dashboard-focus-card__metric">
             <span>Revenue Trend</span>
             <strong className="dashboard-focus-card__trend">
-              <TrendingUp size={20} />
+              <TrendingUp size={14} />
               {client.revenueTrend}
             </strong>
           </div>
@@ -240,9 +240,8 @@ export default function DashboardPage() {
       </div>
 
       <button type="button" className="dashboard-journey-cta" onClick={() => openAlert(activeAlert)}>
-        <Sparkles size={26} />
         <span>Start Advisory Journey</span>
-        <ArrowRight size={26} />
+        <ArrowRight size={15} />
       </button>
     </div>
   );

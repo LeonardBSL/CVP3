@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, Settings2, Sparkles, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BrainCircuit, Settings2, X } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { EngagementJourneyStepper, FeedbackStrip, useJourneyStep } from '../../components/UI';
@@ -44,7 +44,7 @@ export default function InsightReviewPage() {
 
         <article className="engagement-insight-banner">
           <div className="engagement-insight-banner__icon">
-            <Sparkles size={26} />
+            <BrainCircuit size={16} />
           </div>
           <div>
             <strong>AI-generated insight</strong>
