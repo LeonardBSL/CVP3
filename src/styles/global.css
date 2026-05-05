@@ -385,8 +385,7 @@ select:focus, input:focus, textarea:focus {
 
 .alert-row:hover, .client-card:hover, .product-card:hover, .choice-card:hover, .lookup-suggestion:hover, .sector-card:hover {
   transform: translateY(-1px);
-  border-color: rgba(192, 0, 48, 0.2);
-  background: #fffafc;
+  border-color: var(--accent);
   box-shadow: 0 14px 28px rgba(35, 24, 21, 0.08);
 }
 
@@ -1514,7 +1513,7 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
   color: #fff;
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.1);
-  box-shadow: inset 3px 0 0 rgba(255, 255, 255, 0.7);
+  box-shadow: inset 3px 0 0 #ff8a00;
 }
 
 .ri-rail__footer {
@@ -1658,8 +1657,7 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
 }
 
 .dashboard-action-card:hover {
-  border-color: rgba(192, 0, 48, 0.22);
-  background: #fffafc;
+  border-color: var(--accent);
   color: var(--accent-dark);
 }
 
@@ -1765,7 +1763,7 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
 }
 
 .dashboard-priority-alert:hover {
-  background: #fffafc;
+  border-color: var(--accent);
 }
 
 .dashboard-priority-alert--warning {
@@ -2401,8 +2399,7 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
 .lookup-page .lookup-agent-card:hover,
 .lookup-suggestion-card:hover {
   transform: translateY(-1px);
-  border-color: rgba(192, 0, 48, 0.22);
-  background: #fffafc;
+  border-color: var(--accent);
 }
 
 .lookup-page .lookup-choice-card--selected,
@@ -3121,8 +3118,7 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
 
 .sector-briefing-card:hover {
   transform: translateY(-1px);
-  border-color: rgba(192, 0, 48, 0.22);
-  background: #fffafc;
+  border-color: var(--accent);
 }
 
 .sector-briefing-card--selected {
@@ -3786,8 +3782,7 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
 }
 
 .insight-delivery-action:hover {
-  border-color: rgba(192, 0, 48, 0.22);
-  background: #fffafc;
+  border-color: var(--accent);
   color: var(--accent-dark);
 }
 
