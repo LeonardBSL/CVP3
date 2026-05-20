@@ -469,9 +469,6 @@ export const sectorBriefings = {
 
 export const suggestedQueries = [
   'How should I position expansion funding for a retail client with stronger takings?',
-  'What can I recommend to smooth procurement pressure for a manufacturing SME?',
-  'How do I explain the transport sector signal to a logistics client?',
-  'Which pre-approved products fit a growth-ready distributor?',
   'How do I connect transactional data to sector knowledge in a client discussion?',
 ];
 

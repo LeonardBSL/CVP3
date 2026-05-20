@@ -1,4 +1,4 @@
-import { getInsightPackById, scenarios } from './demoData';
+import { getInsightPackById } from './demoData';
 
 function shiftDate(days, hours = 9, minutes = 0) {
   const date = new Date();
@@ -117,24 +117,27 @@ export function buildInitialClientPortal() {
     engagements.push(engagement);
   }
 
-  const scenarioByClientId = Object.fromEntries(scenarios.map(scenario => [scenario.clientId, scenario]));
+  const scenarioByClientId = {
+    'nkosi-retail': 'growth-retail',
+    'mahlangu-manufacturing': 'liquidity-manufacturing',
+    'transit-logistics': 'sector-logistics',
+    'meridian-distributor': 'growth-distributor',
+  };
 
-  scenarios.forEach((scenario, index) => {
-    const insight = getInsightPackById(scenario.insightPackId);
-    registerInsightRecord(
-      createInsightRecord({
-        id: `insight-live-${scenario.id}`,
-        clientId: scenario.clientId,
-        scenarioId: scenario.id,
-        headline: insight.headline,
-        summary: insight.whatHappened,
-        generatedAt: shiftIso(-(index + 1), 10, 15),
-        sharedStatus: 'unshared',
-        noteIds: [],
-        isActive: true,
-      }),
-    );
-  });
+  const nkosiLiveInsight = getInsightPackById('insight-growth-retail');
+  registerInsightRecord(
+    createInsightRecord({
+      id: 'insight-live-growth-retail',
+      clientId: 'nkosi-retail',
+      scenarioId: 'growth-retail',
+      headline: nkosiLiveInsight.headline,
+      summary: nkosiLiveInsight.whatHappened,
+      generatedAt: shiftIso(-1, 10, 15),
+      sharedStatus: 'unshared',
+      noteIds: [],
+      isActive: true,
+    }),
+  );
 
   registerGeneralNote(
     createNote({
@@ -199,7 +202,7 @@ export function buildInitialClientPortal() {
     createInsightRecord({
       id: nkosiSharedRecordId,
       clientId: 'nkosi-retail',
-      scenarioId: scenarioByClientId['nkosi-retail'].id,
+      scenarioId: scenarioByClientId['nkosi-retail'],
       headline: 'Seasonal trading uplift supported an early working-capital review.',
       summary: 'The prior review combined higher festive inflows with tighter inventory control to open a growth discussion.',
       generatedAt: shiftIso(-35, 9, 20),
@@ -212,7 +215,7 @@ export function buildInitialClientPortal() {
     createInsightRecord({
       id: nkosiUnsharedRecordId,
       clientId: 'nkosi-retail',
-      scenarioId: scenarioByClientId['nkosi-retail'].id,
+      scenarioId: scenarioByClientId['nkosi-retail'],
       headline: 'Supplier settlement data may support a margin-protection follow-up.',
       summary: 'Earlier settlement pressure suggested a short-term advisory follow-up, but it remained internal.',
       generatedAt: shiftIso(-13, 8, 45),
@@ -258,7 +261,7 @@ export function buildInitialClientPortal() {
     createEngagement({
       id: nkosiEngagementOneId,
       clientId: 'nkosi-retail',
-      scenarioId: scenarioByClientId['nkosi-retail'].id,
+      scenarioId: scenarioByClientId['nkosi-retail'],
       insightRecordId: nkosiSharedRecordId,
       channel: 'meeting',
       status: 'Meeting held',
@@ -295,7 +298,7 @@ export function buildInitialClientPortal() {
     createEngagement({
       id: nkosiEngagementTwoId,
       clientId: 'nkosi-retail',
-      scenarioId: scenarioByClientId['nkosi-retail'].id,
+      scenarioId: scenarioByClientId['nkosi-retail'],
       insightRecordId: nkosiUnsharedRecordId,
       channel: 'email',
       status: 'Email drafted',

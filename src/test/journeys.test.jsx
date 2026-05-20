@@ -94,7 +94,7 @@ describe('journey walkthroughs', () => {
     renderApp('/lookup/search');
 
     await user.click(screen.getByRole('button', { name: /Revenue opportunity scan/i }));
-    await user.click(screen.getByRole('button', { name: /Which pre-approved products fit a growth-ready distributor\?/i }));
+    await user.click(screen.getByRole('button', { name: /How should I position expansion funding for a retail client with stronger takings\?/i }));
 
     expect((await screen.findAllByText(/Opportunity summary/i, {}, { timeout: 3000 })).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/1\. Expansion Term Loan - Site rollout and fit-out funding\./i).length).toBeGreaterThan(0);
