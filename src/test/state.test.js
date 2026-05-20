@@ -109,13 +109,13 @@ describe('demo reducer', () => {
     const completedState = demoReducer(startedState, {
       type: 'COMPLETE_LOOKUP',
       query: 'How do I explain the transport sector signal to a logistics client?',
-      responseId: 'lookup-sector-logistics',
+      responseId: 'lookup-growth-retail',
     });
 
     expect(startedState.lookupSession.messages).toHaveLength(1);
     expect(startedState.lookupSession.messages[0]).toMatchObject({ role: 'user' });
     expect(completedState.lookupSession.messages).toHaveLength(2);
-    expect(completedState.lookupSession.messages[1]).toMatchObject({ role: 'assistant', responseId: 'lookup-sector-logistics' });
+    expect(completedState.lookupSession.messages[1]).toMatchObject({ role: 'assistant', responseId: 'lookup-growth-retail' });
   });
 
   it('resets the lookup thread and latest response when a fresh search starts from the search page', () => {
@@ -153,7 +153,7 @@ describe('demo reducer', () => {
           query: 'Legacy lookup',
           pendingQuery: '',
           status: 'complete',
-          responseId: 'lookup-growth-distributor',
+          responseId: 'lookup-growth-retail',
           messages: [],
         },
       }),
