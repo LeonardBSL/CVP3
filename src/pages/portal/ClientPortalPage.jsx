@@ -130,7 +130,7 @@ export default function ClientPortalPage() {
   const [showAllInsights, setShowAllInsights] = useState(false);
   const [composerState, setComposerState] = useState(null);
 
-  const client = clients.find(item => item.id === state.selectedClientId) ?? clients[0];
+  const client = clients.find(item => item.id === state.portalClientId) ?? clients[0];
   const notesById = state.clientPortal.notes;
   const normalizedSearch = searchValue.trim().toLowerCase();
 

@@ -11,15 +11,12 @@ describe('demo reducer', () => {
     sessionStorage.clear();
   });
 
-  it('switches client context and scenario together', () => {
-    const nextState = demoReducer(createBaseState(), {
-      type: 'SELECT_CLIENT',
-      clientId: 'mahlangu-manufacturing',
-    });
-
-    expect(nextState.selectedClientId).toBe('mahlangu-manufacturing');
-    expect(nextState.activeScenarioId).toBe('liquidity-manufacturing');
-    expect(nextState.sectorFocus).toBe('manufacturing');
+  it('updates portalClientId without cascading to journey state', () => {
+    const state = createBaseState();
+    const nextState = demoReducer(state, { type: 'SELECT_CLIENT', clientId: 'mahlangu-manufacturing' });
+    expect(nextState.portalClientId).toBe('mahlangu-manufacturing');
+    expect(nextState.activeScenarioId).toBe(state.activeScenarioId); // unchanged
+    expect(nextState.sectorFocus).toBe(state.sectorFocus); // unchanged
   });
 
   it('triggers a scenario and updates the inbox and feed', () => {
@@ -151,7 +148,7 @@ describe('demo reducer', () => {
     sessionStorage.setItem(
       storageKey,
       JSON.stringify({
-        selectedClientId: 'meridian-distributor',
+        portalClientId: 'meridian-distributor',
         lookupSession: {
           query: 'Legacy lookup',
           pendingQuery: '',
@@ -167,7 +164,7 @@ describe('demo reducer', () => {
     expect(hydratedState.lookupSession.context).toEqual({
       intentMode: 'generic',
       clientScopeMode: 'selected',
-      selectedClientIds: ['meridian-distributor'],
+      selectedClientIds: ['nkosi-retail'],
     });
     expect(hydratedState.lookupSession.selectedAgentId).toBeNull();
   });

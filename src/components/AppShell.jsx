@@ -34,7 +34,7 @@ function isSectionActive(pathname, target) {
   return pathname === target;
 }
 
-function SettingsDialog({ client, dispatch, onClose, scenario, selectedClientId }) {
+function SettingsDialog({ client, dispatch, onClose, scenario, portalClientId }) {
   return (
     <div className="overlay-backdrop settings-backdrop">
       <div className="overlay-card settings-panel" role="dialog" aria-modal="true" aria-label="Workspace settings">
@@ -54,7 +54,7 @@ function SettingsDialog({ client, dispatch, onClose, scenario, selectedClientId 
           <section className="settings-section">
             <label className="topbar-field">
               <span>Client</span>
-              <select aria-label="Select client" value={selectedClientId} onChange={event => dispatch({ type: 'SELECT_CLIENT', clientId: event.target.value })}>
+              <select aria-label="Select client" value={portalClientId} onChange={event => dispatch({ type: 'SELECT_CLIENT', clientId: event.target.value })}>
                 {clients.map(option => (
                   <option key={option.id} value={option.id}>
                     {option.name}
@@ -79,12 +79,6 @@ function SettingsDialog({ client, dispatch, onClose, scenario, selectedClientId 
             <div className="scenario-controls settings-controls" aria-label="Scenario simulator">
               <button type="button" className="chip-button" onClick={() => dispatch({ type: 'TRIGGER_SCENARIO', scenarioId: scenarioTriggerMap.growth })}>
                 Simulate growth signal
-              </button>
-              <button type="button" className="chip-button" onClick={() => dispatch({ type: 'TRIGGER_SCENARIO', scenarioId: scenarioTriggerMap.liquidity })}>
-                Simulate liquidity risk
-              </button>
-              <button type="button" className="chip-button" onClick={() => dispatch({ type: 'TRIGGER_SCENARIO', scenarioId: scenarioTriggerMap.sector })}>
-                Simulate sector disruption
               </button>
             </div>
           </section>
@@ -200,7 +194,7 @@ export default function AppShell({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { state, dispatch } = useDemoState();
-  const client = getClientById(state.selectedClientId);
+  const client = getClientById(state.portalClientId);
   const scenario = getScenarioById(state.activeScenarioId);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const urgentAlertCount = state.alerts.filter(alert => ['warning', 'critical'].includes(alert.severity)).length;
@@ -253,7 +247,7 @@ export default function AppShell({ children }) {
           dispatch={dispatch}
           onClose={() => setSettingsOpen(false)}
           scenario={scenario}
-          selectedClientId={state.selectedClientId}
+          portalClientId={state.portalClientId}
         />
       ) : null}
     </>
