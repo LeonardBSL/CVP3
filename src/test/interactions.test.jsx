@@ -119,12 +119,12 @@ describe('insight interactions', () => {
 
     expect(screen.getByText('R486m')).toBeInTheDocument();
     expect(screen.getByText('2.4hrs')).toBeInTheDocument();
-    expect(screen.getByLabelText(/2 urgent notifications/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/0 urgent notifications/i)).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /Alerts quick action/i }));
 
     expect(screen.getByRole('heading', { name: 'Advisory Engagement' })).toBeInTheDocument();
-    expect(screen.getByText(/Transport margin pressure requires proactive cover/i)).toBeInTheDocument();
+    expect(screen.getByText(/Expansion capacity signal detected/i)).toBeInTheDocument();
   });
 
   it('starts the advisory journey from the active dashboard alert', async () => {

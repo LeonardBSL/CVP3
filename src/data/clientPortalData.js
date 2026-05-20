@@ -367,7 +367,7 @@ export function buildInitialClientPortal() {
     createInsightRecord({
       id: mahlanguSharedRecordId,
       clientId: 'mahlangu-manufacturing',
-      scenarioId: scenarioByClientId['mahlangu-manufacturing'].id,
+      scenarioId: 'liquidity-manufacturing',
       headline: 'Procurement-cycle tightening justified a same-day liquidity review.',
       summary: 'Earlier supplier pressure and slower collections were translated into a stabilization conversation.',
       generatedAt: shiftIso(-30, 8, 40),
@@ -380,7 +380,7 @@ export function buildInitialClientPortal() {
     createInsightRecord({
       id: mahlanguUnsharedRecordId,
       clientId: 'mahlangu-manufacturing',
-      scenarioId: scenarioByClientId['mahlangu-manufacturing'].id,
+      scenarioId: 'liquidity-manufacturing',
       headline: 'Receivables drift may require policy re-check before client outreach.',
       summary: 'The internal read suggested a funding conversation, but the RM paused it pending credit validation.',
       generatedAt: shiftIso(-9, 8, 5),
@@ -426,7 +426,7 @@ export function buildInitialClientPortal() {
     createEngagement({
       id: mahlanguEngagementOneId,
       clientId: 'mahlangu-manufacturing',
-      scenarioId: scenarioByClientId['mahlangu-manufacturing'].id,
+      scenarioId: 'liquidity-manufacturing',
       insightRecordId: mahlanguSharedRecordId,
       channel: 'call',
       status: 'Call completed',
@@ -463,7 +463,7 @@ export function buildInitialClientPortal() {
     createEngagement({
       id: mahlanguEngagementTwoId,
       clientId: 'mahlangu-manufacturing',
-      scenarioId: scenarioByClientId['mahlangu-manufacturing'].id,
+      scenarioId: 'liquidity-manufacturing',
       insightRecordId: mahlanguUnsharedRecordId,
       channel: 'email',
       status: 'Internal hold',
@@ -535,7 +535,7 @@ export function buildInitialClientPortal() {
     createInsightRecord({
       id: transitSharedRecordId,
       clientId: 'transit-logistics',
-      scenarioId: scenarioByClientId['transit-logistics'].id,
+      scenarioId: 'sector-logistics',
       headline: 'Settlement pressure justified an earlier resilience conversation.',
       summary: 'The RM used the transport signal to prepare a treasury and liquidity response before disruption escalated.',
       generatedAt: shiftIso(-27, 8, 0),
@@ -548,7 +548,7 @@ export function buildInitialClientPortal() {
     createInsightRecord({
       id: transitUnsharedRecordId,
       clientId: 'transit-logistics',
-      scenarioId: scenarioByClientId['transit-logistics'].id,
+      scenarioId: 'sector-logistics',
       headline: 'Margin compression read stayed internal pending fleet utilization refresh.',
       summary: 'The RM held a more severe internal interpretation back until utilization data was refreshed.',
       generatedAt: shiftIso(-7, 9, 10),
@@ -594,7 +594,7 @@ export function buildInitialClientPortal() {
     createEngagement({
       id: transitEngagementOneId,
       clientId: 'transit-logistics',
-      scenarioId: scenarioByClientId['transit-logistics'].id,
+      scenarioId: 'sector-logistics',
       insightRecordId: transitSharedRecordId,
       channel: 'meeting',
       status: 'Meeting held',
@@ -631,7 +631,7 @@ export function buildInitialClientPortal() {
     createEngagement({
       id: transitEngagementTwoId,
       clientId: 'transit-logistics',
-      scenarioId: scenarioByClientId['transit-logistics'].id,
+      scenarioId: 'sector-logistics',
       insightRecordId: transitUnsharedRecordId,
       channel: 'call',
       status: 'Internal follow-up',
@@ -703,7 +703,7 @@ export function buildInitialClientPortal() {
     createInsightRecord({
       id: meridianSharedRecordId,
       clientId: 'meridian-distributor',
-      scenarioId: scenarioByClientId['meridian-distributor'].id,
+      scenarioId: 'growth-distributor',
       headline: 'Adjacent-sector growth opportunity was packaged with treasury support.',
       summary: 'A previous review translated strong digital sales and stock turn into a disciplined expansion discussion.',
       generatedAt: shiftIso(-25, 8, 50),
@@ -716,7 +716,7 @@ export function buildInitialClientPortal() {
     createInsightRecord({
       id: meridianUnsharedRecordId,
       clientId: 'meridian-distributor',
-      scenarioId: scenarioByClientId['meridian-distributor'].id,
+      scenarioId: 'growth-distributor',
       headline: 'Cross-category upside remained internal pending covenant refresh.',
       summary: 'The signal was credible, but the RM kept the pack internal until quarter-close covenant data landed.',
       generatedAt: shiftIso(-5, 9, 25),
@@ -762,7 +762,7 @@ export function buildInitialClientPortal() {
     createEngagement({
       id: meridianEngagementOneId,
       clientId: 'meridian-distributor',
-      scenarioId: scenarioByClientId['meridian-distributor'].id,
+      scenarioId: 'growth-distributor',
       insightRecordId: meridianSharedRecordId,
       channel: 'meeting',
       status: 'Meeting held',
@@ -799,7 +799,7 @@ export function buildInitialClientPortal() {
     createEngagement({
       id: meridianEngagementTwoId,
       clientId: 'meridian-distributor',
-      scenarioId: scenarioByClientId['meridian-distributor'].id,
+      scenarioId: 'growth-distributor',
       insightRecordId: meridianUnsharedRecordId,
       channel: 'email',
       status: 'Internal hold',

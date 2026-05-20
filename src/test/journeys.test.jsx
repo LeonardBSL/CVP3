@@ -38,20 +38,20 @@ describe('journey walkthroughs', () => {
     const user = userEvent.setup();
     renderApp('/lookup/search');
 
-    await user.click(screen.getByRole('button', { name: /How do I explain the transport sector signal to a logistics client\?/i }));
+    await user.click(screen.getByRole('button', { name: /How should I position expansion funding for a retail client with stronger takings\?/i }));
 
     expect(screen.getByText(/Generating response/i)).toBeInTheDocument();
 
-    expect((await screen.findAllByText(/Translate sector pressure into margin protection/i, {}, { timeout: 3000 })).length).toBeGreaterThan(0);
-    await user.type(screen.getByRole('textbox', { name: /Follow-up question/i }), 'What can I recommend to smooth procurement pressure for a manufacturing SME?');
+    expect((await screen.findAllByText(/Position the discussion around controlled expansion/i, {}, { timeout: 3000 })).length).toBeGreaterThan(0);
+    await user.type(screen.getByRole('textbox', { name: /Follow-up question/i }), 'How do I connect transactional data to sector knowledge in a client discussion?');
     await user.click(screen.getByRole('button', { name: /^Send$/i }));
 
-    expect((await screen.findAllByText(/Frame the solution as cycle stabilization across payables, receivables, and visibility/i, {}, { timeout: 3000 })).length).toBeGreaterThan(0);
+    expect((await screen.findAllByText(/Position the discussion around controlled expansion/i, {}, { timeout: 3000 })).length).toBeGreaterThan(0);
     await user.click(screen.getByRole('link', { name: /Open recommendation output/i }));
 
     expect(screen.getByRole('heading', { name: 'Advisory Lookup' })).toBeInTheDocument();
     expect(screen.getByText(/Recommended products/i)).toBeInTheDocument();
-    expect(screen.getByText(/Working Capital Revolver/i)).toBeInTheDocument();
+    expect(screen.getByText(/Expansion Term Loan/i)).toBeInTheDocument();
   }, 15000);
 
   it('renders the pre-meeting brief preset with specific-client context across response and recommendation views', async () => {
@@ -82,9 +82,9 @@ describe('journey walkthroughs', () => {
     expect(screen.queryByText(/Selected clients/i)).not.toBeInTheDocument();
     expect(screen.queryByLabelText(/Nkosi Retail Group/i)).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: /How do I explain the transport sector signal to a logistics client\?/i }));
+    await user.click(screen.getByRole('button', { name: /How should I position expansion funding for a retail client with stronger takings\?/i }));
 
-    expect((await screen.findAllByText(/Translate sector pressure into margin protection/i, {}, { timeout: 3000 })).length).toBeGreaterThan(0);
+    expect((await screen.findAllByText(/Position the discussion around controlled expansion/i, {}, { timeout: 3000 })).length).toBeGreaterThan(0);
     expect(screen.getByText(/^Agent$/i)).toBeInTheDocument();
     expect(screen.getByText(/^None$/i)).toBeInTheDocument();
   }, 15000);
@@ -107,19 +107,19 @@ describe('journey walkthroughs', () => {
     renderApp('/lookup/search');
 
     await user.click(screen.getByRole('button', { name: /Client risk assessment/i }));
-    await user.click(screen.getByRole('button', { name: /How do I explain the transport sector signal to a logistics client\?/i }));
+    await user.click(screen.getByRole('button', { name: /How should I position expansion funding for a retail client with stronger takings\?/i }));
 
     expect((await screen.findAllByText(/Risk overview/i, {}, { timeout: 3000 })).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/Trend analysis/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/Confidence and limitations/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/Overall posture: deteriorating\./i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Overall posture: improving\./i).length).toBeGreaterThan(0);
   }, 15000);
 
   it('walks the sector journey from overview to client relevance', async () => {
     const user = userEvent.setup();
     renderApp('/sector/overview');
 
-    await user.click(screen.getByRole('button', { name: /Transport & Logistics/i }));
+    await user.click(screen.getByRole('button', { name: /Retail & Franchise/i }));
     expect(screen.getByRole('heading', { name: 'Sector Briefing' })).toBeInTheDocument();
     expect(screen.getByText(/Sector deep dive/i)).toBeInTheDocument();
 

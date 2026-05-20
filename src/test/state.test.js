@@ -22,12 +22,12 @@ describe('demo reducer', () => {
   it('triggers a scenario and updates the inbox and feed', () => {
     const nextState = demoReducer(createBaseState(), {
       type: 'TRIGGER_SCENARIO',
-      scenarioId: 'sector-logistics',
+      scenarioId: 'growth-retail',
     });
 
-    expect(nextState.activeScenarioId).toBe('sector-logistics');
+    expect(nextState.activeScenarioId).toBe('growth-retail');
     expect(nextState.alerts[0].scenarioId).toBe('growth-retail');
-    expect(nextState.activityFeed[0].title).toBe('Sector disruption simulated');
+    expect(nextState.activityFeed[0].title).toBe('Growth signal simulated');
   });
 
   it('customizes bundle selection and terms', () => {
@@ -175,16 +175,16 @@ describe('demo reducer', () => {
       activeScenarioId: 'growth-retail',
       lookupSession: {
         ...createBaseState().lookupSession,
-        responseId: 'lookup-liquidity-manufacturing',
+        responseId: 'lookup-growth-retail',
         selectedAgentId: 'client-risk-assessment',
-        messages: [{ id: 'assistant-1', role: 'assistant', responseId: 'lookup-liquidity-manufacturing' }],
+        messages: [{ id: 'assistant-1', role: 'assistant', responseId: 'lookup-growth-retail' }],
       },
     };
 
     const lookupView = getLookupPresentationForResponse(state);
 
-    expect(lookupView.scenario.id).toBe('liquidity-manufacturing');
-    expect(lookupView.client.id).toBe('mahlangu-manufacturing');
+    expect(lookupView.scenario.id).toBe('growth-retail');
+    expect(lookupView.client.id).toBe('nkosi-retail');
     expect(lookupView.agentPresentation.title).toBe('Client risk assessment');
   });
 
