@@ -5,13 +5,13 @@ import {
   buildInitialInsightDrafts,
   getBundleById,
   getClientById,
-  getDefaultScenarioForClient,
   getInsightPackById,
   getScenarioById,
   sortAlerts,
 } from '../data/demoData';
 
 export const storageKey = 'cvp3-demo-state';
+export const JOURNEY_CLIENT_ID = 'nkosi-retail';
 
 function makeId() {
   return globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
@@ -83,7 +83,6 @@ function normalizeLookupSession(lookupSession = {}, selectedClientId = 'nkosi-re
 function focusScenarioState(state, scenario) {
   return {
     ...state,
-    selectedClientId: scenario.clientId,
     activeScenarioId: scenario.id,
     sectorFocus: scenario.sectorId,
     lookupSession: buildLookupSession(scenario.clientId),
@@ -357,7 +356,7 @@ function markActiveInsightShared(clientPortal, scenarioId) {
 
 export function createBaseState() {
   return {
-    selectedClientId: 'nkosi-retail',
+    portalClientId: 'nkosi-retail',
     activeScenarioId: 'growth-retail',
     alerts: buildInitialAlerts(),
     journeyProgress: {
@@ -403,11 +402,10 @@ export function createInitialState() {
   try {
     const savedState = JSON.parse(sessionStorage.getItem(storageKey));
     if (!savedState) return baseState;
-    const selectedClientId = savedState.selectedClientId ?? baseState.selectedClientId;
-
     return {
       ...baseState,
       ...savedState,
+      portalClientId: savedState.portalClientId ?? baseState.portalClientId,
       journeyProgress: {
         ...baseState.journeyProgress,
         ...savedState.journeyProgress,
@@ -420,7 +418,7 @@ export function createInitialState() {
         ...baseState.insightDrafts,
         ...savedState.insightDrafts,
       },
-      lookupSession: normalizeLookupSession(savedState.lookupSession, selectedClientId),
+      lookupSession: normalizeLookupSession(savedState.lookupSession, JOURNEY_CLIENT_ID),
       clientPortal: mergeClientPortalState(baseState.clientPortal, savedState.clientPortal),
       toasts: [],
     };
@@ -432,14 +430,7 @@ export function createInitialState() {
 export function demoReducer(state, action) {
   switch (action.type) {
     case 'SELECT_CLIENT': {
-      const scenario = getDefaultScenarioForClient(action.clientId);
-      return {
-        ...state,
-        selectedClientId: action.clientId,
-        activeScenarioId: scenario.id,
-        sectorFocus: scenario.sectorId,
-        lookupSession: buildLookupSession(action.clientId),
-      };
+      return { ...state, portalClientId: action.clientId };
     }
 
     case 'FOCUS_SCENARIO': {
@@ -662,7 +653,7 @@ export function demoReducer(state, action) {
 
     case 'CONFIRM_OUTREACH': {
       const scenario = getScenarioById(state.activeScenarioId);
-      const client = getClientById(state.selectedClientId);
+      const client = getClientById(JOURNEY_CLIENT_ID);
       const confirmationLabel = {
         call: 'Call scheduled',
         email: 'Email sent',
@@ -758,7 +749,7 @@ export function demoReducer(state, action) {
       };
 
     case 'RECORD_DELIVERY_ACTION': {
-      const client = getClientById(state.selectedClientId);
+      const client = getClientById(JOURNEY_CLIENT_ID);
       const verb = {
         send: 'Insight sent',
         present: 'Presentation launched',
