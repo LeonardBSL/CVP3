@@ -393,13 +393,16 @@ export function buildInitialClientPortal() {
   );
   registerInsightRecord(
     createInsightRecord({
-      ...insightRecords.find(record => record.id === 'insight-live-liquidity-manufacturing'),
+      id: 'insight-live-liquidity-manufacturing',
+      clientId: 'mahlangu-manufacturing',
+      scenarioId: 'liquidity-manufacturing',
+      headline: 'Mahlangu Components needs pre-emptive liquidity cover before procurement intensity peaks.',
+      summary: 'Supplier payments are bunching earlier while collections lag, creating a tightening working-capital cycle.',
+      generatedAt: shiftIso(-2, 10, 15),
+      sharedStatus: 'unshared',
       noteIds: [mahlanguActiveNoteId],
+      isActive: true,
     }),
-  );
-  insightRecords.splice(
-    insightRecords.findIndex(record => record.id === 'insight-live-liquidity-manufacturing'),
-    1,
   );
 
   const mahlanguEngagementOneId = 'engagement-mahlangu-1';
@@ -561,13 +564,16 @@ export function buildInitialClientPortal() {
   );
   registerInsightRecord(
     createInsightRecord({
-      ...insightRecords.find(record => record.id === 'insight-live-sector-logistics'),
+      id: 'insight-live-sector-logistics',
+      clientId: 'transit-logistics',
+      scenarioId: 'sector-logistics',
+      headline: 'Transit Flow Logistics should lock in resilience funding before sector pressure hits harder.',
+      summary: 'Corridor settlement delays and fuel volatility are increasing pressure on working capital.',
+      generatedAt: shiftIso(-3, 10, 15),
+      sharedStatus: 'unshared',
       noteIds: [transitActiveNoteId],
+      isActive: true,
     }),
-  );
-  insightRecords.splice(
-    insightRecords.findIndex(record => record.id === 'insight-live-sector-logistics'),
-    1,
   );
 
   const transitEngagementOneId = 'engagement-transit-1';
@@ -729,13 +735,16 @@ export function buildInitialClientPortal() {
   );
   registerInsightRecord(
     createInsightRecord({
-      ...insightRecords.find(record => record.id === 'insight-live-growth-distributor'),
+      id: 'insight-live-growth-distributor',
+      clientId: 'meridian-distributor',
+      scenarioId: 'growth-distributor',
+      headline: 'Meridian Trade Grid is ready for controlled expansion into adjacent sectors.',
+      summary: 'Digital sales growth and stable collections indicate capacity for disciplined expansion.',
+      generatedAt: shiftIso(-4, 10, 15),
+      sharedStatus: 'unshared',
       noteIds: [meridianActiveNoteId],
+      isActive: true,
     }),
-  );
-  insightRecords.splice(
-    insightRecords.findIndex(record => record.id === 'insight-live-growth-distributor'),
-    1,
   );
 
   const meridianEngagementOneId = 'engagement-meridian-1';
