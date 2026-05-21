@@ -117,27 +117,7 @@ export function buildInitialClientPortal() {
     engagements.push(engagement);
   }
 
-  const scenarioByClientId = {
-    'nkosi-retail': 'growth-retail',
-    'mahlangu-manufacturing': 'liquidity-manufacturing',
-    'transit-logistics': 'sector-logistics',
-    'meridian-distributor': 'growth-distributor',
-  };
-
   const nkosiLiveInsight = getInsightPackById('insight-growth-retail');
-  registerInsightRecord(
-    createInsightRecord({
-      id: 'insight-live-growth-retail',
-      clientId: 'nkosi-retail',
-      scenarioId: 'growth-retail',
-      headline: nkosiLiveInsight.headline,
-      summary: nkosiLiveInsight.whatHappened,
-      generatedAt: shiftIso(-1, 10, 15),
-      sharedStatus: 'unshared',
-      noteIds: [],
-      isActive: true,
-    }),
-  );
 
   registerGeneralNote(
     createNote({
@@ -202,7 +182,7 @@ export function buildInitialClientPortal() {
     createInsightRecord({
       id: nkosiSharedRecordId,
       clientId: 'nkosi-retail',
-      scenarioId: scenarioByClientId['nkosi-retail'],
+      scenarioId: 'growth-retail',
       headline: 'Seasonal trading uplift supported an early working-capital review.',
       summary: 'The prior review combined higher festive inflows with tighter inventory control to open a growth discussion.',
       generatedAt: shiftIso(-35, 9, 20),
@@ -215,7 +195,7 @@ export function buildInitialClientPortal() {
     createInsightRecord({
       id: nkosiUnsharedRecordId,
       clientId: 'nkosi-retail',
-      scenarioId: scenarioByClientId['nkosi-retail'],
+      scenarioId: 'growth-retail',
       headline: 'Supplier settlement data may support a margin-protection follow-up.',
       summary: 'Earlier settlement pressure suggested a short-term advisory follow-up, but it remained internal.',
       generatedAt: shiftIso(-13, 8, 45),
@@ -225,13 +205,16 @@ export function buildInitialClientPortal() {
   );
   registerInsightRecord(
     createInsightRecord({
-      ...insightRecords.find(record => record.id === 'insight-live-growth-retail'),
+      id: 'insight-live-growth-retail',
+      clientId: 'nkosi-retail',
+      scenarioId: 'growth-retail',
+      headline: nkosiLiveInsight.headline,
+      summary: nkosiLiveInsight.whatHappened,
+      generatedAt: shiftIso(-1, 10, 15),
+      sharedStatus: 'unshared',
       noteIds: [nkosiActiveNoteId],
+      isActive: true,
     }),
-  );
-  insightRecords.splice(
-    insightRecords.findIndex(record => record.id === 'insight-live-growth-retail'),
-    1,
   );
 
   const nkosiEngagementOneId = 'engagement-nkosi-1';
@@ -261,7 +244,7 @@ export function buildInitialClientPortal() {
     createEngagement({
       id: nkosiEngagementOneId,
       clientId: 'nkosi-retail',
-      scenarioId: scenarioByClientId['nkosi-retail'],
+      scenarioId: 'growth-retail',
       insightRecordId: nkosiSharedRecordId,
       channel: 'meeting',
       status: 'Meeting held',
@@ -298,7 +281,7 @@ export function buildInitialClientPortal() {
     createEngagement({
       id: nkosiEngagementTwoId,
       clientId: 'nkosi-retail',
-      scenarioId: scenarioByClientId['nkosi-retail'],
+      scenarioId: 'growth-retail',
       insightRecordId: nkosiUnsharedRecordId,
       channel: 'email',
       status: 'Email drafted',
