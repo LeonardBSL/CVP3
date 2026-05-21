@@ -37,17 +37,17 @@ function pushActivity(activityFeed, title, detail, tone = 'info') {
   return [{ id: makeId(), title, detail, tone, timestamp: timestampLabel() }, ...activityFeed].slice(0, 8);
 }
 
-function buildLookupContext(selectedClientId = 'nkosi-retail', overrides = {}) {
+function buildLookupContext(clientId = JOURNEY_CLIENT_ID, overrides = {}) {
   return {
     intentMode: 'generic',
     clientScopeMode: 'selected',
-    selectedClientIds: selectedClientId ? [selectedClientId] : [],
+    selectedClientIds: clientId ? [clientId] : [],
     ...overrides,
   };
 }
 
-function normalizeLookupContext(context = {}, selectedClientId = 'nkosi-retail') {
-  const baseContext = buildLookupContext(selectedClientId);
+function normalizeLookupContext(context = {}, clientId = JOURNEY_CLIENT_ID) {
+  const baseContext = buildLookupContext(clientId);
   return {
     ...baseContext,
     ...context,
@@ -57,25 +57,25 @@ function normalizeLookupContext(context = {}, selectedClientId = 'nkosi-retail')
   };
 }
 
-function buildLookupSession(selectedClientId = 'nkosi-retail') {
+function buildLookupSession(clientId = JOURNEY_CLIENT_ID) {
   return {
     query: '',
     pendingQuery: '',
     status: 'idle',
     responseId: null,
     messages: [],
-    context: buildLookupContext(selectedClientId),
+    context: buildLookupContext(clientId),
     selectedAgentId: null,
   };
 }
 
-function normalizeLookupSession(lookupSession = {}, selectedClientId = 'nkosi-retail') {
-  const baseSession = buildLookupSession(selectedClientId);
+function normalizeLookupSession(lookupSession = {}, clientId = JOURNEY_CLIENT_ID) {
+  const baseSession = buildLookupSession(clientId);
   return {
     ...baseSession,
     ...lookupSession,
     messages: Array.isArray(lookupSession.messages) ? lookupSession.messages : baseSession.messages,
-    context: normalizeLookupContext(lookupSession.context, selectedClientId),
+    context: normalizeLookupContext(lookupSession.context, clientId),
     selectedAgentId: lookupSession.selectedAgentId ?? null,
   };
 }
@@ -356,7 +356,7 @@ function markActiveInsightShared(clientPortal, scenarioId) {
 
 export function createBaseState() {
   return {
-    portalClientId: 'nkosi-retail',
+    portalClientId: JOURNEY_CLIENT_ID,
     activeScenarioId: 'growth-retail',
     alerts: buildInitialAlerts(),
     journeyProgress: {
@@ -368,7 +368,7 @@ export function createBaseState() {
     bundleSelection: buildInitialBundleSelection(),
     insightDrafts: buildInitialInsightDrafts(),
     outreachChoice: 'meeting',
-    lookupSession: buildLookupSession('nkosi-retail'),
+    lookupSession: buildLookupSession(JOURNEY_CLIENT_ID),
     sectorFocus: 'retail',
     feedback: {},
     clientPortal: buildInitialClientPortal(),
