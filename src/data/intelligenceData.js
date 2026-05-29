@@ -22,7 +22,7 @@ export const healthScore = {
   ],
   intelligenceSignals: [
     {
-      id: 'pnp-loyalty',
+      id: 'pnp-loyalty', // also a newsItems entry; the health module uses this bespoke version (richer connectionText + paired KB signal)
       sourceType: 'competitor',
       sourceName: 'Trade Press — Retail Week',
       time: 'Yesterday',
@@ -291,7 +291,7 @@ export const diagnostic = {
       id: 'wc-efficiency',
       name: 'Working Capital Efficiency',
       formula: 'Current Assets ÷ Current Liabilities (+ cycle quality score)',
-      currentValue: 'Good',
+      currentValue: 'Good', // qualitative badge label; trend[] holds the 0–100 numeric score used for the chart
       unit: '',
       badge: 'Good ↑',
       status: 'good',

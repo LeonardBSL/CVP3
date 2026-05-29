@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { healthScore, milestones, newsItems, benchmarking, diagnostic } from '../data/intelligenceData';
+import { healthScore, milestones, newsItems, benchmarking, diagnostic, signalsForModule } from '../data/intelligenceData';
 
 describe('intelligenceData', () => {
   it('exposes a health score in the 0-100 range with sub-scores and signals', () => {
@@ -56,5 +56,22 @@ describe('intelligenceData', () => {
       expect(m.interpretation).toBeTruthy();
       expect(m.formula).toBeTruthy();
     });
+  });
+
+  it('signalsForModule filters newsItems by module and maps to the shared signal shape', () => {
+    const benchSignals = signalsForModule('benchmarking');
+    expect(benchSignals.map(s => s.id).sort()).toEqual(['fmcg-price-hike', 'loadshedding-margin', 'shoprite-sens']);
+
+    const actSignal = benchSignals.find(s => s.id === 'fmcg-price-hike');
+    expect(actSignal.impactDirection).toBe('watch');
+    expect(actSignal.impactLabel).toBe('Act now');
+    expect(actSignal.connectionText).toBe(actSignal.connectionText); // present
+    expect(actSignal.connectionText).toBeTruthy();
+
+    const monitorSignal = benchSignals.find(s => s.id === 'shoprite-sens');
+    expect(monitorSignal.impactDirection).toBe('up');
+    expect(monitorSignal.impactLabel).toBe('Monitor');
+
+    expect(signalsForModule('nonexistent-module')).toHaveLength(0);
   });
 });
