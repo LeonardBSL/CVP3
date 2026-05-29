@@ -12,6 +12,8 @@ const BAND_LABEL = {
   engaged: 'Fully Engaged',
 };
 
+// ROW_TONE tints the row background only for elevated risk (none-risk rows stay default/unstyled);
+// VAL_TONE colours the value text for every risk level including 'none' (green). The asymmetry is intentional.
 const ROW_TONE = { moderate: 'warn', high: 'watch' };
 const VAL_TONE = { none: 'pos', moderate: 'warn', high: 'crit' };
 
@@ -21,9 +23,10 @@ const SUB_SCORE_META = [
   { key: 'loyalty', label: 'Market Loyalty', max: 35, weight: '35%' },
 ];
 
+const cardSignals = healthScore.intelligenceSignals.slice(0, 2);
+
 export default function HealthScoreModule() {
   const [open, setOpen] = useState(false);
-  const cardSignals = healthScore.intelligenceSignals.slice(0, 2);
 
   return (
     <>
@@ -41,7 +44,7 @@ export default function HealthScoreModule() {
           <div className="intel-health__hero">
             <div className="intel-health__score">{healthScore.score}</div>
             <div className="intel-health__side">
-              <span className="intel-health__pill">{BAND_LABEL[healthScore.band]}</span>
+              <span className={`intel-health__pill intel-health__pill--${healthScore.band}`}>{BAND_LABEL[healthScore.band]}</span>
               <span className="intel-health__sub">Composite · 0–100</span>
             </div>
           </div>

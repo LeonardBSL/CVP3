@@ -4849,6 +4849,10 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
 .intel-health__score { font-size: 2.75rem; font-weight: 800; color: var(--accent); line-height: 1; font-family: var(--heading-font); }
 .intel-health__side { display: flex; flex-direction: column; gap: 4px; }
 .intel-health__pill { display: inline-block; font-size: 0.67rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: var(--positive-soft); color: var(--positive); width: fit-content; }
+.intel-health__pill--low, .intel-health__pill--engaged { background: var(--positive-soft); color: var(--positive); }
+.intel-health__pill--stable { background: var(--surface-strong); color: var(--text-muted); }
+.intel-health__pill--moderate { background: var(--warning-soft); color: var(--warning); }
+.intel-health__pill--critical { background: var(--critical-soft); color: var(--critical); }
 .intel-health__sub { font-size: 0.62rem; color: var(--text-subtle); }
 .intel-health__track { background: var(--surface-strong); border-radius: 4px; height: 5px; position: relative; overflow: hidden; margin-bottom: 5px; }
 .intel-health__fill { position: absolute; inset: 0; background: linear-gradient(90deg, var(--critical) 0%, var(--warning) 40%, var(--positive) 72%); }
