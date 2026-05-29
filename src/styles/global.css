@@ -4843,3 +4843,39 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
 .intel-synthesis__label { font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #9ca3af; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
 .intel-synthesis__text { font-size: 0.7rem; color: #e5e7eb; line-height: 1.55; }
 .intel-synthesis__text strong { color: #fff; }
+
+/* Module 1 — Health Score */
+.intel-health__hero { display: flex; align-items: center; gap: 0.85rem; margin-bottom: 0.65rem; }
+.intel-health__score { font-size: 2.75rem; font-weight: 800; color: var(--accent); line-height: 1; font-family: var(--heading-font); }
+.intel-health__side { display: flex; flex-direction: column; gap: 4px; }
+.intel-health__pill { display: inline-block; font-size: 0.67rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: var(--positive-soft); color: var(--positive); width: fit-content; }
+.intel-health__sub { font-size: 0.62rem; color: var(--text-subtle); }
+.intel-health__track { background: var(--surface-strong); border-radius: 4px; height: 5px; position: relative; overflow: hidden; margin-bottom: 5px; }
+.intel-health__fill { position: absolute; inset: 0; background: linear-gradient(90deg, var(--critical) 0%, var(--warning) 40%, var(--positive) 72%); }
+.intel-health__marker { position: absolute; top: -2px; width: 3px; height: 9px; background: var(--text); border-radius: 2px; }
+.intel-health__labels { display: flex; justify-content: space-between; font-size: 0.55rem; color: var(--text-subtle); margin-bottom: 0.65rem; }
+.intel-health__rows { display: flex; flex-direction: column; gap: 4px; }
+.intel-health__row { display: flex; justify-content: space-between; font-size: 0.7rem; padding: 4px 7px; border-radius: 4px; background: var(--surface-soft); border: 1px solid var(--line); }
+.intel-health__row--warn { background: var(--warning-soft); border-color: #f0d080; }
+.intel-health__row--watch { background: var(--critical-soft); border-color: #f0c0cc; }
+.intel-health__row-label { color: var(--text-muted); }
+.intel-health__row-val { font-weight: 700; }
+.intel-health__row-val--pos { color: var(--positive); }
+.intel-health__row-val--warn { color: var(--warning); }
+.intel-health__row-val--crit { color: var(--critical); }
+
+/* Shared modal: breakdown + table (used by Health and others) */
+.intel-breakdown { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.intel-breakdown__item { background: var(--surface-soft); border: 1px solid var(--line); border-radius: 6px; padding: 10px; text-align: center; }
+.intel-breakdown__val { font-size: 1.4rem; font-weight: 800; color: var(--text); }
+.intel-breakdown__max { font-size: 0.8rem; color: var(--text-subtle); }
+.intel-breakdown__name { font-size: 0.62rem; color: var(--text-subtle); margin-top: 2px; }
+.intel-breakdown__weight { font-size: 0.58rem; color: var(--text-subtle); margin-top: 1px; }
+.intel-breakdown__total { text-align: center; font-size: 0.68rem; color: var(--text-subtle); margin-top: 6px; }
+.intel-breakdown__total strong { color: var(--accent); font-size: 1rem; }
+
+.intel-table { width: 100%; border-collapse: collapse; font-size: 0.72rem; }
+.intel-table th { text-align: left; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-subtle); padding: 4px 6px; border-bottom: 1px solid var(--line); }
+.intel-table td { padding: 6px; border-bottom: 1px solid var(--surface-muted); vertical-align: top; }
+.intel-table tr:last-child td { border-bottom: none; }
+.intel-table__sub { display: block; color: var(--text-subtle); font-size: 0.65rem; margin-top: 1px; }
