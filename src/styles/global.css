@@ -5033,4 +5033,10 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
 .intel-diag-detail__bar-q { font-size: 0.52rem; color: var(--text-subtle); }
 .intel-diag-detail__series { font-size: 0.58rem; color: var(--text-subtle); margin-top: 3px; }
 .intel-diag-detail__interp-label { font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-subtle); margin-bottom: 3px; }
+
+/* Intelligence Dashboard — portal tab bar */
+.intel-tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--line); margin-bottom: 1.25rem; }
+.intel-tab { padding: 0.6rem 1.1rem; font-size: 0.82rem; font-weight: 600; color: var(--text-subtle); border-bottom: 2px solid transparent; background: none; }
+.intel-tab--active { color: var(--accent); border-bottom-color: var(--accent); }
+.intel-tab:hover { color: var(--text); }
 .intel-diag-detail__interp-text { font-size: 0.68rem; color: var(--text-muted); line-height: 1.5; }

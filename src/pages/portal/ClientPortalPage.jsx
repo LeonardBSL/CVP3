@@ -15,6 +15,7 @@ import { InternalNoteComposer } from '../../components/InternalNotes';
 import { StatusPill } from '../../components/UI';
 import { useDemoState } from '../../state/DemoStateProvider';
 import { getPortalRecordVisibility } from '../pageContext';
+import IntelligenceDashboard from './IntelligenceDashboard';
 
 function sortByNewest(items, key) {
   return [...items].sort((left, right) => new Date(right[key]) - new Date(left[key]));
@@ -129,6 +130,7 @@ export default function ClientPortalPage() {
   const [expandedEngagements, setExpandedEngagements] = useState({});
   const [showAllInsights, setShowAllInsights] = useState(false);
   const [composerState, setComposerState] = useState(null);
+  const [activeTab, setActiveTab] = useState('intelligence');
 
   const client = clients.find(item => item.id === state.portalClientId) ?? clients[0];
   const notesById = state.clientPortal.notes;
@@ -308,11 +310,35 @@ export default function ClientPortalPage() {
       <section className="portal-header">
         <h2>Client Portal</h2>
         <p>
-          Navigate client profiles, review the full internal history of insights and engagements, and manage internal notes
-          without exposing them to the client.
+          AI-powered intelligence dashboard and internal relationship history for your clients.
         </p>
       </section>
 
+      <div className="intel-tab-bar" role="tablist" aria-label="Client portal views">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeTab === 'intelligence'}
+          className={`intel-tab${activeTab === 'intelligence' ? ' intel-tab--active' : ''}`}
+          onClick={() => setActiveTab('intelligence')}
+        >
+          Intelligence Dashboard
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeTab === 'records'}
+          className={`intel-tab${activeTab === 'records' ? ' intel-tab--active' : ''}`}
+          onClick={() => setActiveTab('records')}
+        >
+          Notes &amp; Records
+        </button>
+      </div>
+
+      {activeTab === 'intelligence' ? <IntelligenceDashboard /> : null}
+
+      {activeTab === 'records' ? (
+      <>
       <section className="ri-panel portal-filter-panel">
         <div className="portal-filter-panel__row portal-filter-panel__row--full">
           <label className="topbar-field topbar-field--full">
@@ -625,6 +651,8 @@ export default function ClientPortalPage() {
         submitLabel={composerState?.submitLabel ?? 'Save note'}
         initialNote={composerState?.initialNote ?? null}
       />
+      </>
+      ) : null}
     </div>
   );
 }

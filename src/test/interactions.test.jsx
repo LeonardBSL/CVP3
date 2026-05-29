@@ -72,6 +72,7 @@ describe('insight interactions', () => {
     await user.click(screen.getByRole('link', { name: /Client portal/i }));
 
     expect(screen.getByRole('heading', { name: 'Client Portal' })).toBeInTheDocument();
+    await user.click(screen.getByRole('tab', { name: /Notes & Records/i }));
     expect(screen.getByText(/Insight-specific note from the journey\./i)).toBeInTheDocument();
   }, 15000);
 
@@ -85,6 +86,7 @@ describe('insight interactions', () => {
     await user.click(screen.getByRole('button', { name: /Save note/i }));
     await user.click(screen.getByRole('link', { name: /Client portal/i }));
 
+    await user.click(screen.getByRole('tab', { name: /Notes & Records/i }));
     expect(screen.getByText(/General client note from the engagement journey\./i)).toBeInTheDocument();
   });
 
@@ -92,6 +94,7 @@ describe('insight interactions', () => {
     const user = userEvent.setup();
     renderApp('/portal');
 
+    await user.click(screen.getByRole('tab', { name: /Notes & Records/i }));
     expect(screen.getByText(/Nkosi Retail Group can expand two additional sites without stretching liquidity\./i)).toBeInTheDocument();
 
     await user.selectOptions(screen.getByLabelText(/Insight sharing filter/i), 'shared');
@@ -104,6 +107,7 @@ describe('insight interactions', () => {
     const user = userEvent.setup();
     renderApp('/portal');
 
+    await user.click(screen.getByRole('tab', { name: /Notes & Records/i }));
     await user.selectOptions(screen.getByLabelText(/Client portal client/i), 'mahlangu-manufacturing');
 
     expect(screen.queryByText(/Temporary watch item on delayed receivables has expired/i)).not.toBeInTheDocument();
@@ -151,6 +155,7 @@ describe('insight interactions', () => {
     const user = userEvent.setup();
     renderApp('/portal');
 
+    await user.click(screen.getByRole('tab', { name: /Notes & Records/i }));
     expect(screen.queryByText(/Seasonal trading uplift supported an early working-capital review\./i)).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /Load more insights/i }));
@@ -162,6 +167,7 @@ describe('insight interactions', () => {
     const user = userEvent.setup();
     renderApp('/portal');
 
+    await user.click(screen.getByRole('tab', { name: /Notes & Records/i }));
     await user.click(screen.getAllByRole('button', { name: /Edit note/i })[0]);
     await user.clear(screen.getByRole('textbox', { name: /Internal note text/i }));
     await user.type(screen.getByRole('textbox', { name: /Internal note text/i }), 'Updated portal note.');
@@ -174,6 +180,7 @@ describe('insight interactions', () => {
     const user = userEvent.setup();
     renderApp('/portal');
 
+    await user.click(screen.getByRole('tab', { name: /Notes & Records/i }));
     await user.click(screen.getAllByRole('button', { name: /Add insight note/i })[0]);
     await user.type(screen.getByRole('textbox', { name: /Internal note text/i }), 'Portal insight note.');
     await user.click(screen.getByRole('button', { name: /Save insight note/i }));
