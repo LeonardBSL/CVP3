@@ -16,20 +16,14 @@ const previewMetrics = benchmarking.categories.slice(0, 3).map(cat => ({
   metric: cat.metrics[0],
 }));
 
-// kAnonymity value is e.g. "k-anonymity ≥ 5" — display the threshold only under the
-// "k-anonymity" label so the regex /k-anonymity/ in tests matches uniquely (only the
-// intel-reasoning-box), avoiding a "found multiple elements" failure.
-const METHOD_CELLS = pg => {
-  const [, ...kParts] = pg.kAnonymity.split(' '); // strips "k-anonymity" prefix → "≥ 5"
-  return [
-    { label: 'Sector', value: pg.sector },
-    { label: 'Revenue band', value: pg.revenueBand },
-    { label: 'Geography', value: pg.geography },
-    { label: 'Peer count', value: `${pg.n} businesses` },
-    { label: 'Refresh', value: pg.refreshDate },
-    { label: 'Anonymisation', value: `${kParts.join(' ')} peers min` },
-  ];
-};
+const METHOD_CELLS = pg => [
+  { label: 'Sector', value: pg.sector },
+  { label: 'Revenue band', value: pg.revenueBand },
+  { label: 'Geography', value: pg.geography },
+  { label: 'Peer count', value: `${pg.n} businesses` },
+  { label: 'Refresh', value: pg.refreshDate },
+  { label: 'Anonymisation', value: pg.kAnonymity },
+];
 
 function BenchBar({ metric }) {
   return (

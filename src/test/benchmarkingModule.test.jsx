@@ -17,6 +17,6 @@ describe('BenchmarkingModule', () => {
     expect(within(dialog).getByText('Peer Group Methodology')).toBeInTheDocument();
     expect(within(dialog).getByText('Banking Behaviour')).toBeInTheDocument();
     expect(within(dialog).getByText('Growth Indicators')).toBeInTheDocument();
-    expect(within(dialog).getByText(/k-anonymity/)).toBeInTheDocument();
+    expect(within(dialog).getAllByText(/k-anonymity/).length).toBeGreaterThan(0);
   });
 });
