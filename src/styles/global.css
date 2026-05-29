@@ -4167,6 +4167,28 @@ input[type='checkbox'], input[type='radio'] { accent-color: var(--accent); }
   font-size: 0.9rem;
 }
 
+/* Module 2 — Milestones */
+.intel-ml__list { display: flex; flex-direction: column; gap: 6px; }
+.intel-ml__item { display: flex; align-items: center; gap: 8px; padding: 7px 9px; border-radius: 5px; border: 1px solid var(--line); background: var(--surface-soft); }
+.intel-ml__item--urgent { background: var(--warning-soft); border-color: #f0c470; }
+.intel-ml__dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; background: var(--line-strong); }
+.intel-ml__dot--urgent { background: var(--warning); }
+.intel-ml__body { flex: 1; min-width: 0; }
+.intel-ml__name { font-size: 0.71rem; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.intel-ml__meta { font-size: 0.6rem; color: var(--text-subtle); margin-top: 1px; }
+.intel-ml__days { font-size: 0.6rem; font-weight: 700; padding: 2px 7px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; background: var(--surface-strong); color: var(--text-subtle); border: 1px solid var(--line); }
+.intel-ml__days--urgent { background: var(--warning-soft); color: var(--warning); border-color: #f0c470; }
+
+.intel-ml-detail { border: 1px solid var(--line); border-radius: 6px; overflow: hidden; margin-bottom: 8px; }
+.intel-ml-detail__head { padding: 8px 12px; background: var(--surface-soft); border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.intel-ml-detail__head--urgent { background: var(--warning-soft); }
+.intel-ml-detail__title { font-size: 0.78rem; font-weight: 700; color: var(--text); }
+.intel-ml-detail__source { font-size: 0.6rem; background: var(--surface-strong); border: 1px solid var(--line); border-radius: 3px; padding: 1px 6px; color: var(--text-subtle); font-weight: 600; white-space: nowrap; }
+.intel-ml-detail__body { padding: 10px 12px; display: flex; flex-direction: column; gap: 7px; }
+.intel-ml-detail__row { display: grid; grid-template-columns: 90px 1fr; gap: 6px; font-size: 0.7rem; }
+.intel-ml-detail__key { font-weight: 700; color: var(--text-subtle); }
+.intel-ml-detail__val { color: var(--text); line-height: 1.45; }
+
 .engagement-source-chip--transaction {
   background: #fff1dc;
   border-color: rgba(255, 203, 135, 0.86);
