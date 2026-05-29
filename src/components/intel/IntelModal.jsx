@@ -1,11 +1,13 @@
 import { X } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useId } from 'react';
 
 export default function IntelModal({ open, title, subtitle, footerLeft, footerRight, onClose, children }) {
   useEffect(() => {
     if (!open) {
       return undefined;
     }
+
+    const previouslyFocused = document.activeElement;
 
     function handleKey(event) {
       if (event.key === 'Escape') {
@@ -14,14 +16,19 @@ export default function IntelModal({ open, title, subtitle, footerLeft, footerRi
     }
 
     document.addEventListener('keydown', handleKey);
-    return () => document.removeEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('keydown', handleKey);
+      if (previouslyFocused && typeof previouslyFocused.focus === 'function') {
+        previouslyFocused.focus();
+      }
+    };
   }, [open, onClose]);
+
+  const titleId = useId();
 
   if (!open) {
     return null;
   }
-
-  const titleId = 'intel-modal-title';
 
   return (
     <div className="intel-modal-overlay" onClick={onClose}>

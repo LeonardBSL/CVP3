@@ -48,4 +48,11 @@ describe('IntelModal', () => {
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(onClose).toHaveBeenCalledTimes(1);
   });
+
+  it('calls onClose when the backdrop is clicked', () => {
+    const onClose = vi.fn();
+    const { container } = render(<IntelModal open title="X" onClose={onClose}><p>Body</p></IntelModal>);
+    fireEvent.click(container.querySelector('.intel-modal-overlay'));
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
 });
