@@ -69,6 +69,7 @@ export default function NewsMonitorModule() {
                   <div className="intel-news__card-top">
                     <span className={`intel-news__src ${sourceBadgeClass(item.sourceType)}`}>{sourceLabel(item.sourceType)}</span>
                     <span className="intel-news__time">{item.time.split(' · ')[0]}</span>
+                    <span className={`intel-news__pill intel-news__pill--${meta.pillMod}`}>{meta.label}</span>
                   </div>
                   <div className="intel-news__headline">{item.headline}</div>
                   <div className="intel-news__why"><strong>Why:</strong> {shortWhy(item.relevanceAssessment)}</div>

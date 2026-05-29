@@ -6,7 +6,7 @@ describe('NewsMonitorModule', () => {
   it('renders the live feed counts and top headlines on the card', () => {
     render(<NewsMonitorModule />);
     expect(screen.getByText('Live Feed')).toBeInTheDocument();
-    expect(screen.getByText('Act Now')).toBeInTheDocument();
+    expect(screen.getAllByText('Act Now').length).toBeGreaterThan(0);
     expect(screen.getAllByText(/Pick n Pay launches expanded Smart Shopper/i).length).toBeGreaterThan(0);
   });
 
