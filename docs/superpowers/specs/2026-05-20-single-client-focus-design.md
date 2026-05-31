@@ -100,7 +100,18 @@ Remove entries that are exclusively used by non-Nkosi journey pages and will nev
 
 ### clientPortalData.js hardening
 
-`clientPortalData.js` currently references the `scenarios` array via a `scenarioByClientId` mapping. After deleting 3 non-Nkosi scenarios, this mapping must be hardened — either by inlining the client→scenario mapping as a static object, or by guarding the lookup with a fallback — so it does not throw on a missing scenario.
+`clientPortalData.js` currently builds a `scenarioByClientId` mapping by iterating the `scenarios` array. After deleting 3 non-Nkosi scenarios, replace this dynamic mapping with a static inline object:
+
+```js
+const scenarioByClientId = {
+  'nkosi-retail': 'growth-retail',
+  'mahlangu-manufacturing': 'liquidity-manufacturing',
+  'transit-logistics': 'sector-logistics',
+  'meridian-distributor': 'growth-distributor',
+};
+```
+
+The scenario IDs are retained as string references only — the full scenario objects are deleted from `demoData.js`. This removes the runtime dependency on the deleted entries.
 
 ---
 

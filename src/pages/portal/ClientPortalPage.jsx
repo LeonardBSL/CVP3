@@ -303,7 +303,7 @@ export default function ClientPortalPage() {
   return (
     <div className="ri-page portal-page">
       <Link className="portal-breadcrumb" to="/dashboard">
-        <ArrowLeft size={20} />
+        <ArrowLeft size={14} />
         <span>Back to Dashboard</span>
       </Link>
 
