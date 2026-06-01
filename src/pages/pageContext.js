@@ -258,6 +258,190 @@ export function buildMeetingBrief(context, overrides = {}) {
   };
 }
 
+export function buildRevenueOpportunityScan(context) {
+  const { client, insight, bundle, selection, selectedProducts: products = [] } = context;
+  const sourceIds = insight.sourceIds;
+  return {
+    title: 'Revenue opportunity scan',
+    summary: insight.whyItMatters,
+    sections: [
+      {
+        id: 'opportunity-summary',
+        title: 'Opportunity summary',
+        type: 'bullets',
+        items: products.map((product, index) => `${index + 1}. ${product.name} - ${product.description}`),
+      },
+      {
+        id: 'opportunity-breakdown',
+        title: 'Opportunity breakdown',
+        type: 'cards',
+        items: products.map(product => ({
+          title: product.name,
+          body: `${product.description} Relevant now because ${insight.whyNow} Expected impact: supports ${client.focus.toLowerCase()}.`,
+          meta: formatProductMeta(product, selection),
+        })),
+      },
+      {
+        id: 'client-context',
+        title: 'Client context',
+        type: 'bullets',
+        items: insight.transactionalMetrics.map(formatMetric),
+      },
+      {
+        id: 'product-solution-mapping',
+        title: 'Product or solution mapping',
+        type: 'key-value',
+        items: products.map(product => ({
+          label: product.name,
+          value: formatProductMeta(product, selection).join(' | '),
+        })),
+      },
+      {
+        id: 'recommended-next-actions',
+        title: 'Recommended next actions',
+        type: 'bullets',
+        items: [
+          `Engage client on ${products[0]?.name ?? bundle.title} while ${insight.whyNow.charAt(0).toLowerCase()}${insight.whyNow.slice(1)}`,
+          products[1]
+            ? `Explore ${products[1].name} as the next lever if the conversation broadens beyond the first opportunity.`
+            : `Explore the broader ${bundle.title} bundle if the conversation broadens beyond the first opportunity.`,
+          `Monitor ${insight.transactionalMetrics[2]?.label?.toLowerCase() ?? 'the operating signals'} before the next RM review.`,
+        ],
+      },
+    ],
+    sourceIds,
+  };
+}
+
+export function buildClientRiskAssessment(context) {
+  const { scenario, insight, briefing } = context;
+  const overallPosture = scenario.severity === 'positive' ? 'improving' : 'deteriorating';
+  const trend = describeTrend(insight.trendData ?? []);
+  return {
+    title: 'Client risk assessment',
+    summary: insight.whyItMatters,
+    sections: [
+      {
+        id: 'risk-overview',
+        title: 'Risk overview',
+        type: 'paragraph',
+        body: `Overall posture: ${overallPosture}. ${insight.whyItMatters}`,
+      },
+      {
+        id: 'key-risk-areas',
+        title: 'Key risk areas',
+        type: 'key-value',
+        items: buildRiskAreas({ scenario, insight, briefing }),
+      },
+      {
+        id: 'risk-indicators-signals',
+        title: 'Risk indicators and signals',
+        type: 'bullets',
+        items: [
+          ...scenario.alert.supportingData.map(item => `${item.label}: ${item.value}`),
+          ...insight.transactionalMetrics.map(formatMetric),
+        ],
+      },
+      {
+        id: 'trend-analysis',
+        title: 'Trend analysis',
+        type: 'key-value',
+        items: [
+          { label: 'Direction', value: trend.from != null && trend.to != null ? `${trend.direction} (${trend.from} to ${trend.to})` : trend.direction },
+          { label: 'Overall posture', value: overallPosture },
+          { label: 'Notable shift', value: scenario.alert.whyNow },
+        ],
+      },
+      {
+        id: 'recommended-actions',
+        title: 'Recommended actions',
+        type: 'bullets',
+        items: [
+          `Monitor ${insight.transactionalMetrics[2]?.label?.toLowerCase() ?? 'the latest operating signals'} through the next review cycle.`,
+          `Engage client with the current RM position: ${insight.recommendedAction}`,
+          scenario.severity === 'critical'
+            ? 'Escalate internally if the pressure pattern continues to intensify across the next scripted refresh.'
+            : 'Escalate internally only if the observed indicators move materially outside the current scripted range.',
+        ],
+      },
+    ],
+    sourceIds: insight.sourceIds,
+  };
+}
+
+export function buildStrategicLens(context) {
+  const { client, insight, scenario } = context;
+  return {
+    title: 'Strategic lens',
+    summary: insight.whyItMatters,
+    sections: [
+      {
+        id: 'strategic-thesis',
+        title: 'Strategic thesis',
+        type: 'paragraph',
+        body: `${insight.headline} ${insight.whyItMatters}`,
+      },
+      {
+        id: 'alignment',
+        title: 'Alignment with client direction',
+        type: 'bullets',
+        items: [
+          `RM focus: ${client.focus}`,
+          `Why now: ${insight.whyNow}`,
+          `Recommended posture: ${insight.recommendedAction}`,
+        ],
+      },
+      {
+        id: 'strategic-next-steps',
+        title: 'Strategic next steps',
+        type: 'bullets',
+        items: splitDraftIntoBullets(insight.whatToDoNext).length
+          ? splitDraftIntoBullets(insight.whatToDoNext)
+          : [insight.whatToDoNext, `Anchor the conversation in the ${scenario.label.toLowerCase()} signal.`],
+      },
+    ],
+    sourceIds: insight.sourceIds,
+  };
+}
+
+export function buildRegulatoryLens(context) {
+  const { insight, scenario, briefing } = context;
+  return {
+    title: 'Regulatory lens',
+    summary: 'Regulatory and compliance context for this origination angle.',
+    sections: [
+      {
+        id: 'regulatory-context',
+        title: 'Regulatory context',
+        type: 'paragraph',
+        body: briefing?.riskSignal
+          ? `${briefing.riskSignal} is the leading external watch item; confirm it does not constrain the proposed structure.`
+          : `No specific regulatory constraint is flagged in the current ${scenario.label.toLowerCase()} scenario; proceed under standard product governance.`,
+      },
+      {
+        id: 'compliance-checks',
+        title: 'Compliance checks before commitment',
+        type: 'bullets',
+        items: [
+          'Confirm product eligibility and pre-approved appetite before any client commitment.',
+          'Ensure all figures cited in client-facing material trace to a source (evidence-backed by design).',
+          'No client-facing commitment is made until human officers approve.',
+        ],
+      },
+    ],
+    sourceIds: insight.sourceIds,
+  };
+}
+
+export function buildOriginationLenses(context) {
+  return {
+    strategic: buildStrategicLens(context),
+    financial: buildRevenueOpportunityScan(context),
+    risk: buildClientRiskAssessment(context),
+    regulatory: buildRegulatoryLens(context),
+  };
+}
+
 function buildLookupAgentPresentation(agentId, { scenario, client, insight, bundle, selection, briefing, lookupResponse, products, trend }) {
   if (!agentId || !scenario || !client || !insight || !bundle || !lookupResponse) {
     return null;
