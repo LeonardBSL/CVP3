@@ -443,6 +443,37 @@ export function buildOriginationLenses(context) {
   };
 }
 
+export function buildOriginationPipeline(context) {
+  const { scenario, insight, client } = context;
+  const metric = insight.transactionalMetrics;
+  return {
+    agents: [
+      { id: 'market-signal', label: 'Market Signal', role: 'Detects banking-relevant events', contribution: scenario.alert.title },
+      { id: 'insight-engine', label: 'Insight Engine', role: 'Explains trends and patterns', contribution: insight.whatHappened },
+      { id: 'internal-intel', label: 'Internal Intelligence', role: 'Checks strategy and financing fit', contribution: `RM focus alignment: ${client.focus}` },
+      { id: 'opportunity', label: 'Opportunity Generation', role: 'Converts intelligence into products', contribution: insight.recommendedAction },
+      { id: 'risk-intel', label: 'Risk Intelligence', role: 'Validates exposure and sector risk', contribution: `Why now: ${scenario.alert.whyNow}` },
+      { id: 'origination', label: 'Deal Origination', role: 'Assembles the banker-ready report', contribution: insight.whyItMatters },
+    ],
+    synthesis: { id: 'synthesis', label: 'Deal Origination Report', role: 'Combines all inputs', contribution: `${metric[0] ? `${metric[0].label}: ${metric[0].value}. ` : ''}${insight.headline}` },
+  };
+}
+
+export function buildMeetingBriefPipeline(context) {
+  const { scenario, insight, client, briefing } = context;
+  return {
+    agents: [
+      { id: 'relationship-snapshot', label: 'Relationship Snapshot', role: 'Client identity and coverage', contribution: `${client.name} | ${client.persona}` },
+      { id: 'financial-snapshot', label: 'Financial Snapshot', role: 'Revenue, balances, leverage', contribution: insight.transactionalMetrics.map(formatMetric).join('; ') },
+      { id: 'opportunities-risks', label: 'Opportunities & Risks', role: 'Angles and watch-outs', contribution: insight.whyItMatters },
+      { id: 'recent-intel', label: 'Recent Intelligence', role: 'Latest internal/external signals', contribution: scenario.alert.summary },
+      { id: 'relationship-timeline', label: 'Relationship Timeline', role: 'Meeting history and follow-ups', contribution: `Recommended action: ${insight.recommendedAction}` },
+      { id: 'peer-context', label: 'Peer/Market Context', role: 'Sector dynamics', contribution: briefing?.commentary ?? `${scenario.label} is the leading external signal.` },
+    ],
+    synthesis: { id: 'synthesis', label: 'Meeting Brief', role: 'Combines all inputs', contribution: insight.headline },
+  };
+}
+
 function buildLookupAgentPresentation(agentId, { scenario, client, insight, bundle, selection, briefing, lookupResponse, products, trend }) {
   if (!agentId || !scenario || !client || !insight || !bundle || !lookupResponse) {
     return null;

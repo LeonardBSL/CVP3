@@ -2,8 +2,9 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { EngagementJourneyStepper, useJourneyStep } from '../../components/UI';
 import LookupAgentOutput from '../../components/LookupAgentOutput';
-import { buildMeetingBrief, engagementSteps, getViewContext } from '../pageContext';
+import { buildMeetingBrief, buildMeetingBriefPipeline, engagementSteps, getViewContext } from '../pageContext';
 import { useDemoState } from '../../state/DemoStateProvider';
+import AgentPipeline from '../../components/engagement/AgentPipeline';
 
 export default function MeetingBriefPage() {
   const { state } = useDemoState();
@@ -12,6 +13,7 @@ export default function MeetingBriefPage() {
   const context = getViewContext(state);
   const { client, insight } = context;
   const brief = buildMeetingBrief(context);
+  const briefPipeline = buildMeetingBriefPipeline(context);
 
   return (
     <div className="ri-page engagement-page">
@@ -36,6 +38,14 @@ export default function MeetingBriefPage() {
           </div>
         </div>
         <LookupAgentOutput presentation={brief} />
+      </section>
+
+      <section className="ri-panel engagement-main-panel">
+        <div className="engagement-section-heading">
+          <h3>How the agents work together</h3>
+          <p>Six specialist agents produce one meeting brief.</p>
+        </div>
+        <AgentPipeline pipeline={briefPipeline} />
       </section>
 
       <Link className="engagement-primary-cta" to="/engagement/outreach">

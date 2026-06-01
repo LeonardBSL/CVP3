@@ -5,8 +5,9 @@ import { EngagementJourneyStepper, FeedbackStrip, useJourneyStep } from '../../c
 import { JourneyNoteAction } from '../../components/InternalNotes';
 import RichEvidenceNarrative from '../../components/RichEvidenceNarrative';
 import { useDemoState } from '../../state/DemoStateProvider';
-import { buildOriginationLenses, engagementSteps, getViewContext } from '../pageContext';
+import { buildOriginationLenses, buildOriginationPipeline, engagementSteps, getViewContext } from '../pageContext';
 import LensTabs from '../../components/engagement/LensTabs';
+import AgentPipeline from '../../components/engagement/AgentPipeline';
 
 export default function InsightReviewPage() {
   const [bundleOpen, setBundleOpen] = useState(false);
@@ -14,6 +15,7 @@ export default function InsightReviewPage() {
   const context = getViewContext(state);
   const { activeInsightRecord, bundle, client, insight, scenario, selection, selectedProducts } = context;
   const originationLenses = buildOriginationLenses(context);
+  const originationPipeline = buildOriginationPipeline(context);
 
   useJourneyStep('engagement', 'insight');
 
@@ -85,6 +87,14 @@ export default function InsightReviewPage() {
           <p>Four specialist views over the same client intelligence.</p>
         </div>
         <LensTabs lenses={originationLenses} />
+      </section>
+
+      <section className="ri-panel engagement-main-panel">
+        <div className="engagement-section-heading">
+          <h3>How the agents work together</h3>
+          <p>Six specialist agents produce one banker-ready report.</p>
+        </div>
+        <AgentPipeline pipeline={originationPipeline} />
       </section>
 
       <section className="ri-panel engagement-main-panel">
