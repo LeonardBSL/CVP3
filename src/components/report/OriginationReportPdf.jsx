@@ -12,7 +12,7 @@ const LENS_ORDER = ['strategic', 'financial', 'risk', 'regulatory'];
 export default function OriginationReportPdf({ lenses, client, date }) {
   return (
     <PdfLayout reportType="Deal Origination Report" client={client} date={date}>
-      {LENS_ORDER.map(key => (
+      {LENS_ORDER.filter(key => lenses[key]).map(key => (
         <View key={key}>
           <Text style={styles.lensTitle}>{lenses[key].title}</Text>
           <ReportPresentation presentation={lenses[key]} />

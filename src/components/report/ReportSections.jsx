@@ -48,7 +48,7 @@ export function ReportPresentation({ presentation }) {
   return (
     <View>
       {presentation.summary ? <Text style={styles.summary}>{presentation.summary}</Text> : null}
-      {presentation.sections.map(section => (
+      {(presentation.sections ?? []).map(section => (
         <View key={section.id} style={styles.section} wrap={false}>
           <Text style={styles.heading}>{section.title}</Text>
           <SectionBody section={section} />
