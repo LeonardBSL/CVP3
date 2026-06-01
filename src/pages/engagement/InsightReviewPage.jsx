@@ -5,7 +5,7 @@ import { EngagementJourneyStepper, FeedbackStrip, useJourneyStep } from '../../c
 import { JourneyNoteAction } from '../../components/InternalNotes';
 import RichEvidenceNarrative from '../../components/RichEvidenceNarrative';
 import { useDemoState } from '../../state/DemoStateProvider';
-import { buildOriginationLenses, buildOriginationPipeline, engagementSteps, getViewContext } from '../pageContext';
+import { buildOriginationLenses, buildOriginationPipeline, engagementSteps, getReportDate, getViewContext } from '../pageContext';
 import LensTabs from '../../components/engagement/LensTabs';
 import AgentPipeline from '../../components/engagement/AgentPipeline';
 import ExportReportButton from '../../components/report/ExportReportButton';
@@ -18,6 +18,7 @@ export default function InsightReviewPage() {
   const { activeInsightRecord, bundle, client, insight, scenario, selection, selectedProducts } = context;
   const originationLenses = buildOriginationLenses(context);
   const originationPipeline = buildOriginationPipeline(context);
+  const reportDate = getReportDate();
 
   useJourneyStep('engagement', 'insight');
 
@@ -90,8 +91,8 @@ export default function InsightReviewPage() {
             <p>Four specialist views over the same client intelligence.</p>
           </div>
           <ExportReportButton
-            document={<OriginationReportPdf lenses={originationLenses} client={client.name} date="1 June 2026" />}
-            fileName={`Absa-${client.name.replace(/\s+/g, '-')}-Deal-Origination-Report-20260601.pdf`}
+            document={<OriginationReportPdf lenses={originationLenses} client={client.name} date={reportDate.label} />}
+            fileName={`Absa-${client.name.replace(/\s+/g, '-')}-Deal-Origination-Report-${reportDate.stamp}.pdf`}
             label="Download origination report"
           />
         </div>

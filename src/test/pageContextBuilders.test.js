@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createBaseState } from '../state/demoState';
-import { buildMeetingBrief, getViewContext } from '../pages/pageContext';
+import { buildMeetingBrief, getReportDate, getViewContext } from '../pages/pageContext';
 
 describe('buildMeetingBrief', () => {
   it('builds a five-section brief from the insight pack without a lookupResponse', () => {
@@ -25,5 +25,14 @@ describe('buildMeetingBrief', () => {
 
     expect(brief.summary).toBe('OVERRIDE');
     expect(brief.sourceIds).toEqual(['x']);
+  });
+});
+
+describe('getReportDate', () => {
+  it('formats a human label and a compact filename stamp from a given date', () => {
+    const { label, stamp } = getReportDate(new Date('2026-06-01T09:00:00Z'));
+
+    expect(label).toBe('1 June 2026');
+    expect(stamp).toBe('20260601');
   });
 });

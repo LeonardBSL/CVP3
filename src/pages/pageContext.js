@@ -38,6 +38,13 @@ export const sectorSteps = [
   { id: 'client-relevance', label: 'Client relevance' },
 ];
 
+export function getReportDate(now = new Date()) {
+  return {
+    label: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+    stamp: now.toISOString().slice(0, 10).replace(/-/g, ''),
+  };
+}
+
 const lookupIntentLabels = {
   generic: 'Generic lookup',
   'kb-only': 'Knowledge base only',

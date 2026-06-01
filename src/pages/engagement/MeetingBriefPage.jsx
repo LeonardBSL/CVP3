@@ -2,7 +2,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { EngagementJourneyStepper, useJourneyStep } from '../../components/UI';
 import LookupAgentOutput from '../../components/LookupAgentOutput';
-import { buildMeetingBrief, buildMeetingBriefPipeline, engagementSteps, getViewContext } from '../pageContext';
+import { buildMeetingBrief, buildMeetingBriefPipeline, engagementSteps, getReportDate, getViewContext } from '../pageContext';
 import { useDemoState } from '../../state/DemoStateProvider';
 import AgentPipeline from '../../components/engagement/AgentPipeline';
 import ExportReportButton from '../../components/report/ExportReportButton';
@@ -16,6 +16,7 @@ export default function MeetingBriefPage() {
   const { client, insight } = context;
   const brief = buildMeetingBrief(context);
   const briefPipeline = buildMeetingBriefPipeline(context);
+  const reportDate = getReportDate();
 
   return (
     <div className="ri-page engagement-page">
@@ -39,8 +40,8 @@ export default function MeetingBriefPage() {
             <p>{client.name} | {insight.headline}</p>
           </div>
           <ExportReportButton
-            document={<MeetingBriefPdf brief={brief} client={client.name} date="1 June 2026" />}
-            fileName={`Absa-${client.name.replace(/\s+/g, '-')}-Meeting-Brief-20260601.pdf`}
+            document={<MeetingBriefPdf brief={brief} client={client.name} date={reportDate.label} />}
+            fileName={`Absa-${client.name.replace(/\s+/g, '-')}-Meeting-Brief-${reportDate.stamp}.pdf`}
             label="Download brief PDF"
           />
         </div>
