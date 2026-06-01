@@ -5,12 +5,15 @@ import { EngagementJourneyStepper, FeedbackStrip, useJourneyStep } from '../../c
 import { JourneyNoteAction } from '../../components/InternalNotes';
 import RichEvidenceNarrative from '../../components/RichEvidenceNarrative';
 import { useDemoState } from '../../state/DemoStateProvider';
-import { engagementSteps, getViewContext } from '../pageContext';
+import { buildOriginationLenses, engagementSteps, getViewContext } from '../pageContext';
+import LensTabs from '../../components/engagement/LensTabs';
 
 export default function InsightReviewPage() {
   const [bundleOpen, setBundleOpen] = useState(false);
   const { state, dispatch } = useDemoState();
-  const { activeInsightRecord, bundle, client, insight, scenario, selection, selectedProducts } = getViewContext(state);
+  const context = getViewContext(state);
+  const { activeInsightRecord, bundle, client, insight, scenario, selection, selectedProducts } = context;
+  const originationLenses = buildOriginationLenses(context);
 
   useJourneyStep('engagement', 'insight');
 
@@ -74,6 +77,14 @@ export default function InsightReviewPage() {
 
       <section className="ri-panel engagement-main-panel">
         <RichEvidenceNarrative response={insight.richResponse} />
+      </section>
+
+      <section className="ri-panel engagement-main-panel">
+        <div className="engagement-section-heading">
+          <h3>Origination lenses</h3>
+          <p>Four specialist views over the same client intelligence.</p>
+        </div>
+        <LensTabs lenses={originationLenses} />
       </section>
 
       <section className="ri-panel engagement-main-panel">
