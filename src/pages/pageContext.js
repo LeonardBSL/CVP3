@@ -192,68 +192,81 @@ function buildRecommendedActions({ scenario, lookupResponse, insight }) {
   return actions;
 }
 
+export function buildMeetingBrief(context, overrides = {}) {
+  const { scenario, insight, briefing, selectedProducts = [], selection = { customTerms: {} } } = context;
+  const trend = describeTrend(insight.trendData ?? []);
+  const summary = overrides.summary ?? insight.whyItMatters;
+  const recommendedAction = overrides.recommendedAction ?? insight.recommendedAction;
+  const sourceIds = overrides.sourceIds ?? insight.sourceIds;
+
+  return {
+    title: 'Pre-meeting brief',
+    summary,
+    sections: [
+      {
+        id: 'executive-summary',
+        title: 'Executive summary',
+        type: 'bullets',
+        items: [
+          summary,
+          scenario.alert.summary,
+          `Why now: ${scenario.alert.whyNow}`,
+          trend.from != null && trend.to != null ? `Signal trend: ${trend.direction} from ${trend.from} to ${trend.to}.` : null,
+          `Meeting objective: ${recommendedAction}`,
+        ].filter(Boolean),
+      },
+      {
+        id: 'key-developments',
+        title: 'Key developments',
+        type: 'key-value',
+        items: [
+          {
+            label: 'Financial position',
+            value: `${formatMetric(insight.transactionalMetrics[0])} ${insight.transactionalMetrics[1] ? `| ${formatMetric(insight.transactionalMetrics[1])}` : ''}`.trim(),
+          },
+          {
+            label: 'Transactional behaviour',
+            value: `${scenario.alert.summary} ${insight.transactionalMetrics[2] ? `Watch ${formatMetric(insight.transactionalMetrics[2])}.` : ''}`.trim(),
+          },
+          {
+            label: 'External or sector signals',
+            value: briefing?.commentary ?? `${scenario.label} remains the leading external context signal for this client.`,
+          },
+        ],
+      },
+      {
+        id: 'risks-watchpoints',
+        title: 'Risks and watchpoints',
+        type: 'bullets',
+        items: buildPreMeetingWatchpoints({ scenario, insight, briefing }),
+      },
+      {
+        id: 'opportunities',
+        title: 'Opportunities',
+        type: 'cards',
+        items: buildOpportunityCards(selectedProducts, selection, insight).slice(0, 3),
+      },
+      {
+        id: 'recommended-talking-points',
+        title: 'Recommended talking points',
+        type: 'bullets',
+        items: splitDraftIntoBullets(insight.clientFacingDraft).slice(0, 3),
+      },
+    ],
+    sourceIds,
+  };
+}
+
 function buildLookupAgentPresentation(agentId, { scenario, client, insight, bundle, selection, briefing, lookupResponse, products, trend }) {
   if (!agentId || !scenario || !client || !insight || !bundle || !lookupResponse) {
     return null;
   }
 
   if (agentId === 'pre-meeting-brief') {
-    return {
-      title: 'Pre-meeting brief',
-      summary: lookupResponse.summary,
-      sections: [
-        {
-          id: 'executive-summary',
-          title: 'Executive summary',
-          type: 'bullets',
-          items: [
-            lookupResponse.summary,
-            scenario.alert.summary,
-            `Why now: ${scenario.alert.whyNow}`,
-            trend.from != null && trend.to != null ? `Signal trend: ${trend.direction} from ${trend.from} to ${trend.to}.` : null,
-            `Meeting objective: ${lookupResponse.recommendedAction}`,
-          ].filter(Boolean),
-        },
-        {
-          id: 'key-developments',
-          title: 'Key developments',
-          type: 'key-value',
-          items: [
-            {
-              label: 'Financial position',
-              value: `${formatMetric(insight.transactionalMetrics[0])} ${insight.transactionalMetrics[1] ? `| ${formatMetric(insight.transactionalMetrics[1])}` : ''}`.trim(),
-            },
-            {
-              label: 'Transactional behaviour',
-              value: `${scenario.alert.summary} ${insight.transactionalMetrics[2] ? `Watch ${formatMetric(insight.transactionalMetrics[2])}.` : ''}`.trim(),
-            },
-            {
-              label: 'External or sector signals',
-              value: briefing?.commentary ?? `${scenario.label} remains the leading external context signal for this client.`,
-            },
-          ],
-        },
-        {
-          id: 'risks-watchpoints',
-          title: 'Risks and watchpoints',
-          type: 'bullets',
-          items: buildPreMeetingWatchpoints({ scenario, insight, briefing }),
-        },
-        {
-          id: 'opportunities',
-          title: 'Opportunities',
-          type: 'cards',
-          items: buildOpportunityCards(products, selection, insight).slice(0, 3),
-        },
-        {
-          id: 'recommended-talking-points',
-          title: 'Recommended talking points',
-          type: 'bullets',
-          items: splitDraftIntoBullets(insight.clientFacingDraft).slice(0, 3),
-        },
-      ],
-      sourceIds: lookupResponse.sourceIds,
-    };
+    return buildMeetingBrief(
+      { scenario, insight, briefing, selectedProducts: products, selection },
+      { summary: lookupResponse.summary, recommendedAction: lookupResponse.recommendedAction, sourceIds: lookupResponse.sourceIds },
+    );
   }
 
   if (agentId === 'revenue-opportunity-scan') {
