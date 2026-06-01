@@ -7,11 +7,11 @@ import { useDemoState } from '../../state/DemoStateProvider';
 
 export default function MeetingBriefPage() {
   const { state } = useDemoState();
+  useJourneyStep('engagement', 'brief');
+
   const context = getViewContext(state);
   const { client, insight } = context;
   const brief = buildMeetingBrief(context);
-
-  useJourneyStep('engagement', 'brief');
 
   return (
     <div className="ri-page engagement-page">
