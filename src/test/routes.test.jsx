@@ -8,6 +8,7 @@ describe('route smoke tests', () => {
     ['/portal', 'Client Portal'],
     ['/engagement/alert/alert-growth-retail', 'Advisory Engagement'],
     ['/engagement/insight', 'Advisory Engagement'],
+    ['/engagement/brief', 'Advisory Engagement'],
     ['/engagement/bundle', 'Advisory Engagement'],
     ['/engagement/customize', 'Advisory Engagement'],
     ['/engagement/outreach', 'Advisory Engagement'],

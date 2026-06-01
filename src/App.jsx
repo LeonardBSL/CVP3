@@ -4,6 +4,7 @@ import DashboardPage from './pages/DashboardPage';
 import AlertDetailPage from './pages/engagement/AlertDetailPage';
 import InsightReviewPage from './pages/engagement/InsightReviewPage';
 import OutreachConfirmPage from './pages/engagement/OutreachConfirmPage';
+import MeetingBriefPage from './pages/engagement/MeetingBriefPage';
 import OutreachSelectionPage from './pages/engagement/OutreachSelectionPage';
 import ClientInsightPage from './pages/insights/ClientInsightPage';
 import CustomizeInsightPage from './pages/insights/CustomizeInsightPage';
@@ -27,6 +28,7 @@ export default function App() {
 
         <Route path="/engagement/alert/:alertId" element={<AlertDetailPage />} />
         <Route path="/engagement/insight" element={<InsightReviewPage />} />
+        <Route path="/engagement/brief" element={<MeetingBriefPage />} />
         <Route path="/engagement/bundle" element={<Navigate to="/engagement/insight" replace />} />
         <Route path="/engagement/customize" element={<Navigate to="/engagement/insight" replace />} />
         <Route path="/engagement/outreach" element={<OutreachSelectionPage />} />

@@ -14,6 +14,7 @@ import {
 export const engagementSteps = [
   { id: 'alert', label: 'Alert' },
   { id: 'insight', label: 'Insight' },
+  { id: 'brief', label: 'Brief' },
   { id: 'outreach', label: 'Outreach' },
   { id: 'confirm', label: 'Confirm' },
 ];
