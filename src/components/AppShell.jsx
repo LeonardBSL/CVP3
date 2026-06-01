@@ -141,7 +141,7 @@ function RelationshipShell({ children, onNotificationsClick, onOpenSettings, urg
         <div className="ri-rail__brand">
           <img className="ri-brand__logo" src={absaLogo} alt="Absa" />
           <div className="ri-brand__copy">
-            <p className="ri-brand__title">Relationship Intelligence</p>
+            <h1 className="ri-brand__title">Relationship Intelligence</h1>
             <p>Intelligent insights that enable better client conversations and outcomes</p>
           </div>
         </div>

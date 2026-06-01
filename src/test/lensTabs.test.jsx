@@ -23,4 +23,39 @@ describe('LensTabs', () => {
     expect(screen.getByText('REG BODY')).toBeInTheDocument();
     expect(screen.queryByText('STRAT BODY')).not.toBeInTheDocument();
   });
+
+  it('toggles aria-selected when switching tabs', async () => {
+    const user = userEvent.setup();
+    render(<LensTabs lenses={lenses} />);
+
+    const strategicTab = screen.getByRole('tab', { name: /strategic/i });
+    const financialTab = screen.getByRole('tab', { name: /financial/i });
+
+    expect(strategicTab).toHaveAttribute('aria-selected', 'true');
+    expect(financialTab).toHaveAttribute('aria-selected', 'false');
+
+    await user.click(financialTab);
+
+    expect(strategicTab).toHaveAttribute('aria-selected', 'false');
+    expect(financialTab).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('moves focus and selection with ArrowRight and ArrowLeft', async () => {
+    const user = userEvent.setup();
+    render(<LensTabs lenses={lenses} />);
+
+    const strategicTab = screen.getByRole('tab', { name: /strategic/i });
+    const financialTab = screen.getByRole('tab', { name: /financial/i });
+
+    strategicTab.focus();
+    await user.keyboard('{ArrowRight}');
+
+    expect(financialTab).toHaveAttribute('aria-selected', 'true');
+    expect(financialTab).toHaveFocus();
+
+    await user.keyboard('{ArrowLeft}');
+
+    expect(strategicTab).toHaveAttribute('aria-selected', 'true');
+    expect(strategicTab).toHaveFocus();
+  });
 });
