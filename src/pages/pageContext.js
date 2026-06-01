@@ -371,6 +371,7 @@ export function buildClientRiskAssessment(context) {
 
 export function buildStrategicLens(context) {
   const { client, insight, scenario } = context;
+  const nextStepBullets = splitDraftIntoBullets(insight.whatToDoNext);
   return {
     title: 'Strategic lens',
     summary: insight.whyItMatters,
@@ -395,8 +396,8 @@ export function buildStrategicLens(context) {
         id: 'strategic-next-steps',
         title: 'Strategic next steps',
         type: 'bullets',
-        items: splitDraftIntoBullets(insight.whatToDoNext).length
-          ? splitDraftIntoBullets(insight.whatToDoNext)
+        items: nextStepBullets.length
+          ? nextStepBullets
           : [insight.whatToDoNext, `Anchor the conversation in the ${scenario.label.toLowerCase()} signal.`],
       },
     ],
