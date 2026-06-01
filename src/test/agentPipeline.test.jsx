@@ -14,6 +14,7 @@ describe('AgentPipeline', () => {
     render(<AgentPipeline title="Pipeline" pipeline={pipeline} />);
 
     expect(screen.getByText('Agent One')).toBeInTheDocument();
+    expect(screen.getByText('SUMMARY')).toBeInTheDocument();
     expect(screen.queryByText('HIDDEN CONTRIBUTION')).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /Agent One/i }));

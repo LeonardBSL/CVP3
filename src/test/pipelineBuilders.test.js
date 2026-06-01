@@ -7,6 +7,7 @@ describe('pipeline builders', () => {
     const pipeline = buildOriginationPipeline(getViewContext(createBaseState()));
     expect(pipeline.agents).toHaveLength(6);
     expect(pipeline.synthesis.label).toBeTruthy();
+    expect(pipeline.synthesis.contribution).toBeTruthy();
     pipeline.agents.forEach(agent => expect(agent.contribution).toBeTruthy());
   });
 
@@ -14,5 +15,7 @@ describe('pipeline builders', () => {
     const pipeline = buildMeetingBriefPipeline(getViewContext(createBaseState()));
     expect(pipeline.agents).toHaveLength(6);
     expect(pipeline.synthesis.label).toBeTruthy();
+    expect(pipeline.synthesis.contribution).toBeTruthy();
+    pipeline.agents.forEach(agent => expect(agent.contribution).toBeTruthy());
   });
 });
