@@ -120,8 +120,8 @@ export default function InsightReviewPage() {
         />
       </section>
 
-      <Link className="engagement-primary-cta" to="/engagement/outreach">
-        <span>Choose outreach</span>
+      <Link className="engagement-primary-cta" to="/engagement/brief">
+        <span>Build meeting brief</span>
         <ArrowRight size={22} />
       </Link>
 

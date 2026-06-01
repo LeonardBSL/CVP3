@@ -16,6 +16,7 @@ describe('journey walkthroughs', () => {
     expect(screen.getByRole('dialog', { name: /Review bundle/i })).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /Close review bundle/i }));
     expect(screen.queryByRole('dialog', { name: /Review bundle/i })).not.toBeInTheDocument();
+    await user.click(screen.getByRole('link', { name: /Build meeting brief/i }));
     await user.click(screen.getByRole('link', { name: /Choose outreach/i }));
     await user.click(screen.getByRole('button', { name: /Confirm outreach/i }));
 
@@ -114,6 +115,15 @@ describe('journey walkthroughs', () => {
     expect(screen.getAllByText(/Confidence and limitations/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/Overall posture: improving\./i).length).toBeGreaterThan(0);
   }, 15000);
+
+  it('routes from the insight step to the new brief step', async () => {
+    const user = userEvent.setup();
+    renderApp('/engagement/insight');
+
+    await user.click(screen.getByRole('link', { name: /build meeting brief/i }));
+
+    expect(screen.getByRole('heading', { name: 'Pre-meeting brief' })).toBeInTheDocument();
+  });
 
   it('walks the sector journey from overview to client relevance', async () => {
     const user = userEvent.setup();
