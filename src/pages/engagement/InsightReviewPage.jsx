@@ -8,6 +8,8 @@ import { useDemoState } from '../../state/DemoStateProvider';
 import { buildOriginationLenses, buildOriginationPipeline, engagementSteps, getViewContext } from '../pageContext';
 import LensTabs from '../../components/engagement/LensTabs';
 import AgentPipeline from '../../components/engagement/AgentPipeline';
+import ExportReportButton from '../../components/report/ExportReportButton';
+import OriginationReportPdf from '../../components/report/OriginationReportPdf';
 
 export default function InsightReviewPage() {
   const [bundleOpen, setBundleOpen] = useState(false);
@@ -83,8 +85,15 @@ export default function InsightReviewPage() {
 
       <section className="ri-panel engagement-main-panel">
         <div className="engagement-section-heading">
-          <h3>Origination lenses</h3>
-          <p>Four specialist views over the same client intelligence.</p>
+          <div>
+            <h3>Origination lenses</h3>
+            <p>Four specialist views over the same client intelligence.</p>
+          </div>
+          <ExportReportButton
+            document={<OriginationReportPdf lenses={originationLenses} client={client.name} date="1 June 2026" />}
+            fileName={`Absa-${client.name.replace(/\s+/g, '-')}-Deal-Origination-Report-20260601.pdf`}
+            label="Download origination report"
+          />
         </div>
         <LensTabs lenses={originationLenses} />
       </section>

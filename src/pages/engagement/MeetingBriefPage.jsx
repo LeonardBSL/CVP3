@@ -5,6 +5,8 @@ import LookupAgentOutput from '../../components/LookupAgentOutput';
 import { buildMeetingBrief, buildMeetingBriefPipeline, engagementSteps, getViewContext } from '../pageContext';
 import { useDemoState } from '../../state/DemoStateProvider';
 import AgentPipeline from '../../components/engagement/AgentPipeline';
+import ExportReportButton from '../../components/report/ExportReportButton';
+import MeetingBriefPdf from '../../components/report/MeetingBriefPdf';
 
 export default function MeetingBriefPage() {
   const { state } = useDemoState();
@@ -36,6 +38,11 @@ export default function MeetingBriefPage() {
             <h3>{brief.title}</h3>
             <p>{client.name} | {insight.headline}</p>
           </div>
+          <ExportReportButton
+            document={<MeetingBriefPdf brief={brief} client={client.name} date="1 June 2026" />}
+            fileName={`Absa-${client.name.replace(/\s+/g, '-')}-Meeting-Brief-20260601.pdf`}
+            label="Download brief PDF"
+          />
         </div>
         <LookupAgentOutput presentation={brief} />
       </section>
