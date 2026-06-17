@@ -2,6 +2,44 @@
 
 React + Vite single-page application for the Absa RM Advisory Cockpit.
 
+## Overview
+
+CVP 3 is the Customer Value Proposition prototype for **Absa**'s Relationship Manager (RM) advisory function — a demo cockpit that shows how AI-surfaced signals, insights, and sector intelligence can drive better client conversations and outcomes. It is a self-contained, front-end-only build: all content is served from in-memory demo data, so the app can be run and demonstrated without any backend.
+
+## Experiences
+
+The app has two distinct experiences that share a single shell and demo state.
+
+### Relationship Intelligence cockpit (RM-facing)
+
+The banker workspace, reached from the primary navigation. Feature areas:
+
+- **Dashboard** — prioritised client alerts, KPIs, active-client context, and a scenario simulator to trigger scripted demo signals.
+- **Advisory Engagement** — a guided journey from alert → insight review → meeting brief → outreach, with sourced evidence and a branded PDF meeting-brief export.
+- **Insight Delivery** — client insight review, customisation, and delivery, with a branded PDF report export.
+- **Advisory Lookup** — agent-style search across the knowledge base and client data, returning a structured response and recommendations.
+- **Sector Briefing** — sector overview, deep dive, and client-relevance mapping that routes the RM back into client context.
+
+### Client Portal (client-facing intelligence dashboard)
+
+A separate intelligence dashboard surface for the client. Feature areas:
+
+- **Health Score** — composite relationship/financial health module.
+- **Milestones** — engagement and journey milestone tracking.
+- **Benchmarking** — peer and sector benchmarking.
+- **Diagnostic** — diagnostic assessment module.
+- **News Monitor** — signal and news monitoring.
+- **Signal intelligence & internal notes** — a signal strip plus RM-only internal notes layered over the portal.
+
+## Tech stack
+
+| Area | Choice |
+| --- | --- |
+| Frontend framework | React 19 + Vite 8, routed with React Router 7 (SPA, `BrowserRouter`) |
+| Local API | None — in-memory demo data modules in `src/data/`; no backend server runs locally |
+| Production host | Cloudflare Pages (static site) |
+| State approach | React Context + `useReducer` (`DemoStateProvider`), persisted to `sessionStorage` |
+
 ## Local development
 
 ```bash

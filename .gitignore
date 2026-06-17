@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Planning and documentation artefacts (not build code)
+docs/
+.superpowers/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
